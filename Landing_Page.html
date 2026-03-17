@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShareCare — Diabetes Support Community</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,700;1,600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #5C8D7A; --primary-dark: #4A7363; --primary-light: #EAF2EF;
+            --accent: #E8A598; --accent-light: #FCF0EE;
+            --bg: #F8F6F2; --card: #FFFFFF; --text: #2C3A35;
+            --text-muted: #7A8C86; --border: #E8E4DF;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); width: 100%; -webkit-font-smoothing: antialiased; }
+
+        nav { width: 100%; height: 72px; background: rgba(255,255,255,0.96); backdrop-filter: blur(12px); display: flex; align-items: center; justify-content: space-between; padding: 0 60px; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
+        .logo { display: flex; align-items: center; gap: 10px; font-family: 'Lora', serif; font-size: 22px; font-weight: 700; color: var(--primary); text-decoration: none; }
+        .logo i { color: var(--accent); font-size: 24px; }
+        .nav-links { display: flex; gap: 36px; list-style: none; }
+        .nav-links a { text-decoration: none; color: var(--text-muted); font-size: 15px; font-weight: 500; transition: color 0.2s; }
+        .nav-links a:hover { color: var(--primary); }
+        .nav-right { display: flex; gap: 10px; align-items: center; }
+        .btn { padding: 10px 22px; border-radius: 50px; font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; border: none; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s; }
+        .btn-primary { background: var(--primary); color: white; box-shadow: 0 4px 12px rgba(92,141,122,0.3); }
+        .btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); }
+        .btn-outline { background: transparent; color: var(--text); border: 1.5px solid var(--border); }
+        .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+        .btn-lg { padding: 14px 32px; font-size: 16px; }
+
+        .hero { max-width: 1100px; margin: 0 auto; padding: 96px 40px 72px; display: flex; flex-direction: column; align-items: center; text-align: center; }
+        .hero-badge { background: var(--accent-light); color: #B5685A; padding: 8px 18px; border-radius: 50px; font-size: 13px; font-weight: 600; margin-bottom: 28px; display: inline-flex; align-items: center; gap: 6px; }
+        .hero h1 { font-family: 'Lora', serif; font-size: 58px; line-height: 1.15; color: var(--text); margin-bottom: 20px; }
+        .hero h1 em { font-style: italic; color: var(--primary); }
+        .hero p { font-size: 18px; color: var(--text-muted); margin-bottom: 40px; max-width: 560px; line-height: 1.7; }
+        .hero-cta { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; justify-content: center; }
+
+        .features { max-width: 1100px; margin: 0 auto; padding: 56px 40px 96px; }
+        .section-label { text-align: center; font-size: 12px; font-weight: 600; color: var(--primary); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px; }
+        .section-title { font-family: 'Lora', serif; font-size: 34px; font-weight: 700; text-align: center; margin-bottom: 48px; color: var(--text); }
+        .cards-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+        .feature-card { background: var(--card); border-radius: 20px; padding: 36px 28px; border: 1px solid var(--border); transition: transform 0.2s, box-shadow 0.2s; }
+        .feature-card:hover { transform: translateY(-5px); box-shadow: 0 16px 40px rgba(92,141,122,0.1); }
+        .feature-icon { width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 20px; }
+        .icon-teal { background: var(--primary-light); color: var(--primary); }
+        .icon-rose { background: var(--accent-light); color: #B5685A; }
+        .icon-amber { background: #FEF5E7; color: #B07D2A; }
+        .feature-card h3 { font-size: 17px; font-weight: 700; margin-bottom: 10px; }
+        .feature-card p { font-size: 14px; color: var(--text-muted); line-height: 1.65; }
+
+        .disclaimer-bar { background: #FFFBF0; border-top: 1px solid #F0D9A0; border-bottom: 1px solid #F0D9A0; padding: 16px 60px; }
+        .disclaimer-inner { max-width: 800px; margin: 0 auto; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 13px; color: #7A6020; }
+        .disclaimer-inner i { font-size: 16px; flex-shrink: 0; }
+
+        footer { background: var(--card); border-top: 1px solid var(--border); padding: 36px 60px; display: flex; align-items: center; justify-content: space-between; }
+        .footer-right { text-align: right; }
+        .copyright { font-size: 13px; color: var(--text-muted); margin-bottom: 8px; }
+        .footer-links { display: flex; gap: 20px; justify-content: flex-end; }
+        .footer-links a { color: var(--text-muted); text-decoration: none; font-size: 13px; transition: color 0.2s; }
+        .footer-links a:hover { color: var(--primary); }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="#" class="logo"><i class="ri-heart-pulse-fill"></i> ShareCare</a>
+        <ul class="nav-links">
+            <li><a href="#">About</a></li>
+            <li><a href="#">Community</a></li>
+            <li><a href="#">Resources</a></li>
+        </ul>
+        <div class="nav-right">
+            <a href="ShareCare_-_Login_Page.html" class="btn btn-outline">Log in</a>
+            <a href="ShareCare_-_Sign-up_Page.html" class="btn btn-primary">Sign up free</a>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-badge"><i class="ri-group-line"></i> Peer support, not medical advice</div>
+        <h1>Living with diabetes<br>is easier <em>together</em></h1>
+        <p>ShareCare is a safe community where people with diabetes share real experiences, practical tips, and everyday coping strategies — no judgement, no clinical jargon.</p>
+        <div class="hero-cta">
+            <a href="ShareCare_-_Sign-up_Page.html" class="btn btn-primary btn-lg">Join the community <i class="ri-arrow-right-line"></i></a>
+            <a href="ShareCare_-_Community_Feed__Guest_.html" class="btn btn-outline btn-lg">Browse as guest</a>
+        </div>
+    </section>
+
+    <section class="features">
+        <div class="section-label">How it works</div>
+        <h2 class="section-title">Built around lived experience</h2>
+        <div class="cards-grid">
+            <div class="feature-card">
+                <div class="feature-icon icon-teal"><i class="ri-chat-heart-line"></i></div>
+                <h3>Share your story</h3>
+                <p>Post about what worked for you — recipes, snacks, exercise routines, or how you handled a tough day. Your experience matters.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon icon-rose"><i class="ri-thumb-up-line"></i></div>
+                <h3>Community validation</h3>
+                <p>Rate and discuss posts. The most helpful real-world strategies get surfaced by the community, for the community.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon icon-amber"><i class="ri-shield-check-line"></i></div>
+                <h3>Safe and moderated</h3>
+                <p>All content is peer-reviewed and reported. We keep this space respectful, honest, and free from harmful content.</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="disclaimer-bar">
+        <div class="disclaimer-inner">
+            <i class="ri-information-fill"></i>
+            <span><strong>Important:</strong> ShareCare is a peer support community only. It does not provide medical advice, diagnosis, or treatment. Always consult your healthcare provider for medical decisions.</span>
+        </div>
+    </div>
+
+    <footer>
+        <a href="#" class="logo"><i class="ri-heart-pulse-fill"></i> ShareCare</a>
+        <div class="footer-right">
+            <div class="copyright">© 2024 ShareCare. All rights reserved.</div>
+            <div class="footer-links">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="#">Contact</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

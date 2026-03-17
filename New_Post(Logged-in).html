@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShareCare — New Post</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,700;1,600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #5C8D7A; --primary-dark: #4A7363; --primary-light: #EAF2EF;
+            --accent: #E8A598; --accent-light: #FCF0EE;
+            --bg: #F8F6F2; --card: #FFFFFF; --text: #2C3A35;
+            --text-muted: #7A8C86; --border: #E8E4DF;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); -webkit-font-smoothing: antialiased; }
+
+        nav { width: 100%; height: 72px; background: var(--card); display: flex; align-items: center; justify-content: space-between; padding: 0 48px; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
+        .logo { display: flex; align-items: center; gap: 10px; font-family: 'Lora', serif; font-size: 22px; font-weight: 700; color: var(--primary); text-decoration: none; }
+        .logo i { color: var(--accent); font-size: 24px; }
+        .nav-links { display: flex; gap: 28px; }
+        .nav-links a { text-decoration: none; color: var(--text-muted); font-size: 14px; font-weight: 500; transition: color 0.2s; }
+        .nav-links a:hover, .nav-links a.active { color: var(--primary); }
+        .nav-right { display: flex; align-items: center; gap: 12px; }
+        .avatar { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid var(--border); }
+
+        .page-wrap { max-width: 900px; margin: 0 auto; padding: 48px 24px 80px; display: grid; grid-template-columns: 1fr 260px; gap: 28px; align-items: start; }
+
+        .page-header { grid-column: 1 / -1; margin-bottom: 4px; }
+        .page-header h1 { font-family: 'Lora', serif; font-size: 28px; font-weight: 700; }
+        .page-header p { font-size: 14px; color: var(--text-muted); margin-top: 6px; }
+
+        .form-card { background: var(--card); border-radius: 20px; padding: 36px; border: 1px solid var(--border); }
+        .form-group { margin-bottom: 24px; }
+        .label { display: block; font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+        .input { width: 100%; padding: 13px 16px; border: 1.5px solid var(--border); border-radius: 10px; font-family: 'Inter', sans-serif; font-size: 15px; color: var(--text); background: #FAFAF8; outline: none; transition: all 0.2s; }
+        .input:focus { border-color: var(--primary); background: white; box-shadow: 0 0 0 3px rgba(92,141,122,0.1); }
+        .input::placeholder { color: #BFC9C4; }
+        textarea.input { min-height: 200px; resize: vertical; line-height: 1.65; }
+        .char-count { text-align: right; font-size: 12px; color: var(--text-muted); margin-top: 5px; }
+
+        /* Category select */
+        .cat-select { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+        .cat-chip { padding: 9px 10px; border: 1.5px solid var(--border); border-radius: 9px; text-align: center; cursor: pointer; font-size: 13px; font-weight: 500; color: var(--text-muted); transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .cat-chip:hover { border-color: var(--primary); color: var(--primary); }
+        .cat-chip.active { border-color: var(--primary); background: var(--primary-light); color: var(--primary-dark); }
+        .cat-chip i { font-size: 16px; }
+
+        /* Upload */
+        .upload-area { border: 2px dashed var(--border); border-radius: 12px; padding: 36px; text-align: center; cursor: pointer; transition: all 0.2s; background: #FAFAF8; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+        .upload-area:hover { border-color: var(--primary); background: var(--primary-light); }
+        .upload-icon { width: 52px; height: 52px; background: var(--card); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; color: var(--primary); box-shadow: 0 2px 8px rgba(92,141,122,0.1); }
+        .upload-text { font-size: 14px; font-weight: 600; color: var(--text); }
+        .upload-hint { font-size: 12px; color: var(--text-muted); }
+
+        /* Tags */
+        .tag-options { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+        .tag-pill { background: var(--bg); border: 1.5px solid var(--border); color: var(--text-muted); padding: 6px 14px; border-radius: 50px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 5px; }
+        .tag-pill:hover { border-color: var(--primary); color: var(--primary); }
+        .tag-pill.active { background: var(--primary-light); border-color: var(--primary); color: var(--primary-dark); }
+
+        .action-row { display: flex; justify-content: flex-end; align-items: center; gap: 14px; margin-top: 28px; padding-top: 24px; border-top: 1px solid var(--border); }
+        .btn-cancel { background: transparent; border: none; color: var(--text-muted); font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; padding: 10px 16px; transition: color 0.2s; }
+        .btn-cancel:hover { color: var(--text); }
+        .btn-draft { background: var(--bg); border: 1.5px solid var(--border); color: var(--text); font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; padding: 10px 22px; border-radius: 50px; transition: all 0.2s; }
+        .btn-draft:hover { border-color: var(--primary); color: var(--primary); }
+        .btn-publish { background: var(--primary); color: white; border: none; font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; padding: 10px 24px; border-radius: 50px; display: flex; align-items: center; gap: 8px; transition: all 0.2s; box-shadow: 0 4px 12px rgba(92,141,122,0.3); }
+        .btn-publish:hover { background: var(--primary-dark); transform: translateY(-1px); }
+
+        /* Tips sidebar */
+        .tips { display: flex; flex-direction: column; gap: 16px; }
+        .tip-card { background: var(--card); border-radius: 14px; padding: 18px; border: 1px solid var(--border); }
+        .tip-header { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: var(--primary); margin-bottom: 8px; }
+        .tip-header i { font-size: 16px; }
+        .tip-text { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+        .disclaimer { background: #FFFBF0; border: 1px solid #F0D9A0; border-radius: 10px; padding: 12px 14px; font-size: 12px; color: #7A6020; display: flex; gap: 8px; align-items: flex-start; line-height: 1.55; }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="ShareCare_-_Landing_Page.html" class="logo"><i class="ri-heart-pulse-fill"></i> ShareCare</a>
+        <div class="nav-links">
+            <a href="ShareCare_-_Dashboard__Logged-in_.html">Feed</a>
+            <a href="#" class="active">New Post</a>
+            <a href="#">Saved</a>
+        </div>
+        <div class="nav-right">
+            <i class="ri-notification-3-line" style="font-size:20px;color:var(--text-muted);cursor:pointer;"></i>
+            <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=100&auto=format&fit=crop" class="avatar" alt="User">
+        </div>
+    </nav>
+
+    <div class="page-wrap">
+
+        <div class="page-header">
+            <h1>Create a new post</h1>
+            <p>Share what worked for you — your experience can help someone else today.</p>
+        </div>
+
+        <div class="form-card">
+
+            <div class="form-group">
+                <label class="label">Category</label>
+                <div class="cat-select">
+                    <div class="cat-chip active" onclick="selectCat(this)"><i class="ri-restaurant-line"></i> Recipe</div>
+                    <div class="cat-chip" onclick="selectCat(this)"><i class="ri-run-line"></i> Exercise</div>
+                    <div class="cat-chip" onclick="selectCat(this)"><i class="ri-seedling-line"></i> Snack</div>
+                    <div class="cat-chip" onclick="selectCat(this)"><i class="ri-mental-health-line"></i> Emotional</div>
+                    <div class="cat-chip" onclick="selectCat(this)"><i class="ri-lightbulb-line"></i> Daily Tip</div>
+                    <div class="cat-chip" onclick="selectCat(this)"><i class="ri-question-line"></i> Question</div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="label" for="title">Title</label>
+                <input type="text" id="title" class="input" placeholder="Give your post a clear, helpful title">
+            </div>
+
+            <div class="form-group">
+                <label class="label" for="content">Your experience</label>
+                <textarea id="content" class="input" placeholder="What worked for you? Be specific — details help others the most." oninput="updateCount(this)"></textarea>
+                <div class="char-count" id="char-count">0 / 2000</div>
+            </div>
+
+            <div class="form-group">
+                <label class="label">Add photo (optional)</label>
+                <div class="upload-area">
+                    <div class="upload-icon"><i class="ri-image-add-line"></i></div>
+                    <div class="upload-text">Click to upload or drag and drop</div>
+                    <div class="upload-hint">PNG, JPG up to 5MB</div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="label">Tags</label>
+                <div class="tag-options">
+                    <div class="tag-pill active" onclick="toggleTag(this)">LowGI</div>
+                    <div class="tag-pill" onclick="toggleTag(this)">Type 1</div>
+                    <div class="tag-pill" onclick="toggleTag(this)">Type 2</div>
+                    <div class="tag-pill" onclick="toggleTag(this)">Caregiver</div>
+                    <div class="tag-pill" onclick="toggleTag(this)">Budget Friendly</div>
+                    <div class="tag-pill" onclick="toggleTag(this)">Quick & Easy</div>
+                    <div class="tag-pill" onclick="toggleTag(this)">Indian Diet</div>
+                </div>
+            </div>
+
+            <div class="action-row">
+                <button class="btn-cancel">Cancel</button>
+                <button class="btn-draft">Save draft</button>
+                <button class="btn-publish">Publish post <i class="ri-send-plane-fill"></i></button>
+            </div>
+        </div>
+
+        <!-- Tips sidebar -->
+        <div class="tips">
+            <div class="tip-card">
+                <div class="tip-header"><i class="ri-lightbulb-flash-line"></i> Writing tips</div>
+                <p class="tip-text">Be specific and honest. "I ate X and my reading was Y" is more useful than general advice. Your details make your post more helpful.</p>
+            </div>
+            <div class="tip-card">
+                <div class="tip-header"><i class="ri-shield-check-line"></i> Community guidelines</div>
+                <p class="tip-text">Share your experience, not prescriptions. Avoid telling others what to do — describe what worked for you and let them decide.</p>
+            </div>
+            <div class="disclaimer">
+                <i class="ri-information-fill" style="font-size:15px;flex-shrink:0;margin-top:1px;"></i>
+                <span>All posts are peer experiences only. Do not include medical advice. Misleading content will be removed.</span>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function updateCount(el) {
+            document.getElementById('char-count').textContent = el.value.length + ' / 2000';
+        }
+        function selectCat(el) {
+            document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
+            el.classList.add('active');
+        }
+        function toggleTag(el) {
+            el.classList.toggle('active');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShareCare — Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,700;1,600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #5C8D7A; --primary-dark: #4A7363; --primary-light: #EAF2EF;
+            --accent: #E8A598; --accent-light: #FCF0EE;
+            --bg: #F8F6F2; --card: #FFFFFF; --text: #2C3A35;
+            --text-muted: #7A8C86; --border: #E8E4DF;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); display: flex; min-height: 100vh; -webkit-font-smoothing: antialiased; }
+
+        /* Sidebar */
+        .sidebar { width: 260px; background: var(--card); border-right: 1px solid var(--border); height: 100vh; position: sticky; top: 0; padding: 28px 20px; display: flex; flex-direction: column; flex-shrink: 0; }
+        .logo { display: flex; align-items: center; gap: 10px; font-family: 'Lora', serif; font-size: 20px; font-weight: 700; color: var(--primary); text-decoration: none; margin-bottom: 36px; padding: 0 8px; }
+        .logo i { color: var(--accent); font-size: 22px; }
+        .nav-menu { list-style: none; display: flex; flex-direction: column; gap: 4px; }
+        .nav-item { display: flex; align-items: center; gap: 12px; padding: 11px 14px; border-radius: 10px; font-size: 15px; color: var(--text-muted); cursor: pointer; transition: all 0.2s; font-weight: 500; }
+        .nav-item:hover { background: var(--bg); color: var(--text); }
+        .nav-item.active { background: var(--primary-light); color: var(--primary-dark); font-weight: 600; }
+        .nav-item i { font-size: 20px; }
+        .nav-badge { margin-left: auto; background: var(--accent); color: white; font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 50px; }
+        .sidebar-footer { margin-top: auto; padding-top: 20px; border-top: 1px solid var(--border); }
+        .user-row { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; background: var(--bg); }
+        .user-row img { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; }
+        .user-row-name { font-size: 14px; font-weight: 600; }
+        .user-row-role { font-size: 12px; color: var(--text-muted); }
+        .logout-icon { margin-left: auto; color: var(--text-muted); cursor: pointer; font-size: 18px; }
+
+        /* Main */
+        .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+        .topbar { height: 72px; background: var(--card); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 36px; }
+        .topbar-left h1 { font-family: 'Lora', serif; font-size: 22px; font-weight: 700; }
+        .topbar-left p { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
+        .topbar-right { display: flex; align-items: center; gap: 14px; }
+        .search { display: flex; align-items: center; background: var(--bg); border: 1px solid var(--border); padding: 9px 14px; border-radius: 50px; width: 260px; gap: 8px; }
+        .search i { color: var(--text-muted); font-size: 16px; }
+        .search input { border: none; outline: none; font-family: 'Inter', sans-serif; font-size: 14px; background: transparent; color: var(--text); width: 100%; }
+        .btn { padding: 9px 20px; border-radius: 50px; font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; border: none; text-decoration: none; display: inline-flex; align-items: center; gap: 7px; transition: all 0.2s; }
+        .btn-primary { background: var(--primary); color: white; box-shadow: 0 4px 12px rgba(92,141,122,0.25); }
+        .btn-primary:hover { background: var(--primary-dark); }
+        .notif-btn { background: var(--bg); border: 1px solid var(--border); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; }
+        .notif-dot { position: absolute; top: 6px; right: 6px; width: 8px; height: 8px; background: var(--accent); border-radius: 50%; border: 2px solid var(--card); }
+        .profile-chip { display: flex; align-items: center; gap: 9px; background: var(--bg); border: 1px solid var(--border); padding: 6px 14px 6px 6px; border-radius: 50px; cursor: pointer; }
+        .profile-chip img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
+        .profile-chip span { font-size: 14px; font-weight: 600; }
+
+        /* Feed layout */
+        .feed-area { flex: 1; overflow-y: auto; padding: 28px 36px; }
+        .feed-grid { display: grid; grid-template-columns: 1fr 300px; gap: 24px; max-width: 1100px; }
+
+        .feed-stream { display: flex; flex-direction: column; gap: 20px; }
+        .post-card { background: var(--card); border-radius: 16px; padding: 24px; border: 1px solid var(--border); transition: box-shadow 0.2s, transform 0.2s; }
+        .post-card:hover { box-shadow: 0 8px 24px rgba(92,141,122,0.1); transform: translateY(-2px); }
+        .post-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+        .author-meta { display: flex; align-items: center; gap: 12px; }
+        .author-meta img { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; border: 2px solid var(--border); }
+        .author-name { font-size: 14px; font-weight: 600; }
+        .author-sub { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
+        .more-btn { color: var(--border); font-size: 22px; cursor: pointer; }
+        .post-title { font-family: 'Lora', serif; font-size: 19px; font-weight: 700; margin-bottom: 10px; line-height: 1.4; }
+        .post-body { font-size: 14px; color: var(--text-muted); line-height: 1.65; margin-bottom: 16px; }
+        .post-image { width: 100%; height: 320px; object-fit: cover; border-radius: 12px; margin-bottom: 16px; }
+        .tags { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+        .tag { background: var(--primary-light); color: var(--primary-dark); padding: 4px 11px; border-radius: 50px; font-size: 12px; font-weight: 500; }
+        .post-actions { display: flex; gap: 18px; border-top: 1px solid var(--border); padding-top: 14px; }
+        .action-btn { display: flex; align-items: center; gap: 6px; color: var(--text-muted); font-size: 13px; font-weight: 500; cursor: pointer; transition: color 0.2s; background: none; border: none; font-family: 'Inter', sans-serif; }
+        .action-btn:hover { color: var(--primary); }
+        .action-btn.liked { color: var(--accent); }
+        .action-btn i { font-size: 17px; }
+
+        /* Widgets */
+        .widgets { display: flex; flex-direction: column; gap: 18px; }
+        .widget { background: var(--card); border-radius: 16px; padding: 20px; border: 1px solid var(--border); }
+        .widget-title { font-size: 14px; font-weight: 700; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
+        .widget-link { font-size: 12px; color: var(--primary); font-weight: 500; cursor: pointer; }
+
+        .quote-widget { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; }
+        .quote-text { font-family: 'Lora', serif; font-style: italic; font-size: 15px; line-height: 1.6; margin-bottom: 10px; }
+        .quote-author { font-size: 12px; opacity: 0.8; text-align: right; }
+
+        .topic-item { display: flex; align-items: center; gap: 12px; padding: 8px 0; cursor: pointer; border-bottom: 1px solid var(--border); }
+        .topic-item:last-child { border-bottom: none; }
+        .topic-icon { width: 36px; height: 36px; background: var(--primary-light); border-radius: 9px; display: flex; align-items: center; justify-content: center; color: var(--primary); font-size: 18px; flex-shrink: 0; }
+        .topic-name { font-size: 14px; font-weight: 600; }
+        .topic-count { font-size: 12px; color: var(--text-muted); }
+
+        .suggest-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border); }
+        .suggest-item:last-child { border-bottom: none; }
+        .suggest-item img { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; }
+        .suggest-name { font-size: 14px; font-weight: 600; flex: 1; }
+        .suggest-role { font-size: 12px; color: var(--text-muted); }
+        .follow-btn { color: var(--primary); font-size: 19px; cursor: pointer; }
+
+        .disclaimer { background: #FFFBF0; border: 1px solid #F0D9A0; border-radius: 10px; padding: 12px 14px; font-size: 12px; color: #7A6020; display: flex; gap: 8px; line-height: 1.5; }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <a href="ShareCare_-_Landing_Page.html" class="logo"><i class="ri-heart-pulse-fill"></i> ShareCare</a>
+        <ul class="nav-menu">
+            <li class="nav-item active"><i class="ri-home-smile-2-line"></i> Community</li>
+            <li class="nav-item"><i class="ri-article-line"></i> My Posts</li>
+            <li class="nav-item"><i class="ri-bookmark-3-line"></i> Saved</li>
+            <li class="nav-item"><i class="ri-notification-3-line"></i> Notifications <span class="nav-badge">3</span></li>
+            <li class="nav-item"><i class="ri-settings-4-line"></i> Settings</li>
+        </ul>
+        <div class="sidebar-footer">
+            <div class="user-row">
+                <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=100&auto=format&fit=crop" alt="User">
+                <div>
+                    <div class="user-row-name">Sara M.</div>
+                    <div class="user-row-role">Type 2 · Member</div>
+                </div>
+                <i class="ri-logout-box-r-line logout-icon"></i>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main content -->
+    <div class="main">
+        <div class="topbar">
+            <div class="topbar-left">
+                <h1>Welcome back, Sara</h1>
+                <p>Here's what's happening in your community today</p>
+            </div>
+            <div class="topbar-right">
+                <div class="search">
+                    <i class="ri-search-line"></i>
+                    <input type="text" placeholder="Search topics, posts...">
+                </div>
+                <a href="ShareCare_-_New_Post__Logged-in_.html" class="btn btn-primary"><i class="ri-edit-circle-line"></i> New Post</a>
+                <div class="notif-btn"><i class="ri-notification-3-line" style="font-size:18px;color:var(--text-muted);"></i><div class="notif-dot"></div></div>
+                <div class="profile-chip">
+                    <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=100&auto=format&fit=crop" alt="User">
+                    <span>Sara</span>
+                    <i class="ri-arrow-down-s-line" style="color:var(--text-muted);font-size:16px;"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="feed-area">
+            <div class="feed-grid">
+
+                <div class="feed-stream">
+
+                    <article class="post-card">
+                        <div class="post-header">
+                            <div class="author-meta">
+                                <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=100&auto=format&fit=crop" alt="Author">
+                                <div>
+                                    <div class="author-name">David Chen <span style="background:var(--primary-light);color:var(--primary-dark);font-size:11px;padding:2px 7px;border-radius:50px;font-weight:600;margin-left:4px;">Type 1</span></div>
+                                    <div class="author-sub">2 hours ago · Exercise</div>
+                                </div>
+                            </div>
+                            <i class="ri-more-fill more-btn"></i>
+                        </div>
+                        <h2 class="post-title">Found this peaceful spot for my morning walks 🌿</h2>
+                        <p class="post-body">Taking time to move and just breathe has been a game changer for my readings this week. A 20-min walk before breakfast keeps things steady all morning.</p>
+                        <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=800&auto=format&fit=crop" class="post-image" alt="Nature">
+                        <div class="tags"><span class="tag">Exercise</span><span class="tag">Morning Routine</span></div>
+                        <div class="post-actions">
+                            <button class="action-btn liked"><i class="ri-heart-3-fill"></i> 248 helpful</button>
+                            <button class="action-btn"><i class="ri-chat-1-line"></i> 42 comments</button>
+                            <button class="action-btn"><i class="ri-bookmark-line"></i> Save</button>
+                            <button class="action-btn" style="margin-left:auto;"><i class="ri-flag-line"></i> Report</button>
+                        </div>
+                    </article>
+
+                    <article class="post-card">
+                        <div class="post-header">
+                            <div class="author-meta">
+                                <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=100&auto=format&fit=crop" alt="Author">
+                                <div>
+                                    <div class="author-name">Elena R. <span style="background:var(--accent-light);color:#B5685A;font-size:11px;padding:2px 7px;border-radius:50px;font-weight:600;margin-left:4px;">Type 2</span></div>
+                                    <div class="author-sub">5 hours ago · Emotional Support</div>
+                                </div>
+                            </div>
+                            <i class="ri-more-fill more-btn"></i>
+                        </div>
+                        <h2 class="post-title">How do you handle the mental fatigue of constant monitoring?</h2>
+                        <p class="post-body">I've been feeling incredibly drained lately. Not just physically — it's the constant mental calculation with every meal, every activity. Has anyone found a way to make peace with this? Looking for others who've been through it.</p>
+                        <div class="tags"><span class="tag">Emotional</span><span class="tag">Mental Fatigue</span><span class="tag">Support</span></div>
+                        <div class="post-actions">
+                            <button class="action-btn"><i class="ri-heart-3-line"></i> 156 helpful</button>
+                            <button class="action-btn"><i class="ri-chat-1-line"></i> 89 comments</button>
+                            <button class="action-btn"><i class="ri-bookmark-line"></i> Save</button>
+                            <button class="action-btn" style="margin-left:auto;"><i class="ri-flag-line"></i> Report</button>
+                        </div>
+                    </article>
+
+                    <article class="post-card">
+                        <div class="post-header">
+                            <div class="author-meta">
+                                <img src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=100&auto=format&fit=crop" alt="Author">
+                                <div>
+                                    <div class="author-name">Marcus J. <span style="background:var(--primary-light);color:var(--primary-dark);font-size:11px;padding:2px 7px;border-radius:50px;font-weight:600;margin-left:4px;">Caregiver</span></div>
+                                    <div class="author-sub">Just now · Recipes</div>
+                                </div>
+                            </div>
+                        </div>
+                        <h2 class="post-title">Sunday meal prep for the week 🥗</h2>
+                        <p class="post-body">Prepped 5 days of balanced meals for my wife. Low GI grains, lots of legumes, and a really good tahini dressing that she actually enjoys. The secret is in the prep!</p>
+                        <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=800&auto=format&fit=crop" class="post-image" style="height:240px;" alt="Healthy Food">
+                        <div class="post-actions">
+                            <button class="action-btn"><i class="ri-heart-3-line"></i> 12 helpful</button>
+                            <button class="action-btn"><i class="ri-chat-1-line"></i> 3 comments</button>
+                            <button class="action-btn"><i class="ri-bookmark-line"></i> Save</button>
+                            <button class="action-btn" style="margin-left:auto;"><i class="ri-flag-line"></i> Report</button>
+                        </div>
+                    </article>
+
+                </div>
+
+                <!-- Widgets -->
+                <div class="widgets">
+                    <div class="widget quote-widget">
+                        <div class="quote-text">"Every day with diabetes is a chance to learn something new about your body."</div>
+                        <div class="quote-author">— ShareCare Community</div>
+                    </div>
+
+                    <div class="widget">
+                        <div class="widget-title">Trending Topics <span class="widget-link">See all</span></div>
+                        <div class="topic-item">
+                            <div class="topic-icon"><i class="ri-restaurant-line"></i></div>
+                            <div><div class="topic-name">Low GI Recipes</div><div class="topic-count">1.2k posts</div></div>
+                        </div>
+                        <div class="topic-item">
+                            <div class="topic-icon"><i class="ri-run-line"></i></div>
+                            <div><div class="topic-name">After-meal walks</div><div class="topic-count">856 posts</div></div>
+                        </div>
+                        <div class="topic-item">
+                            <div class="topic-icon"><i class="ri-mental-health-line"></i></div>
+                            <div><div class="topic-name">Managing fatigue</div><div class="topic-count">2.4k posts</div></div>
+                        </div>
+                    </div>
+
+                    <div class="widget">
+                        <div class="widget-title">Suggested Members</div>
+                        <div class="suggest-item">
+                            <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=100&auto=format&fit=crop" alt="User">
+                            <div style="flex:1;"><div class="suggest-name">Priya M.</div><div class="suggest-role">Type 2 · 8 years</div></div>
+                            <i class="ri-user-add-line follow-btn"></i>
+                        </div>
+                        <div class="suggest-item">
+                            <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=100&auto=format&fit=crop" alt="User">
+                            <div style="flex:1;"><div class="suggest-name">Raj Kumar</div><div class="suggest-role">Caregiver · Parent</div></div>
+                            <i class="ri-user-add-line follow-btn"></i>
+                        </div>
+                    </div>
+
+                    <div class="disclaimer">
+                        <i class="ri-information-fill" style="flex-shrink:0;font-size:15px;"></i>
+                        <span>Peer support only. Not medical advice. Always consult your doctor for health decisions.</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
