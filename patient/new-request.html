@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShareCare — New Request</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=DM+Serif+Display:ital@0;1&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="../assets/style.css">
+    <style>
+        body {
+            display: flex;
+        }
+
+        .medicine-row {
+            display: grid;
+            grid-template-columns: 1fr 120px 36px;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .remove-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: var(--bg-alt);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            transition: all 0.2s;
+        }
+
+        .remove-btn:hover {
+            background: #FEE2E2;
+            color: #DC2626;
+        }
+
+        .add-medicine-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--primary);
+            background: none;
+            border: 1.5px dashed var(--primary-mid);
+            border-radius: 8px;
+            padding: 8px 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: var(--font-body);
+            margin-top: 4px;
+        }
+
+        .add-medicine-btn:hover {
+            background: var(--primary-light);
+            border-color: var(--primary);
+        }
+
+        .pharmacy-option {
+            border: 1.5px solid var(--border);
+            border-radius: 12px;
+            padding: 14px 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 10px;
+        }
+
+        .pharmacy-option:hover {
+            border-color: var(--primary-mid);
+        }
+
+        .pharmacy-option.selected {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .pharmacy-opt-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: var(--bg-alt);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            flex-shrink: 0;
+        }
+
+        .pharmacy-option.selected .pharmacy-opt-icon {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .ph-name {
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .ph-area {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .ph-dist {
+            margin-left: auto;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .check-icon {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            flex-shrink: 0;
+        }
+
+        .pharmacy-option.selected .check-icon {
+            display: flex;
+        }
+
+        .time-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+
+        .time-option {
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            padding: 12px 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.82rem;
+            font-weight: 500;
+            color: var(--text-muted);
+        }
+
+        .time-option:hover {
+            border-color: var(--primary-mid);
+        }
+
+        .time-option.selected {
+            border-color: var(--primary);
+            background: var(--primary-light);
+            color: var(--primary-dark);
+        }
+
+        .time-option i {
+            display: block;
+            font-size: 1.2rem;
+            margin-bottom: 4px;
+        }
+
+        .form-layout {
+            display: grid;
+            grid-template-columns: 1fr 280px;
+            gap: 24px;
+            max-width: 960px;
+        }
+
+        .form-card {
+            background: var(--card);
+            border-radius: 20px;
+            padding: 26px;
+            border: 1px solid var(--border);
+            margin-bottom: 16px;
+        }
+
+        .form-card-title {
+            font-family: var(--font-display);
+            font-size: 1.1rem;
+            margin-bottom: 18px;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 12px;
+            margin-top: 20px;
+            padding-top: 18px;
+            border-top: 1px solid var(--border);
+        }
+
+        .tip-card {
+            background: var(--card);
+            border-radius: 14px;
+            padding: 18px;
+            border: 1px solid var(--border);
+            margin-bottom: 14px;
+        }
+
+        .tip-header {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .tip-text {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            line-height: 1.65;
+        }
+    </style>
+</head>
+
+<body>
+    <aside class="sc-sidebar">
+        <a href="../index.html" class="sc-logo"><i class="ri-heart-pulse-fill"></i> ShareCare</a>
+        <ul class="sc-sidebar-nav">
+            <li><a href="dashboard.html"><i class="ri-file-list-3-line"></i> My Requests</a></li>
+            <li><a href="new-request.html" class="active"><i class="ri-add-circle-line"></i> New Request</a></li>
+            <li><a href="../community/feed.html"><i class="ri-chat-heart-line"></i> Community</a></li>
+        </ul>
+        <div class="sc-sidebar-footer">
+            <div class="sc-user-chip">
+                <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=80&auto=format&fit=crop"
+                    alt="User">
+                <div>
+                    <div class="sc-user-chip-name">Ravi Kumar</div>
+                    <div class="sc-user-chip-role">Patient · Type 2</div>
+                </div>
+                <i class="ri-logout-box-r-line"></i>
+            </div>
+        </div>
+    </aside>
+    <div class="sc-main">
+        <div class="sc-topbar">
+            <div>
+                <div class="sc-topbar-title">New Medicine Request</div>
+                <div class="sc-topbar-sub">Raise a restock request to your pharmacy</div>
+            </div>
+        </div>
+        <div class="sc-content">
+            <div class="form-layout">
+                <form id="req-form">
+                    <div class="form-card">
+                        <div class="form-card-title">Choose a pharmacy</div>
+                        <div class="form-group">
+                            <div class="input-wrap"><i class="ri-search-line input-icon"></i><input type="text"
+                                    class="sc-input" placeholder="Search by name or area..."></div>
+                        </div>
+                        <div class="pharmacy-option selected" onclick="selPh(this)">
+                            <div class="pharmacy-opt-icon"><i class="ri-store-2-line"></i></div>
+                            <div>
+                                <div class="ph-name">Apollo Pharmacy</div>
+                                <div class="ph-area">80ft Road, Koramangala</div>
+                            </div>
+                            <div class="ph-dist">0.8 km</div>
+                            <div class="check-icon"><i class="ri-check-line"></i></div>
+                        </div>
+                        <div class="pharmacy-option" onclick="selPh(this)">
+                            <div class="pharmacy-opt-icon"><i class="ri-store-2-line"></i></div>
+                            <div>
+                                <div class="ph-name">MedPlus</div>
+                                <div class="ph-area">CMH Road, Indiranagar</div>
+                            </div>
+                            <div class="ph-dist">2.1 km</div>
+                            <div class="check-icon"><i class="ri-check-line"></i></div>
+                        </div>
+                        <div class="pharmacy-option" onclick="selPh(this)">
+                            <div class="pharmacy-opt-icon"><i class="ri-store-2-line"></i></div>
+                            <div>
+                                <div class="ph-name">Wellness Forever</div>
+                                <div class="ph-area">Sarjapur Road, HSR Layout</div>
+                            </div>
+                            <div class="ph-dist">3.4 km</div>
+                            <div class="check-icon"><i class="ri-check-line"></i></div>
+                        </div>
+                    </div>
+                    <div class="form-card">
+                        <div class="form-card-title">Medicines needed</div>
+                        <div id="med-rows">
+                            <div class="medicine-row">
+                                <div class="input-wrap"><i class="ri-medicine-bottle-line input-icon"></i><input
+                                        type="text" class="sc-input" placeholder="Medicine name + dosage"
+                                        value="Metformin 500mg"></div><input type="number" class="sc-input"
+                                    style="padding:11px 14px;" placeholder="Qty" value="30" min="1"><button
+                                    type="button" class="remove-btn" onclick="remRow(this)"><i
+                                        class="ri-delete-bin-line"></i></button>
+                            </div>
+                            <div class="medicine-row">
+                                <div class="input-wrap"><i class="ri-medicine-bottle-line input-icon"></i><input
+                                        type="text" class="sc-input" placeholder="Medicine name + dosage"
+                                        value="Glimepiride 1mg"></div><input type="number" class="sc-input"
+                                    style="padding:11px 14px;" placeholder="Qty" value="15" min="1"><button
+                                    type="button" class="remove-btn" onclick="remRow(this)"><i
+                                        class="ri-delete-bin-line"></i></button>
+                            </div>
+                        </div>
+                        <button type="button" class="add-medicine-btn" onclick="addRow()"><i class="ri-add-line"></i>
+                            Add another medicine</button>
+                    </div>
+                    <div class="form-card">
+                        <div class="form-card-title">Prescription & pickup</div>
+                        <div class="form-group">
+                            <label class="form-label">Upload prescription (recommended)</label>
+                            <div class="upload-area">
+                                <div class="upload-icon"><i class="ri-camera-line"></i></div>
+                                <div style="font-size:0.875rem;font-weight:600;">Click to upload or drag & drop</div>
+                                <div style="font-size:0.75rem;color:var(--text-muted);">JPG, PNG or PDF · Max 5MB</div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Preferred pickup time</label>
+                            <div class="time-grid">
+                                <div class="time-option selected" onclick="selTime(this)"><i
+                                        class="ri-sun-line"></i>Morning<br><span
+                                        style="font-size:0.7rem;">8am–12pm</span></div>
+                                <div class="time-option" onclick="selTime(this)"><i
+                                        class="ri-sun-foggy-line"></i>Afternoon<br><span
+                                        style="font-size:0.7rem;">12pm–4pm</span></div>
+                                <div class="time-option" onclick="selTime(this)"><i
+                                        class="ri-moon-line"></i>Evening<br><span
+                                        style="font-size:0.7rem;">4pm–8pm</span></div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Notes (optional)</label>
+                            <textarea class="sc-input" style="padding:11px 14px;min-height:80px;resize:none;"
+                                placeholder="Any specific instructions for the pharmacy..."></textarea>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-ghost"
+                                onclick="location.href='dashboard.html'">Cancel</button>
+                            <button type="submit" class="btn btn-primary"><i class="ri-send-plane-fill"></i> Submit
+                                request</button>
+                        </div>
+                    </div>
+                </form>
+                <div>
+                    <div class="tip-card">
+                        <div class="tip-header"><i class="ri-lightbulb-flash-line"></i> Tips</div>
+                        <p class="tip-text">Include the full medicine name with dosage (e.g. "Metformin 500mg") so the
+                            pharmacy can confirm availability accurately.</p>
+                    </div>
+                    <div class="tip-card">
+                        <div class="tip-header"><i class="ri-time-line"></i> What happens next</div>
+                        <p class="tip-text">Your pharmacy will receive this request and confirm availability. You'll see
+                            the status update on your dashboard in real time.</p>
+                    </div>
+                    <div class="disclaimer"><i class="ri-information-fill"></i><span>Only submit requests for medicines
+                            prescribed by your doctor. This platform does not provide medical advice.</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function selPh(el) { document.querySelectorAll('.pharmacy-option').forEach(o => o.classList.remove('selected')); el.classList.add('selected'); }
+        function selTime(el) { document.querySelectorAll('.time-option').forEach(o => o.classList.remove('selected')); el.classList.add('selected'); }
+        function addRow() { const r = document.createElement('div'); r.className = 'medicine-row'; r.innerHTML = '<div class="input-wrap"><i class="ri-medicine-bottle-line input-icon"></i><input type="text" class="sc-input" placeholder="Medicine name + dosage"></div><input type="number" class="sc-input" style="padding:11px 14px;" placeholder="Qty" min="1"><button type="button" class="remove-btn" onclick="remRow(this)"><i class="ri-delete-bin-line"></i></button>'; document.getElementById('med-rows').appendChild(r); }
+        function remRow(btn) { const rows = document.querySelectorAll('.medicine-row'); if (rows.length > 1) btn.closest('.medicine-row').remove(); }
+        document.getElementById('req-form').addEventListener('submit', function (e) { e.preventDefault(); location.href = 'dashboard.html'; });
+    </script>
+</body>
+
+</html>

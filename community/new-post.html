@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShareCare — New Post</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
+    <link href="../css/shared.css" rel="stylesheet">
+    <style>
+        .new-post-wrap {
+            max-width: 920px;
+            margin: 40px auto 80px;
+            padding: 0 52px;
+            display: grid;
+            grid-template-columns: 1fr 260px;
+            gap: 24px;
+            align-items: start;
+        }
+
+        .page-header {
+            grid-column: 1 / -1;
+            margin-bottom: 4px;
+        }
+
+        .page-header h1 {
+            font-size: 1.75rem;
+            margin-bottom: 5px;
+        }
+
+        .page-header p {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        /* Category selector */
+        .cat-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+
+        .cat-option {
+            padding: 12px 10px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-md);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .cat-option:hover {
+            border-color: var(--primary);
+        }
+
+        .cat-option.selected {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .cat-option i {
+            font-size: 1.3rem;
+            display: block;
+            margin-bottom: 5px;
+            color: var(--text-muted);
+        }
+
+        .cat-option.selected i {
+            color: var(--primary);
+        }
+
+        .cat-option span {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .cat-option.selected span {
+            color: var(--primary-dark);
+        }
+
+        /* Tag pills */
+        .tag-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .tag-pill {
+            background: var(--bg);
+            border: 1.5px solid var(--border);
+            color: var(--text-muted);
+            padding: 5px 13px;
+            border-radius: var(--radius-full);
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tag-pill:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .tag-pill.active {
+            background: var(--primary-light);
+            border-color: var(--primary);
+            color: var(--primary-dark);
+        }
+
+        .char-count {
+            text-align: right;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .action-row {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 12px;
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        /* Tips sidebar */
+        .tips {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            position: sticky;
+            top: 88px;
+        }
+
+        .tip-card {
+            background: var(--card);
+            border-radius: var(--radius-lg);
+            padding: 18px;
+            border: 1px solid var(--border-light);
+        }
+
+        .tip-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .tip-header i {
+            font-size: 0.95rem;
+        }
+
+        .tip-text {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="sc-nav">
+        <a href="../index.html" class="sc-logo"><i class="ri-heart-pulse-fill"></i> ShareCare</a>
+        <ul class="sc-nav-links">
+            <li><a href="../patient/dashboard.html">Medicine</a></li>
+            <li><a href="feed.html" class="active">Community</a></li>
+        </ul>
+        <div class="sc-nav-right">
+            <a href="feed.html" class="btn btn-outline btn-sm"><i class="ri-arrow-left-line"></i> Back to Feed</a>
+            <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=80&auto=format&fit=crop"
+                class="sc-avatar-sm" alt="User">
+        </div>
+    </nav>
+
+    <div class="new-post-wrap">
+
+        <div class="page-header">
+            <h1>Create a new post</h1>
+            <p>Share what worked for you — your experience can help someone else today.</p>
+        </div>
+
+        <form class="sc-card sc-card-pad" id="post-form">
+
+            <div class="sc-form-group">
+                <label class="sc-label">Category</label>
+                <div class="cat-grid">
+                    <div class="cat-option selected" data-cat="recipe" onclick="selectCat(this)"><i
+                            class="ri-restaurant-line"></i><span>Recipe</span></div>
+                    <div class="cat-option" data-cat="exercise" onclick="selectCat(this)"><i
+                            class="ri-run-line"></i><span>Exercise</span></div>
+                    <div class="cat-option" data-cat="snack" onclick="selectCat(this)"><i
+                            class="ri-seedling-line"></i><span>Snack</span></div>
+                    <div class="cat-option" data-cat="emotional" onclick="selectCat(this)"><i
+                            class="ri-mental-health-line"></i><span>Emotional</span></div>
+                    <div class="cat-option" data-cat="tip" onclick="selectCat(this)"><i
+                            class="ri-lightbulb-line"></i><span>Daily Tip</span></div>
+                    <div class="cat-option" data-cat="question" onclick="selectCat(this)"><i
+                            class="ri-question-line"></i><span>Question</span></div>
+                </div>
+            </div>
+
+            <div class="sc-form-group">
+                <label class="sc-label">Title</label>
+                <input type="text" class="sc-input" id="post-title" placeholder="Give your post a clear, helpful title"
+                    required>
+            </div>
+
+            <div class="sc-form-group">
+                <label class="sc-label">Your experience</label>
+                <textarea class="sc-input" id="post-body"
+                    placeholder="What worked for you? Be specific — details help others the most."
+                    style="min-height:220px;" oninput="updateCount(this)" required></textarea>
+                <div class="char-count" id="char-count">0 / 2000</div>
+            </div>
+
+            <div class="sc-form-group">
+                <label class="sc-label">Add photo <span
+                        style="font-weight:400;color:var(--text-subtle);font-size:0.78rem;">(optional)</span></label>
+                <div class="sc-upload" onclick="document.getElementById('post-img').click()">
+                    <div class="sc-upload-icon"><i class="ri-image-add-line"></i></div>
+                    <div class="sc-upload-text">Click to upload</div>
+                    <div class="sc-upload-hint">PNG, JPG up to 5MB</div>
+                </div>
+                <input type="file" id="post-img" accept="image/*" style="display:none;" onchange="previewImage(this)">
+                <div id="img-preview" style="display:none;margin-top:10px;">
+                    <div
+                        style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--primary-xlight);border-radius:var(--radius-sm);border:1px solid var(--primary-light);">
+                        <i class="ri-image-line" style="color:var(--primary);"></i>
+                        <span id="img-name" style="font-size:0.85rem;font-weight:500;flex:1;"></span>
+                        <i class="ri-close-line" style="cursor:pointer;color:var(--text-muted);"
+                            onclick="document.getElementById('post-img').value='';document.getElementById('img-preview').style.display='none';"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sc-form-group">
+                <label class="sc-label">Tags</label>
+                <div class="tag-options">
+                    <div class="tag-pill active" onclick="this.classList.toggle('active')">LowGI</div>
+                    <div class="tag-pill" onclick="this.classList.toggle('active')">Type 1</div>
+                    <div class="tag-pill" onclick="this.classList.toggle('active')">Type 2</div>
+                    <div class="tag-pill" onclick="this.classList.toggle('active')">Caregiver</div>
+                    <div class="tag-pill" onclick="this.classList.toggle('active')">Budget Friendly</div>
+                    <div class="tag-pill" onclick="this.classList.toggle('active')">Quick & Easy</div>
+                    <div class="tag-pill" onclick="this.classList.toggle('active')">Indian Diet</div>
+                    <div class="tag-pill" onclick="this.classList.toggle('active')">Vegetarian</div>
+                </div>
+            </div>
+
+            <div class="sc-disclaimer" style="margin-bottom:0;">
+                <i class="ri-information-fill"></i>
+                <span>Share experiences, not prescriptions. Avoid telling others what to do — describe what worked for
+                    you.</span>
+            </div>
+
+            <div class="action-row">
+                <button type="button" class="btn btn-ghost" onclick="saveDraft()">Save draft</button>
+                <a href="feed.html" class="btn btn-outline">Cancel</a>
+                <button type="submit" class="btn btn-primary"><i class="ri-send-plane-fill"></i> Publish post</button>
+            </div>
+
+        </form>
+
+        <!-- Tips sidebar -->
+        <div class="tips">
+            <div class="tip-card">
+                <div class="tip-header"><i class="ri-lightbulb-flash-line"></i> Writing tips</div>
+                <p class="tip-text">Be specific and honest. "I ate X and my reading was Y" is more useful than general
+                    advice. Your details make your post more helpful.</p>
+            </div>
+            <div class="tip-card">
+                <div class="tip-header"><i class="ri-shield-check-line"></i> Community rules</div>
+                <p class="tip-text">No medical prescriptions. No product promotions. Keep it personal — your lived
+                    experience, not advice for others.</p>
+            </div>
+            <div class="tip-card">
+                <div class="tip-header"><i class="ri-eye-line"></i> Who can see this</div>
+                <p class="tip-text">Your post will be visible to all ShareCare members, including guests browsing
+                    without an account.</p>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function selectCat(el) {
+            document.querySelectorAll('.cat-option').forEach(c => c.classList.remove('selected'));
+            el.classList.add('selected');
+        }
+
+        function updateCount(el) {
+            const len = Math.min(el.value.length, 2000);
+            el.value = el.value.slice(0, 2000);
+            document.getElementById('char-count').textContent = len + ' / 2000';
+        }
+
+        function previewImage(input) {
+            if (input.files && input.files[0]) {
+                document.getElementById('img-name').textContent = input.files[0].name;
+                document.getElementById('img-preview').style.display = 'block';
+            }
+        }
+
+        function saveDraft() {
+            // TODO: save to Firestore as draft
+            console.log('Draft saved');
+        }
+
+        document.getElementById('post-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            // TODO: write to Firestore and upload image to Storage
+            window.location.href = 'feed.html';
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShareCare — Community</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
+    <link href="../css/shared.css" rel="stylesheet">
+    <style>
+        .sc-nav {
+            position: sticky;
+            top: 0;
+            z-index: 200;
+        }
+
+        .guest-banner {
+            background: var(--primary-light);
+            border-bottom: 1px solid #C2DAD3;
+            padding: 12px 52px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: var(--primary-dark);
+        }
+
+        .guest-banner a {
+            color: var(--primary-dark);
+            font-weight: 700;
+            text-decoration: none;
+            border-bottom: 1px solid var(--primary);
+        }
+
+        .feed-wrap {
+            max-width: 1160px;
+            margin: 0 auto;
+            padding: 36px 52px 80px;
+            display: grid;
+            grid-template-columns: 200px 1fr 280px;
+            gap: 28px;
+        }
+
+        /* Left sidebar */
+        .topics-card {
+            background: var(--card);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-light);
+            padding: 20px;
+            position: sticky;
+            top: 108px;
+        }
+
+        .topics-title {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            margin-bottom: 12px;
+        }
+
+        .topic-list {
+            list-style: none;
+        }
+
+        .topic-item {
+            padding: 9px 12px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.15s;
+        }
+
+        .topic-item:hover {
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        .topic-item.active {
+            background: var(--primary-light);
+            color: var(--primary-dark);
+            font-weight: 600;
+        }
+
+        .topic-item i {
+            font-size: 1rem;
+        }
+
+        /* Feed */
+        .feed {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .post-card {
+            background: var(--card);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            border: 1px solid var(--border-light);
+            transition: all 0.2s;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .post-card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+            border-color: var(--border);
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .post-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--border);
+            flex-shrink: 0;
+        }
+
+        .post-author {
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .post-time {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .post-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 8px;
+            line-height: 1.35;
+        }
+
+        .post-body {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            line-height: 1.65;
+            margin-bottom: 14px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .post-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: var(--radius-sm);
+            margin-bottom: 14px;
+            background: var(--bg);
+        }
+
+        .post-tags {
+            display: flex;
+            gap: 7px;
+            flex-wrap: wrap;
+            margin-bottom: 14px;
+        }
+
+        .post-actions {
+            display: flex;
+            gap: 18px;
+            border-top: 1px solid var(--border-light);
+            padding-top: 13px;
+        }
+
+        .post-action {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: color 0.15s;
+            font-weight: 500;
+        }
+
+        .post-action:hover {
+            color: var(--primary);
+        }
+
+        .post-action.liked {
+            color: var(--accent-dark);
+        }
+
+        .post-action.locked {
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        .post-action i {
+            font-size: 1rem;
+        }
+
+        /* Right sidebar */
+        .right-side {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            position: sticky;
+            top: 108px;
+        }
+
+        .widget-card {
+            background: var(--card);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-light);
+            padding: 20px;
+        }
+
+        .widget-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 14px;
+        }
+
+        .join-card {
+            text-align: center;
+        }
+
+        .join-card i {
+            font-size: 2.5rem;
+            color: var(--primary);
+            opacity: 0.6;
+            display: block;
+            margin-bottom: 12px;
+        }
+
+        .join-card h3 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .join-card p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+            line-height: 1.55;
+        }
+
+        .btn-join {
+            width: 100%;
+            padding: 11px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius-full);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-join:hover {
+            background: var(--primary-dark);
+        }
+
+        .stats-row {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 14px;
+            padding-top: 14px;
+            border-top: 1px solid var(--border-light);
+        }
+
+        .stat-val {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            display: block;
+        }
+
+        .stat-lbl {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+        }
+
+        .trend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .trend-item:last-child {
+            border-bottom: none;
+        }
+
+        .trend-icon {
+            width: 34px;
+            height: 34px;
+            background: var(--primary-light);
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 0.95rem;
+            flex-shrink: 0;
+        }
+
+        .trend-name {
+            font-size: 0.83rem;
+            font-weight: 600;
+        }
+
+        .trend-count {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="sc-nav">
+        <a href="../index.html" class="sc-logo"><i class="ri-heart-pulse-fill"></i> ShareCare</a>
+        <ul class="sc-nav-links">
+            <li><a href="../patient/dashboard.html">Medicine</a></li>
+            <li><a href="feed.html" class="active">Community</a></li>
+        </ul>
+        <div class="sc-nav-right">
+            <a href="../auth/login.html" class="btn btn-outline btn-sm">Log in</a>
+            <a href="../auth/signup.html" class="btn btn-primary btn-sm">Sign up</a>
+        </div>
+    </nav>
+
+    <!-- Guest banner — hide when logged in via JS -->
+    <div class="guest-banner" id="guest-banner">
+        <div style="display:flex;align-items:center;gap:10px;">
+            <i class="ri-lightbulb-flash-line"></i>
+            <span>Browsing as guest. <a href="../auth/signup.html">Sign up</a> or <a href="../auth/login.html">log
+                    in</a> to like, comment, and share your own experiences.</span>
+        </div>
+        <i class="ri-arrow-right-line"></i>
+    </div>
+
+    <div class="feed-wrap">
+
+        <!-- Topics -->
+        <aside>
+            <div class="topics-card">
+                <div class="topics-title">Topics</div>
+                <ul class="topic-list">
+                    <li class="topic-item active" onclick="filterTopic(this,'all')"><i class="ri-fire-line"></i>
+                        Trending</li>
+                    <li class="topic-item" onclick="filterTopic(this,'recipe')"><i class="ri-restaurant-line"></i>
+                        Recipes</li>
+                    <li class="topic-item" onclick="filterTopic(this,'exercise')"><i class="ri-run-line"></i> Exercise
+                    </li>
+                    <li class="topic-item" onclick="filterTopic(this,'snack')"><i class="ri-seedling-line"></i> Snacks
+                    </li>
+                    <li class="topic-item" onclick="filterTopic(this,'emotional')"><i class="ri-mental-health-line"></i>
+                        Emotional</li>
+                    <li class="topic-item" onclick="filterTopic(this,'tip')"><i class="ri-lightbulb-line"></i> Daily
+                        Tips</li>
+                    <li class="topic-item" onclick="filterTopic(this,'question')"><i
+                            class="ri-question-answer-line"></i> Q&A</li>
+                </ul>
+            </div>
+        </aside>
+
+        <!-- Feed -->
+        <main class="feed" id="feed">
+
+            <a href="post-detail.html" class="post-card">
+                <div class="post-header">
+                    <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=80&auto=format&fit=crop"
+                        class="post-avatar" alt="User">
+                    <div>
+                        <div class="post-author">Sarah J. <span class="sc-badge sc-badge-patient"
+                                style="margin-left:5px;">Type 2 · 4 yrs</span></div>
+                        <div class="post-time">2 hours ago</div>
+                    </div>
+                </div>
+                <h2 class="post-title">Cauliflower rice completely changed my dinner routine</h2>
+                <p class="post-body">I was skeptical at first but swapping regular rice for cauliflower rice cut my
+                    post-meal spikes significantly. The trick is to fry it in a pan first so it doesn't go soggy. Works
+                    great with curries and stir-fries...</p>
+                <div class="post-tags">
+                    <span class="sc-tag">Recipe</span>
+                    <span class="sc-tag">LowGI</span>
+                    <span class="sc-tag">Dinner</span>
+                </div>
+                <div class="post-actions">
+                    <div class="post-action locked"><i class="ri-heart-line"></i> 124 helpful</div>
+                    <div class="post-action locked"><i class="ri-chat-1-line"></i> 32 comments</div>
+                    <div class="post-action locked"><i class="ri-bookmark-line"></i> Save</div>
+                </div>
+            </a>
+
+            <a href="post-detail.html" class="post-card">
+                <div class="post-header">
+                    <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&auto=format&fit=crop"
+                        class="post-avatar" alt="User">
+                    <div>
+                        <div class="post-author">David C. <span class="sc-badge"
+                                style="margin-left:5px;background:var(--primary-light);color:var(--primary-dark);">Type
+                                1 · 10 yrs</span></div>
+                        <div class="post-time">5 hours ago</div>
+                    </div>
+                </div>
+                <h2 class="post-title">Walking 20 minutes after meals — the most underrated tip nobody told me</h2>
+                <p class="post-body">My doctor mentioned this casually once and I didn't think much of it. After
+                    tracking it for 3 weeks, a 20-minute walk after dinner consistently keeps my readings better than
+                    any snack swap I've tried...</p>
+                <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&auto=format&fit=crop"
+                    class="post-image" alt="Walk">
+                <div class="post-tags">
+                    <span class="sc-tag">Exercise</span>
+                    <span class="sc-tag">Daily Tips</span>
+                </div>
+                <div class="post-actions">
+                    <div class="post-action locked"><i class="ri-heart-line"></i> 89 helpful</div>
+                    <div class="post-action locked"><i class="ri-chat-1-line"></i> 15 comments</div>
+                    <div class="post-action locked"><i class="ri-bookmark-line"></i> Save</div>
+                </div>
+            </a>
+
+            <a href="post-detail.html" class="post-card">
+                <div class="post-header">
+                    <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=80&auto=format&fit=crop"
+                        class="post-avatar" alt="User">
+                    <div>
+                        <div class="post-author">Emily R. <span class="sc-badge"
+                                style="margin-left:5px;background:#FEF5E7;color:#B07D2A;">Caregiver</span></div>
+                        <div class="post-time">1 day ago</div>
+                    </div>
+                </div>
+                <h2 class="post-title">Managing my father's diabetes during festivals — what I've learnt this year</h2>
+                <p class="post-body">Festival seasons are stressful as a caregiver. Everyone is eating freely and it's
+                    emotionally hard on him. This year we found a few tricks — smaller portions of everything, timed
+                    walks between meals, and being upfront with family...</p>
+                <div class="post-tags">
+                    <span class="sc-tag">Caregiver</span>
+                    <span class="sc-tag">Emotional</span>
+                    <span class="sc-tag">Family</span>
+                </div>
+                <div class="post-actions">
+                    <div class="post-action locked"><i class="ri-heart-line"></i> 245 helpful</div>
+                    <div class="post-action locked"><i class="ri-chat-1-line"></i> 86 comments</div>
+                    <div class="post-action locked"><i class="ri-bookmark-line"></i> Save</div>
+                </div>
+            </a>
+
+            <a href="post-detail.html" class="post-card">
+                <div class="post-header">
+                    <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=80&auto=format&fit=crop"
+                        class="post-avatar" alt="User">
+                    <div>
+                        <div class="post-author">Priya M. <span class="sc-badge sc-badge-patient"
+                                style="margin-left:5px;">Type 2 · 8 yrs</span></div>
+                        <div class="post-time">2 days ago</div>
+                    </div>
+                </div>
+                <h2 class="post-title">5 snacks I keep at my desk that don't spike my sugar</h2>
+                <p class="post-body">After years of trial and error, here's what actually works for me as a Type 2
+                    diabetic who works a desk job. Roasted chana, handful of almonds, cucumber slices with hummus, a
+                    small apple, and dark chocolate (70%+)...</p>
+                <div class="post-tags">
+                    <span class="sc-tag">Snacks</span>
+                    <span class="sc-tag">LowGI</span>
+                    <span class="sc-tag">Office</span>
+                </div>
+                <div class="post-actions">
+                    <div class="post-action locked"><i class="ri-heart-line"></i> 312 helpful</div>
+                    <div class="post-action locked"><i class="ri-chat-1-line"></i> 54 comments</div>
+                    <div class="post-action locked"><i class="ri-bookmark-line"></i> Save</div>
+                </div>
+            </a>
+
+        </main>
+
+        <!-- Right sidebar -->
+        <aside class="right-side">
+
+            <div class="widget-card join-card">
+                <i class="ri-community-line"></i>
+                <h3>Join ShareCare</h3>
+                <p>Connect with thousands managing diabetes every day. Like, comment, and share your own experience.</p>
+                <button class="btn-join" onclick="location.href='../auth/signup.html'">Create free account</button>
+                <div class="stats-row">
+                    <div style="text-align:center;"><span class="stat-val">2.4k</span><span
+                            class="stat-lbl">Members</span></div>
+                    <div style="text-align:center;"><span class="stat-val">180+</span><span class="stat-lbl">Posts /
+                            week</span></div>
+                </div>
+            </div>
+
+            <div class="widget-card">
+                <div class="widget-title">Trending this week</div>
+                <div class="trend-item">
+                    <div class="trend-icon"><i class="ri-restaurant-line"></i></div>
+                    <div>
+                        <div class="trend-name">Low GI Recipes</div>
+                        <div class="trend-count">1.2k posts</div>
+                    </div>
+                </div>
+                <div class="trend-item">
+                    <div class="trend-icon"><i class="ri-run-line"></i></div>
+                    <div>
+                        <div class="trend-name">After-meal walks</div>
+                        <div class="trend-count">856 posts</div>
+                    </div>
+                </div>
+                <div class="trend-item">
+                    <div class="trend-icon"><i class="ri-mental-health-line"></i></div>
+                    <div>
+                        <div class="trend-name">Managing fatigue</div>
+                        <div class="trend-count">2.4k posts</div>
+                    </div>
+                </div>
+                <div class="trend-item">
+                    <div class="trend-icon"><i class="ri-seedling-line"></i></div>
+                    <div>
+                        <div class="trend-name">Healthy snacking</div>
+                        <div class="trend-count">640 posts</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sc-disclaimer">
+                <i class="ri-information-fill"></i>
+                <span>Peer support only. Not medical advice. Always consult your doctor.</span>
+            </div>
+
+        </aside>
+
+    </div>
+
+    <script>
+        function filterTopic(el, topic) {
+            document.querySelectorAll('.topic-item').forEach(t => t.classList.remove('active'));
+            el.classList.add('active');
+            // TODO: filter posts by topic
+        }
+    </script>
+</body>
+
+</html>

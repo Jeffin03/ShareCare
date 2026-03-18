@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShareCare — Pharmacy Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=DM+Serif+Display:ital@0;1&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="../assets/style.css">
+    <style>
+        body {
+            display: flex;
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .stat-card {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .stat-label {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .stat-val {
+            font-family: var(--font-display);
+            font-size: 1.8rem;
+            color: var(--text);
+        }
+
+        .stat-sub {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .stat-icon {
+            float: right;
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+
+        .si-amber {
+            background: #FEF9C3;
+            color: #CA8A04;
+        }
+
+        .si-blue {
+            background: #EFF6FF;
+            color: #3B82F6;
+        }
+
+        .si-green {
+            background: #F0FDF4;
+            color: #16A34A;
+        }
+
+        .si-gray {
+            background: var(--bg-alt);
+            color: var(--text-muted);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 4px;
+            background: var(--bg-alt);
+            padding: 4px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            width: fit-content;
+        }
+
+        .tab {
+            padding: 7px 16px;
+            border-radius: 9px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--text-muted);
+            border: none;
+            background: transparent;
+            font-family: var(--font-body);
+        }
+
+        .tab.active {
+            background: var(--card);
+            color: var(--text);
+            font-weight: 600;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+        }
+
+        .order-card {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 20px 24px;
+            border: 1px solid var(--border);
+            display: grid;
+            grid-template-columns: auto 1fr auto auto;
+            align-items: center;
+            gap: 18px;
+            transition: all 0.2s;
+            cursor: pointer;
+            text-decoration: none;
+            color: var(--text);
+            margin-bottom: 12px;
+        }
+
+        .order-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(44, 58, 53, 0.08);
+            border-color: var(--primary-mid);
+        }
+
+        .order-card.urgent {
+            border-left: 3px solid var(--accent);
+        }
+
+        .ord-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: var(--primary-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: var(--primary);
+            flex-shrink: 0;
+        }
+
+        .ord-patient {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            margin-bottom: 3px;
+        }
+
+        .ord-meds {
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .ord-meta {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+            display: flex;
+            gap: 12px;
+        }
+
+        .ord-time {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            text-align: right;
+        }
+
+        .search-filter-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .sc-search {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            padding: 9px 16px;
+            border-radius: 999px;
+            flex: 1;
+            max-width: 320px;
+        }
+
+        .sc-search input {
+            border: none;
+            outline: none;
+            background: transparent;
+            font-family: var(--font-body);
+            font-size: 0.875rem;
+            color: var(--text);
+            width: 100%;
+        }
+
+        .filter-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 9px 16px;
+            border-radius: 999px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            font-size: 0.82rem;
+            font-weight: 500;
+            cursor: pointer;
+            color: var(--text-muted);
+            font-family: var(--font-body);
+            transition: all 0.2s;
+        }
+
+        .filter-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+    </style>
+</head>
+
+<body>
+    <aside class="sc-sidebar">
+        <a href="../index.html" class="sc-logo"><i class="ri-heart-pulse-fill"></i> ShareCare</a>
+        <ul class="sc-sidebar-nav">
+            <li><a href="dashboard.html" class="active"><i class="ri-dashboard-line"></i> Orders</a></li>
+            <li><a href="#"><i class="ri-notification-3-line"></i> Notifications <span class="sc-nav-badge">3</span></a>
+            </li>
+            <li><a href="#"><i class="ri-settings-4-line"></i> Settings</a></li>
+        </ul>
+        <div class="sc-sidebar-footer">
+            <div class="sc-user-chip">
+                <img src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=80&auto=format&fit=crop"
+                    alt="Pharmacy">
+                <div>
+                    <div class="sc-user-chip-name">Apollo Pharmacy</div>
+                    <div class="sc-user-chip-role">Koramangala</div>
+                </div>
+                <i class="ri-logout-box-r-line"></i>
+            </div>
+        </div>
+    </aside>
+    <div class="sc-main">
+        <div class="sc-topbar">
+            <div>
+                <div class="sc-topbar-title">Order Management</div>
+                <div class="sc-topbar-sub">Apollo Pharmacy, Koramangala · Today</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;">
+                <div class="notif-btn"><i class="ri-notification-3-line"></i>
+                    <div class="notif-dot"></div>
+                </div>
+            </div>
+        </div>
+        <div class="sc-content">
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="stat-icon si-amber"><i class="ri-time-line"></i></div>
+                    <div class="stat-label">Pending</div>
+                    <div class="stat-val">3</div>
+                    <div class="stat-sub">Needs attention</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon si-blue"><i class="ri-checkbox-circle-line"></i></div>
+                    <div class="stat-label">Confirmed</div>
+                    <div class="stat-val">2</div>
+                    <div class="stat-sub">Being prepared</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon si-green"><i class="ri-store-line"></i></div>
+                    <div class="stat-label">Ready</div>
+                    <div class="stat-val">1</div>
+                    <div class="stat-sub">Awaiting pickup</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon si-gray"><i class="ri-archive-line"></i></div>
+                    <div class="stat-label">Today's total</div>
+                    <div class="stat-val">12</div>
+                    <div class="stat-sub">Orders processed</div>
+                </div>
+            </div>
+            <div class="search-filter-row">
+                <div class="sc-search"><i class="ri-search-line"
+                        style="color:var(--text-muted);flex-shrink:0;"></i><input type="text"
+                        placeholder="Search by patient or medicine..."></div>
+                <button class="filter-btn"><i class="ri-filter-line"></i> Filter</button>
+                <button class="filter-btn"><i class="ri-sort-asc"></i> Sort: Newest</button>
+            </div>
+            <div class="tabs">
+                <button class="tab active" onclick="setTab(this,'all')">All</button>
+                <button class="tab" onclick="setTab(this,'pending')">Pending</button>
+                <button class="tab" onclick="setTab(this,'confirmed')">Confirmed</button>
+                <button class="tab" onclick="setTab(this,'ready')">Ready</button>
+            </div>
+            <div id="orders-list">
+                <a href="order-detail.html" class="order-card urgent">
+                    <div class="ord-icon"><i class="ri-user-line"></i></div>
+                    <div>
+                        <div class="ord-patient">Ravi Kumar · Type 2</div>
+                        <div class="ord-meds">Metformin 500mg × 30, Glimepiride 1mg × 15</div>
+                        <div class="ord-meta"><span><i class="ri-time-line"></i> Evening pickup</span><span><i
+                                    class="ri-attachment-line"></i> Prescription attached</span></div>
+                    </div>
+                    <div class="ord-time">Just now</div>
+                    <span class="badge status-pending">Pending</span>
+                </a>
+                <a href="order-detail.html" class="order-card">
+                    <div class="ord-icon"><i class="ri-user-line"></i></div>
+                    <div>
+                        <div class="ord-patient">Priya Sharma · Type 1</div>
+                        <div class="ord-meds">Insulin Glargine 100IU × 2 vials</div>
+                        <div class="ord-meta"><span><i class="ri-time-line"></i> Morning pickup</span><span><i
+                                    class="ri-attachment-line"></i> Prescription attached</span></div>
+                    </div>
+                    <div class="ord-time">15 min ago</div>
+                    <span class="badge status-pending">Pending</span>
+                </a>
+                <a href="order-detail.html" class="order-card">
+                    <div class="ord-icon" style="background:#DBEAFE;color:#1E40AF;"><i class="ri-user-line"></i></div>
+                    <div>
+                        <div class="ord-patient">Arun Mehta · Type 2</div>
+                        <div class="ord-meds">Sitagliptin 100mg × 30</div>
+                        <div class="ord-meta"><span><i class="ri-time-line"></i> Afternoon pickup</span></div>
+                    </div>
+                    <div class="ord-time">1h ago</div>
+                    <span class="badge status-confirmed">Confirmed</span>
+                </a>
+                <a href="order-detail.html" class="order-card">
+                    <div class="ord-icon" style="background:#D1FAE5;color:#065F46;"><i class="ri-user-line"></i></div>
+                    <div>
+                        <div class="ord-patient">Meena Nair · Caregiver</div>
+                        <div class="ord-meds">Metformin 1000mg × 60, Atorvastatin 10mg × 30</div>
+                        <div class="ord-meta"><span><i class="ri-time-line"></i> Evening pickup</span></div>
+                    </div>
+                    <div class="ord-time">3h ago</div>
+                    <span class="badge status-ready">Ready</span>
+                </a>
+            </div>
+        </div>
+    </div>
+    <script>
+        function setTab(el, tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            el.classList.add('active');
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ShareCare — Sign Up</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/style.css">
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .auth-page {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 24px;
+    }
+
+    .auth-card {
+      background: var(--card);
+      border-radius: var(--r-xl);
+      padding: 48px 44px;
+      width: 100%;
+      max-width: 520px;
+      border: 1px solid var(--border-light);
+      box-shadow: var(--shadow-md);
+    }
+
+    .auth-header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .auth-header h2 {
+      margin-bottom: 6px;
+      color: var(--text);
+    }
+
+    .auth-header p {
+      font-size: 0.88rem;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .role-options {
+      display: flex;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .role-opt {
+      flex: 1;
+      padding: 12px 8px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--r);
+      text-align: center;
+      cursor: pointer;
+      font-size: 0.84rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      transition: all 0.2s;
+    }
+
+    .role-opt:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .role-opt.selected {
+      border-color: var(--primary);
+      background: var(--primary-light);
+      color: var(--primary-dark);
+    }
+
+    .role-opt i {
+      display: block;
+      font-size: 1.4rem;
+      margin-bottom: 5px;
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 13px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: var(--r);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 4px;
+      transition: all 0.2s;
+      box-shadow: 0 4px 14px rgba(92, 141, 122, 0.3);
+    }
+
+    .btn-submit:hover {
+      background: var(--primary-dark);
+      transform: translateY(-1px);
+    }
+
+    .terms {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      text-align: center;
+      margin-top: 12px;
+      line-height: 1.5;
+    }
+
+    .terms a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    .auth-footer {
+      text-align: center;
+      margin-top: 18px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .auth-footer a {
+      color: var(--primary);
+      font-weight: 600;
+      text-decoration: none;
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="nav">
+    <a href="../index.html" class="nav-logo"><i class="ri-heart-pulse-fill"></i> ShareCare</a>
+  </nav>
+  <div class="auth-page">
+    <div class="auth-card fade-up">
+      <div class="auth-header">
+        <h2>Join ShareCare</h2>
+        <p>Connect with a community that understands</p>
+      </div>
+      <form>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="label">First name</label>
+            <div class="input-wrap"><i class="ri-user-line i-left"></i><input type="text" class="input"
+                placeholder="Ravi"></div>
+          </div>
+          <div class="form-group">
+            <label class="label">Last name</label>
+            <div class="input-wrap"><i class="ri-user-line i-left"></i><input type="text" class="input"
+                placeholder="Kumar"></div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="label">Email address</label>
+          <div class="input-wrap"><i class="ri-mail-line i-left"></i><input type="email" class="input"
+              placeholder="name@example.com"></div>
+        </div>
+        <div class="form-group">
+          <label class="label">Password</label>
+          <div class="input-wrap">
+            <i class="ri-lock-2-line i-left"></i>
+            <input type="password" class="input" placeholder="••••••••" id="pw">
+            <i class="ri-eye-off-line i-right" onclick="togglePw()"></i>
+          </div>
+          <div class="hint">At least 8 characters</div>
+        </div>
+        <div class="form-group">
+          <label class="label">I am a</label>
+          <div class="role-options">
+            <div class="role-opt selected" onclick="selectRole(this)"><i class="ri-user-heart-line"></i>Patient</div>
+            <div class="role-opt" onclick="selectRole(this)"><i class="ri-parent-line"></i>Caregiver</div>
+            <div class="role-opt" onclick="selectRole(this)"><i class="ri-store-2-line"></i>Pharmacy</div>
+          </div>
+        </div>
+        <button type="button" class="btn-submit">Create account</button>
+        <p class="terms">By signing up you agree to our <a href="#">Terms</a> and <a href="#">Privacy Policy</a>.</p>
+      </form>
+      <div class="divider"><span>or</span></div>
+      <div class="auth-footer">Already have an account? <a href="login.html">Log in</a></div>
+    </div>
+  </div>
+  <script>
+    function selectRole(el) { document.querySelectorAll('.role-opt').forEach(o => o.classList.remove('selected')); el.classList.add('selected'); }
+    function togglePw() { const i = document.getElementById('pw'); i.type = i.type === 'password' ? 'text' : 'password'; }
+  </script>
+</body>
+
+</html>

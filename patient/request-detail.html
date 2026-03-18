@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShareCare — Request Detail</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=DM+Serif+Display:ital@0;1&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="../assets/style.css">
+    <style>
+        body {
+            display: flex;
+        }
+
+        .detail-layout {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 24px;
+            max-width: 960px;
+        }
+
+        .detail-card {
+            background: var(--card);
+            border-radius: 20px;
+            padding: 32px;
+            border: 1px solid var(--border);
+            margin-bottom: 16px;
+        }
+
+        .status-timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .timeline-step {
+            display: flex;
+            gap: 16px;
+            padding-bottom: 24px;
+            position: relative;
+        }
+
+        .timeline-step:last-child {
+            padding-bottom: 0;
+        }
+
+        .timeline-step::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 32px;
+            bottom: 0;
+            width: 2px;
+            background: var(--border);
+        }
+
+        .timeline-step:last-child::before {
+            display: none;
+        }
+
+        .timeline-step.done::before {
+            background: var(--primary-mid);
+        }
+
+        .t-dot {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            flex-shrink: 0;
+            background: var(--card);
+            color: var(--text-muted);
+            position: relative;
+            z-index: 1;
+        }
+
+        .timeline-step.done .t-dot {
+            border-color: var(--primary);
+            background: var(--primary);
+            color: white;
+        }
+
+        .timeline-step.current .t-dot {
+            border-color: var(--primary);
+            background: var(--primary-light);
+            color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(92, 141, 122, 0.15);
+        }
+
+        .t-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .t-sub {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+        }
+
+        .t-time {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .medicine-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .medicine-table th {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            text-align: left;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .medicine-table td {
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.875rem;
+        }
+
+        .medicine-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.875rem;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            color: var(--text-muted);
+            font-size: 0.82rem;
+        }
+
+        .side-card {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 22px;
+            border: 1px solid var(--border);
+            margin-bottom: 14px;
+        }
+
+        .side-title {
+            font-size: 0.875rem;
+            font-weight: 700;
+            margin-bottom: 14px;
+            color: var(--text);
+        }
+
+        .prescription-img {
+            width: 100%;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            object-fit: cover;
+        }
+
+        .pharmacy-contact {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .contact-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.82rem;
+            color: var(--text-muted);
+        }
+
+        .contact-row i {
+            font-size: 1rem;
+            color: var(--primary);
+        }
+    </style>
+</head>
+
+<body>
+    <aside class="sc-sidebar">
+        <a href="../index.html" class="sc-logo"><i class="ri-heart-pulse-fill"></i> ShareCare</a>
+        <ul class="sc-sidebar-nav">
+            <li><a href="dashboard.html" class="active"><i class="ri-file-list-3-line"></i> My Requests</a></li>
+            <li><a href="new-request.html"><i class="ri-add-circle-line"></i> New Request</a></li>
+            <li><a href="../community/feed.html"><i class="ri-chat-heart-line"></i> Community</a></li>
+        </ul>
+        <div class="sc-sidebar-footer">
+            <div class="sc-user-chip">
+                <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=80&auto=format&fit=crop"
+                    alt="User">
+                <div>
+                    <div class="sc-user-chip-name">Ravi Kumar</div>
+                    <div class="sc-user-chip-role">Patient · Type 2</div>
+                </div>
+                <i class="ri-logout-box-r-line"></i>
+            </div>
+        </div>
+    </aside>
+    <div class="sc-main">
+        <div class="sc-topbar">
+            <div style="display:flex;align-items:center;gap:12px;">
+                <a href="dashboard.html"
+                    style="display:flex;align-items:center;gap:6px;font-size:0.82rem;color:var(--text-muted);text-decoration:none;"><i
+                        class="ri-arrow-left-line"></i> Back</a>
+                <div>
+                    <div class="sc-topbar-title">Request #SC-2024-008</div>
+                    <div class="sc-topbar-sub">Apollo Pharmacy · Submitted today</div>
+                </div>
+            </div>
+            <span class="badge status-pending" style="padding:6px 14px;font-size:0.8rem;">Pending</span>
+        </div>
+        <div class="sc-content">
+            <div class="detail-layout">
+                <div>
+                    <div class="detail-card">
+                        <h3 style="font-family:var(--font-display);font-size:1.1rem;margin-bottom:20px;">Request status
+                        </h3>
+                        <div class="status-timeline">
+                            <div class="timeline-step done">
+                                <div class="t-dot"><i class="ri-check-line"></i></div>
+                                <div>
+                                    <div class="t-title">Request submitted</div>
+                                    <div class="t-time">Today, 10:32 AM</div>
+                                </div>
+                            </div>
+                            <div class="timeline-step current">
+                                <div class="t-dot"><i class="ri-time-line"></i></div>
+                                <div>
+                                    <div class="t-title">Awaiting pharmacy confirmation</div>
+                                    <div class="t-sub">Apollo Pharmacy has been notified</div>
+                                </div>
+                            </div>
+                            <div class="timeline-step">
+                                <div class="t-dot">3</div>
+                                <div>
+                                    <div class="t-title">Order confirmed</div>
+                                    <div class="t-sub">Pharmacy will confirm availability</div>
+                                </div>
+                            </div>
+                            <div class="timeline-step">
+                                <div class="t-dot">4</div>
+                                <div>
+                                    <div class="t-title">Ready for pickup</div>
+                                    <div class="t-sub">You'll be notified when ready</div>
+                                </div>
+                            </div>
+                            <div class="timeline-step">
+                                <div class="t-dot">5</div>
+                                <div>
+                                    <div class="t-title">Collected</div>
+                                    <div class="t-sub">Order complete</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="detail-card">
+                        <h3 style="font-family:var(--font-display);font-size:1.1rem;margin-bottom:16px;">Medicines
+                            requested</h3>
+                        <table class="medicine-table">
+                            <thead>
+                                <tr>
+                                    <th>Medicine</th>
+                                    <th>Quantity</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Metformin 500mg</strong></td>
+                                    <td>30 tablets</td>
+                                    <td><span class="badge badge-amber">Checking stock</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Glimepiride 1mg</strong></td>
+                                    <td>15 tablets</td>
+                                    <td><span class="badge badge-amber">Checking stock</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="detail-card">
+                        <h3 style="font-family:var(--font-display);font-size:1.1rem;margin-bottom:16px;">Request details
+                        </h3>
+                        <div class="info-row"><span class="info-label">Pharmacy</span><span
+                                style="font-weight:600;">Apollo Pharmacy, Koramangala</span></div>
+                        <div class="info-row"><span class="info-label">Preferred pickup</span><span>Morning (8am –
+                                12pm)</span></div>
+                        <div class="info-row"><span class="info-label">Submitted</span><span>Today, 10:32 AM</span>
+                        </div>
+                        <div class="info-row"><span class="info-label">Notes</span><span
+                                style="color:var(--text-muted);">No additional notes</span></div>
+                    </div>
+                </div>
+                <div>
+                    <div class="side-card">
+                        <div class="side-title">Prescription uploaded</div>
+                        <img src="https://images.unsplash.com/photo-1550831107-1553da8c8464?w=300&auto=format&fit=crop"
+                            class="prescription-img" alt="Prescription">
+                        <a href="#"
+                            style="display:flex;align-items:center;gap:6px;font-size:0.78rem;color:var(--primary);text-decoration:none;margin-top:10px;font-weight:600;"><i
+                                class="ri-eye-line"></i> View full prescription</a>
+                    </div>
+                    <div class="side-card">
+                        <div class="side-title">Pharmacy contact</div>
+                        <div class="pharmacy-contact">
+                            <div class="contact-row"><i class="ri-store-2-line"></i> Apollo Pharmacy</div>
+                            <div class="contact-row"><i class="ri-map-pin-line"></i> 80ft Road, Koramangala</div>
+                            <div class="contact-row"><i class="ri-phone-line"></i> 080-12345678</div>
+                        </div>
+                    </div>
+                    <div class="disclaimer"><i class="ri-information-fill"></i><span>This request is for medicine
+                            restocking coordination only. Not a medical prescription service.</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

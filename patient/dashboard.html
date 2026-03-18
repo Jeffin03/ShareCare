@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ShareCare — My Requests</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/style.css">
+  <style>
+    .request-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .request-card {
+      background: var(--card);
+      border-radius: var(--r-lg);
+      padding: 22px 24px;
+      border: 1px solid var(--border-light);
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .request-card:hover {
+      box-shadow: var(--shadow);
+      transform: translateY(-2px);
+      border-color: var(--primary-mid);
+    }
+
+    .req-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: var(--r);
+      background: var(--primary-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+
+    .req-body {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .req-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 3px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .req-meta {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .req-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .req-time {
+      font-size: 0.76rem;
+      color: var(--text-light);
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .section-header h3 {
+      font-size: 1rem;
+      color: var(--text);
+    }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+
+    .stat-card {
+      background: var(--card);
+      border-radius: var(--r-lg);
+      padding: 20px;
+      border: 1px solid var(--border-light);
+      text-align: center;
+    }
+
+    .stat-num {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.8rem;
+      color: var(--text);
+      display: block;
+    }
+
+    .stat-label {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 4px;
+      background: var(--bg);
+      border-radius: var(--r-full);
+      padding: 4px;
+      margin-bottom: 20px;
+      width: fit-content;
+    }
+
+    .tab {
+      padding: 7px 18px;
+      border-radius: var(--r-full);
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .tab.active {
+      background: var(--card);
+      color: var(--text);
+      font-weight: 600;
+      box-shadow: var(--shadow-sm);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a href="../index.html" class="sidebar-logo"><i class="ri-heart-pulse-fill"></i> ShareCare</a>
+      <div class="sidebar-label">Medicine</div>
+      <a href="dashboard.html" class="nav-item active"><i class="ri-file-list-3-line"></i> My Requests</a>
+      <a href="new-request.html" class="nav-item"><i class="ri-add-circle-line"></i> New Request</a>
+      <div class="sidebar-label">Community</div>
+      <a href="../community/feed.html" class="nav-item"><i class="ri-group-line"></i> Feed</a>
+      <a href="../community/new-post.html" class="nav-item"><i class="ri-edit-line"></i> New Post</a>
+      <div class="sidebar-label">Account</div>
+      <a href="#" class="nav-item"><i class="ri-settings-4-line"></i> Settings</a>
+      <div class="sidebar-footer">
+        <div class="user-chip">
+          <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=80&auto=format&fit=crop" alt="User">
+          <div>
+            <div class="user-chip-name">Ravi Kumar</div>
+            <div class="user-chip-role">Patient · Type 2</div>
+          </div>
+          <i class="ri-logout-box-r-line logout-icon"></i>
+        </div>
+      </div>
+    </aside>
+
+    <div class="main">
+      <div class="topbar">
+        <div>
+          <div class="topbar-title">My Requests</div>
+          <div class="topbar-sub">Track your medicine requests in real time</div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;">
+          <div class="search-bar"><i class="ri-search-line"></i><input type="text" placeholder="Search requests...">
+          </div>
+          <a href="new-request.html" class="btn btn-primary btn-sm"><i class="ri-add-line"></i> New Request</a>
+        </div>
+      </div>
+
+      <div class="page-body">
+        <!-- Stats -->
+        <div class="stats-row fade-up">
+          <div class="stat-card"><span class="stat-num">8</span><span class="stat-label">Total Requests</span></div>
+          <div class="stat-card"><span class="stat-num" style="color:var(--pending);">2</span><span
+              class="stat-label">Pending</span></div>
+          <div class="stat-card"><span class="stat-num" style="color:var(--ready);">1</span><span
+              class="stat-label">Ready for Pickup</span></div>
+          <div class="stat-card"><span class="stat-num" style="color:var(--collected);">5</span><span
+              class="stat-label">Collected</span></div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs fade-up-2">
+          <div class="tab active" onclick="filterTab(this,'all')">All</div>
+          <div class="tab" onclick="filterTab(this,'active')">Active</div>
+          <div class="tab" onclick="filterTab(this,'collected')">Collected</div>
+        </div>
+
+        <!-- Requests -->
+        <div class="request-grid fade-up-3">
+
+          <a href="request-detail.html" class="request-card">
+            <div class="req-icon" style="background:var(--ready-bg);color:var(--ready);"><i
+                class="ri-checkbox-circle-line"></i></div>
+            <div class="req-body">
+              <div class="req-title">Metformin 500mg × 30 + Glimepiride 1mg × 15</div>
+              <div class="req-meta">Apollo Pharmacy, Koramangala · Pickup: Evening</div>
+            </div>
+            <div class="req-right">
+              <span class="badge badge-ready">Ready for pickup</span>
+              <span class="req-time">Today, 2:30 PM</span>
+            </div>
+          </a>
+
+          <a href="request-detail.html" class="request-card">
+            <div class="req-icon"><i class="ri-medicine-bottle-line"></i></div>
+            <div class="req-body">
+              <div class="req-title">Januvia 50mg × 30</div>
+              <div class="req-meta">MedPlus, Indiranagar · Pickup: Morning</div>
+            </div>
+            <div class="req-right">
+              <span class="badge badge-confirmed">Confirmed</span>
+              <span class="req-time">Today, 10:15 AM</span>
+            </div>
+          </a>
+
+          <a href="request-detail.html" class="request-card">
+            <div class="req-icon" style="background:var(--pending-bg);color:var(--pending);"><i
+                class="ri-time-line"></i></div>
+            <div class="req-body">
+              <div class="req-title">Telmisartan 40mg × 30 + Amlodipine 5mg × 30</div>
+              <div class="req-meta">Apollo Pharmacy, Koramangala · Pickup: Afternoon</div>
+            </div>
+            <div class="req-right">
+              <span class="badge badge-pending">Pending</span>
+              <span class="req-time">Yesterday, 6:00 PM</span>
+            </div>
+          </a>
+
+          <a href="request-detail.html" class="request-card" style="opacity:0.7;">
+            <div class="req-icon" style="background:var(--collected-bg);color:var(--collected);"><i
+                class="ri-check-double-line"></i></div>
+            <div class="req-body">
+              <div class="req-title">Metformin 500mg × 60</div>
+              <div class="req-meta">MedPlus, Indiranagar · Collected</div>
+            </div>
+            <div class="req-right">
+              <span class="badge badge-collected">Collected</span>
+              <span class="req-time">Mar 14</span>
+            </div>
+          </a>
+
+          <a href="request-detail.html" class="request-card" style="opacity:0.7;">
+            <div class="req-icon" style="background:var(--collected-bg);color:var(--collected);"><i
+                class="ri-check-double-line"></i></div>
+            <div class="req-body">
+              <div class="req-title">Glimepiride 2mg × 30</div>
+              <div class="req-meta">Apollo Pharmacy, Koramangala · Collected</div>
+            </div>
+            <div class="req-right">
+              <span class="badge badge-collected">Collected</span>
+              <span class="req-time">Mar 8</span>
+            </div>
+          </a>
+
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    function filterTab(el, type) { document.querySelectorAll('.tab').forEach(t => t.classList.remove('active')); el.classList.add('active'); }
+  </script>
+</body>
+
+</html>
