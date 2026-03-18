@@ -1,357 +1,140 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ShareCare — Order Detail</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
-    <link
-        href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=DM+Serif+Display:ital@0;1&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../assets/style.css">
     <style>
-        body {
-            display: flex;
-        }
-
-        .detail-layout {
-            display: grid;
-            grid-template-columns: 1fr 280px;
-            gap: 24px;
-            max-width: 960px;
-        }
-
-        .detail-card {
-            background: var(--card);
-            border-radius: 20px;
-            padding: 28px;
-            border: 1px solid var(--border);
-            margin-bottom: 16px;
-        }
-
-        .medicine-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .medicine-table th {
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--text-muted);
-            text-align: left;
-            padding: 10px 0;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .medicine-table td {
-            padding: 12px 0;
-            border-bottom: 1px solid var(--border);
-            font-size: 0.875rem;
-        }
-
-        .medicine-table tr:last-child td {
-            border-bottom: none;
-        }
-
-        .avail-toggle {
-            display: flex;
-            gap: 8px;
-        }
-
-        .avail-btn {
-            padding: 5px 12px;
-            border-radius: 999px;
-            border: 1.5px solid var(--border);
-            font-size: 0.78rem;
-            font-weight: 600;
-            cursor: pointer;
-            font-family: var(--font-body);
-            transition: all 0.2s;
-            background: var(--card);
-            color: var(--text-muted);
-        }
-
-        .avail-btn.yes.selected {
-            border-color: #16A34A;
-            background: #F0FDF4;
-            color: #16A34A;
-        }
-
-        .avail-btn.no.selected {
-            border-color: #DC2626;
-            background: #FEF2F2;
-            color: #DC2626;
-        }
-
-        .status-actions {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-top: 20px;
-        }
-
-        .action-card {
-            border: 1.5px solid var(--border);
-            border-radius: 14px;
-            padding: 18px;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-align: center;
-        }
-
-        .action-card:hover {
-            transform: translateY(-2px);
-        }
-
-        .action-card.confirm:hover {
-            border-color: #3B82F6;
-            background: #EFF6FF;
-        }
-
-        .action-card.ready:hover {
-            border-color: #16A34A;
-            background: #F0FDF4;
-        }
-
-        .action-card.collected:hover {
-            border-color: var(--primary);
-            background: var(--primary-light);
-        }
-
-        .action-card.reject:hover {
-            border-color: #DC2626;
-            background: #FEF2F2;
-        }
-
-        .action-card i {
-            font-size: 1.5rem;
-            display: block;
-            margin-bottom: 8px;
-            color: var(--text-muted);
-        }
-
-        .action-card.confirm i {
-            color: #3B82F6;
-        }
-
-        .action-card.ready i {
-            color: #16A34A;
-        }
-
-        .action-card.collected i {
-            color: var(--primary);
-        }
-
-        .action-card.reject i {
-            color: #DC2626;
-        }
-
-        .action-card span {
-            font-size: 0.82rem;
-            font-weight: 600;
-            color: var(--text);
-        }
-
-        .action-card small {
-            display: block;
-            font-size: 0.72rem;
-            color: var(--text-muted);
-            margin-top: 3px;
-        }
-
-        .side-card {
-            background: var(--card);
-            border-radius: 16px;
-            padding: 20px;
-            border: 1px solid var(--border);
-            margin-bottom: 14px;
-        }
-
-        .side-title {
-            font-size: 0.875rem;
-            font-weight: 700;
-            margin-bottom: 12px;
-        }
-
-        .info-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 9px 0;
-            border-bottom: 1px solid var(--border);
-            font-size: 0.82rem;
-        }
-
-        .info-row:last-child {
-            border-bottom: none;
-        }
-
-        .info-label {
-            color: var(--text-muted);
-        }
-
-        .notes-input {
-            width: 100%;
-            padding: 10px 12px;
-            border: 1.5px solid var(--border);
-            border-radius: 10px;
-            font-family: var(--font-body);
-            font-size: 0.875rem;
-            resize: none;
-            height: 80px;
-            outline: none;
-            transition: border-color 0.2s;
-        }
-
-        .notes-input:focus {
-            border-color: var(--primary);
-        }
+        body{display:flex;}
+        .detail-layout{display:grid;grid-template-columns:1fr 280px;gap:24px;max-width:960px;}
+        .detail-card{background:var(--card);border-radius:20px;padding:28px;border:1px solid var(--border);margin-bottom:16px;}
+        .medicine-table{width:100%;border-collapse:collapse;}
+        .medicine-table th{font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:var(--text-muted);text-align:left;padding:10px 0;border-bottom:1px solid var(--border);}
+        .medicine-table td{padding:12px 0;border-bottom:1px solid var(--border);font-size:0.875rem;}
+        .medicine-table tr:last-child td{border-bottom:none;}
+        .avail-toggle{display:flex;gap:8px;}
+        .avail-btn{padding:5px 12px;border-radius:999px;border:1.5px solid var(--border);font-size:0.78rem;font-weight:600;cursor:pointer;font-family:var(--font-body);transition:all 0.2s;background:var(--card);color:var(--text-muted);}
+        .avail-btn.yes.selected{border-color:#16A34A;background:#F0FDF4;color:#16A34A;}
+        .avail-btn.no.selected{border-color:#DC2626;background:#FEF2F2;color:#DC2626;}
+        .status-actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px;}
+        .action-card{border:1.5px solid var(--border);border-radius:14px;padding:18px;cursor:pointer;transition:all 0.2s;text-align:center;}
+        .action-card:hover{transform:translateY(-2px);}
+        .action-card.confirm:hover{border-color:#3B82F6;background:#EFF6FF;}
+        .action-card.ready:hover{border-color:#16A34A;background:#F0FDF4;}
+        .action-card.collected:hover{border-color:var(--primary);background:var(--primary-light);}
+        .action-card.reject:hover{border-color:#DC2626;background:#FEF2F2;}
+        .action-card i{font-size:1.5rem;display:block;margin-bottom:8px;color:var(--text-muted);}
+        .action-card.confirm i{color:#3B82F6;}
+        .action-card.ready i{color:#16A34A;}
+        .action-card.collected i{color:var(--primary);}
+        .action-card.reject i{color:#DC2626;}
+        .action-card span{font-size:0.82rem;font-weight:600;color:var(--text);}
+        .action-card small{display:block;font-size:0.72rem;color:var(--text-muted);margin-top:3px;}
+        .side-card{background:var(--card);border-radius:16px;padding:20px;border:1px solid var(--border);margin-bottom:14px;}
+        .side-title{font-size:0.875rem;font-weight:700;margin-bottom:12px;}
+        .info-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border);font-size:0.82rem;}
+        .info-row:last-child{border-bottom:none;}
+        .info-label{color:var(--text-muted);}
+        .notes-input{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:10px;font-family:var(--font-body);font-size:0.875rem;resize:none;height:80px;outline:none;transition:border-color 0.2s;}
+        .notes-input:focus{border-color:var(--primary);}
     </style>
 </head>
-
 <body>
-    <aside class="sc-sidebar">
-        <a href="../index.html" class="sc-logo"><i class="ri-heart-pulse-fill"></i> ShareCare</a>
-        <ul class="sc-sidebar-nav">
-            <li><a href="dashboard.html" class="active"><i class="ri-dashboard-line"></i> Orders</a></li>
-            <li><a href="#"><i class="ri-notification-3-line"></i> Notifications <span class="sc-nav-badge">3</span></a>
-            </li>
-            <li><a href="#"><i class="ri-settings-4-line"></i> Settings</a></li>
-        </ul>
-        <div class="sc-sidebar-footer">
-            <div class="sc-user-chip">
-                <img src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=80&auto=format&fit=crop"
-                    alt="Pharmacy">
-                <div>
-                    <div class="sc-user-chip-name">Apollo Pharmacy</div>
-                    <div class="sc-user-chip-role">Koramangala</div>
-                </div>
-                <i class="ri-logout-box-r-line"></i>
-            </div>
+<aside class="sc-sidebar">
+    <a href="../index.html" class="sc-logo"><i class="ri-heart-pulse-fill"></i> ShareCare</a>
+    <ul class="sc-sidebar-nav">
+        <li><a href="dashboard.html" class="active"><i class="ri-dashboard-line"></i> Orders</a></li>
+        <li><a href="#"><i class="ri-notification-3-line"></i> Notifications <span class="sc-nav-badge">3</span></a></li>
+        <li><a href="#"><i class="ri-settings-4-line"></i> Settings</a></li>
+    </ul>
+    <div class="sc-sidebar-footer">
+        <div class="sc-user-chip">
+            <img src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=80&auto=format&fit=crop" alt="Pharmacy">
+            <div><div class="sc-user-chip-name">Apollo Pharmacy</div><div class="sc-user-chip-role">Koramangala</div></div>
+            <i class="ri-logout-box-r-line"></i>
         </div>
-    </aside>
-    <div class="sc-main">
-        <div class="sc-topbar">
-            <div style="display:flex;align-items:center;gap:12px;">
-                <a href="dashboard.html"
-                    style="display:flex;align-items:center;gap:6px;font-size:0.82rem;color:var(--text-muted);text-decoration:none;"><i
-                        class="ri-arrow-left-line"></i> Back</a>
-                <div>
-                    <div class="sc-topbar-title">Order #SC-2024-008</div>
-                    <div class="sc-topbar-sub">Ravi Kumar · Received just now</div>
+    </div>
+</aside>
+<div class="sc-main">
+    <div class="sc-topbar">
+        <div style="display:flex;align-items:center;gap:12px;">
+            <a href="dashboard.html" style="display:flex;align-items:center;gap:6px;font-size:0.82rem;color:var(--text-muted);text-decoration:none;"><i class="ri-arrow-left-line"></i> Back</a>
+            <div><div class="sc-topbar-title">Order #SC-2024-008</div><div class="sc-topbar-sub">Ravi Kumar · Received just now</div></div>
+        </div>
+        <span class="badge status-pending" style="padding:6px 14px;font-size:0.8rem;">Pending</span>
+    </div>
+    <div class="sc-content">
+        <div class="detail-layout">
+            <div>
+                <div class="detail-card">
+                    <h3 style="font-family:var(--font-display);font-size:1.1rem;margin-bottom:16px;">Medicines requested</h3>
+                    <table class="medicine-table">
+                        <thead><tr><th>Medicine</th><th>Qty</th><th>Availability</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Metformin 500mg</strong></td>
+                                <td>30 tablets</td>
+                                <td><div class="avail-toggle"><button class="avail-btn yes selected" onclick="setAvail(this,'yes')">In stock</button><button class="avail-btn no" onclick="setAvail(this,'no')">Out of stock</button></div></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Glimepiride 1mg</strong></td>
+                                <td>15 tablets</td>
+                                <td><div class="avail-toggle"><button class="avail-btn yes selected" onclick="setAvail(this,'yes')">In stock</button><button class="avail-btn no" onclick="setAvail(this,'no')">Out of stock</button></div></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="detail-card">
+                    <h3 style="font-family:var(--font-display);font-size:1.1rem;margin-bottom:16px;">Update order status</h3>
+                    <div class="status-actions">
+                        <div class="action-card confirm" onclick="updateStatus('confirmed')"><i class="ri-checkbox-circle-line"></i><span>Confirm order</span><small>Mark as accepted</small></div>
+                        <div class="action-card ready" onclick="updateStatus('ready')"><i class="ri-store-line"></i><span>Mark as ready</span><small>Ready for pickup</small></div>
+                        <div class="action-card collected" onclick="updateStatus('collected')"><i class="ri-check-double-line"></i><span>Mark collected</span><small>Patient picked up</small></div>
+                        <div class="action-card reject" onclick="updateStatus('rejected')"><i class="ri-close-circle-line"></i><span>Reject order</span><small>Cannot fulfil</small></div>
+                    </div>
+                    <div style="margin-top:16px;">
+                        <label style="font-size:0.82rem;font-weight:600;display:block;margin-bottom:7px;">Add note to patient (optional)</label>
+                        <textarea class="notes-input" placeholder="e.g. Glimepiride will be available by 4pm today..."></textarea>
+                        <button class="btn btn-primary" style="margin-top:10px;width:100%;justify-content:center;" onclick="saveNote()"><i class="ri-save-line"></i> Save note</button>
+                    </div>
                 </div>
             </div>
-            <span class="badge status-pending" style="padding:6px 14px;font-size:0.8rem;">Pending</span>
-        </div>
-        <div class="sc-content">
-            <div class="detail-layout">
-                <div>
-                    <div class="detail-card">
-                        <h3 style="font-family:var(--font-display);font-size:1.1rem;margin-bottom:16px;">Medicines
-                            requested</h3>
-                        <table class="medicine-table">
-                            <thead>
-                                <tr>
-                                    <th>Medicine</th>
-                                    <th>Qty</th>
-                                    <th>Availability</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td><strong>Metformin 500mg</strong></td>
-                                    <td>30 tablets</td>
-                                    <td>
-                                        <div class="avail-toggle"><button class="avail-btn yes selected"
-                                                onclick="setAvail(this,'yes')">In stock</button><button
-                                                class="avail-btn no" onclick="setAvail(this,'no')">Out of stock</button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Glimepiride 1mg</strong></td>
-                                    <td>15 tablets</td>
-                                    <td>
-                                        <div class="avail-toggle"><button class="avail-btn yes selected"
-                                                onclick="setAvail(this,'yes')">In stock</button><button
-                                                class="avail-btn no" onclick="setAvail(this,'no')">Out of stock</button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="detail-card">
-                        <h3 style="font-family:var(--font-display);font-size:1.1rem;margin-bottom:16px;">Update order
-                            status</h3>
-                        <div class="status-actions">
-                            <div class="action-card confirm" onclick="updateStatus('confirmed')"><i
-                                    class="ri-checkbox-circle-line"></i><span>Confirm order</span><small>Mark as
-                                    accepted</small></div>
-                            <div class="action-card ready" onclick="updateStatus('ready')"><i
-                                    class="ri-store-line"></i><span>Mark as ready</span><small>Ready for pickup</small>
-                            </div>
-                            <div class="action-card collected" onclick="updateStatus('collected')"><i
-                                    class="ri-check-double-line"></i><span>Mark collected</span><small>Patient picked
-                                    up</small></div>
-                            <div class="action-card reject" onclick="updateStatus('rejected')"><i
-                                    class="ri-close-circle-line"></i><span>Reject order</span><small>Cannot
-                                    fulfil</small></div>
-                        </div>
-                        <div style="margin-top:16px;">
-                            <label style="font-size:0.82rem;font-weight:600;display:block;margin-bottom:7px;">Add note
-                                to patient (optional)</label>
-                            <textarea class="notes-input"
-                                placeholder="e.g. Glimepiride will be available by 4pm today..."></textarea>
-                            <button class="btn btn-primary" style="margin-top:10px;width:100%;justify-content:center;"
-                                onclick="saveNote()"><i class="ri-save-line"></i> Save note</button>
-                        </div>
-                    </div>
+            <div>
+                <div class="side-card">
+                    <div class="side-title">Patient info</div>
+                    <div class="info-row"><span class="info-label">Name</span><span style="font-weight:600;">Ravi Kumar</span></div>
+                    <div class="info-row"><span class="info-label">Type</span><span>Type 2 Diabetic</span></div>
+                    <div class="info-row"><span class="info-label">Pickup</span><span>Evening (4–8pm)</span></div>
+                    <div class="info-row"><span class="info-label">Submitted</span><span>Just now</span></div>
                 </div>
-                <div>
-                    <div class="side-card">
-                        <div class="side-title">Patient info</div>
-                        <div class="info-row"><span class="info-label">Name</span><span style="font-weight:600;">Ravi
-                                Kumar</span></div>
-                        <div class="info-row"><span class="info-label">Type</span><span>Type 2 Diabetic</span></div>
-                        <div class="info-row"><span class="info-label">Pickup</span><span>Evening (4–8pm)</span></div>
-                        <div class="info-row"><span class="info-label">Submitted</span><span>Just now</span></div>
-                    </div>
-                    <div class="side-card">
-                        <div class="side-title">Prescription</div>
-                        <img src="https://images.unsplash.com/photo-1550831107-1553da8c8464?w=260&auto=format&fit=crop"
-                            style="width:100%;border-radius:10px;border:1px solid var(--border);" alt="Prescription">
-                        <a href="#"
-                            style="display:flex;align-items:center;gap:6px;font-size:0.78rem;color:var(--primary);text-decoration:none;margin-top:10px;font-weight:600;"><i
-                                class="ri-eye-line"></i> View full size</a>
-                    </div>
-                    <div class="disclaimer"><i class="ri-information-fill"></i><span>Verify prescription before
-                            confirming any controlled medicines.</span></div>
+                <div class="side-card">
+                    <div class="side-title">Prescription</div>
+                    <img src="https://images.unsplash.com/photo-1550831107-1553da8c8464?w=260&auto=format&fit=crop" style="width:100%;border-radius:10px;border:1px solid var(--border);" alt="Prescription">
+                    <a href="#" style="display:flex;align-items:center;gap:6px;font-size:0.78rem;color:var(--primary);text-decoration:none;margin-top:10px;font-weight:600;"><i class="ri-eye-line"></i> View full size</a>
                 </div>
+                <div class="disclaimer"><i class="ri-information-fill"></i><span>Verify prescription before confirming any controlled medicines.</span></div>
             </div>
         </div>
     </div>
-    <script>
-        function setAvail(btn, val) {
-            const btns = btn.closest('.avail-toggle').querySelectorAll('.avail-btn');
-            btns.forEach(b => { b.classList.remove('selected'); });
-            btn.classList.add('selected');
-        }
-        function updateStatus(status) {
-            const labels = { confirmed: 'Confirmed', ready: 'Ready for Pickup', collected: 'Collected', rejected: 'Rejected' };
-            const statusEl = document.querySelector('.sc-topbar .badge');
-            statusEl.textContent = labels[status];
-            statusEl.className = 'badge';
-            if (status === 'confirmed') statusEl.classList.add('status-confirmed');
-            else if (status === 'ready') statusEl.classList.add('status-ready');
-            else if (status === 'collected') statusEl.classList.add('status-collected');
-            else statusEl.style.cssText = 'background:#FEF2F2;color:#DC2626;padding:6px 14px;font-size:0.8rem;border-radius:999px;font-weight:600;';
-        }
-        function saveNote() { const ta = document.querySelector('.notes-input'); if (ta.value.trim()) { alert('Note saved and patient has been notified.'); ta.value = ''; } }
-    </script>
-</body>
-
-</html>
+</div>
+<script>
+function setAvail(btn,val){
+    const btns=btn.closest('.avail-toggle').querySelectorAll('.avail-btn');
+    btns.forEach(b=>{b.classList.remove('selected');});
+    btn.classList.add('selected');
+}
+function updateStatus(status){
+    const labels={confirmed:'Confirmed',ready:'Ready for Pickup',collected:'Collected',rejected:'Rejected'};
+    const statusEl=document.querySelector('.sc-topbar .badge');
+    statusEl.textContent=labels[status];
+    statusEl.className='badge';
+    if(status==='confirmed')statusEl.classList.add('status-confirmed');
+    else if(status==='ready')statusEl.classList.add('status-ready');
+    else if(status==='collected')statusEl.classList.add('status-collected');
+    else statusEl.style.cssText='background:#FEF2F2;color:#DC2626;padding:6px 14px;font-size:0.8rem;border-radius:999px;font-weight:600;';
+}
+function saveNote(){const ta=document.querySelector('.notes-input');if(ta.value.trim()){alert('Note saved and patient has been notified.');ta.value='';}}
+</script>
+</body></html>

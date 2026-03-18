@@ -1,597 +1,297 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ShareCare — Post</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
-    <link href="../css/shared.css" rel="stylesheet">
-    <style>
-        .post-layout {
-            max-width: 1100px;
-            margin: 40px auto 80px;
-            padding: 0 52px;
-            display: grid;
-            grid-template-columns: 1fr 280px;
-            gap: 28px;
-        }
-
-        /* Post card */
-        .post-card {
-            background: var(--card);
-            border-radius: var(--radius-xl);
-            padding: 44px;
-            border: 1px solid var(--border-light);
-        }
-
-        .post-tags {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 18px;
-        }
-
-        .post-title {
-            font-size: 2rem;
-            line-height: 1.2;
-            color: var(--text);
-            margin-bottom: 20px;
-        }
-
-        .author-row {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            padding-bottom: 24px;
-            border-bottom: 1px solid var(--border-light);
-            margin-bottom: 28px;
-        }
-
-        .author-row img {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid var(--border);
-        }
-
-        .author-name {
-            font-size: 0.9rem;
-            font-weight: 700;
-        }
-
-        .author-meta {
-            font-size: 0.78rem;
-            color: var(--text-muted);
-            margin-top: 2px;
-        }
-
-        .post-body {
-            font-size: 1rem;
-            line-height: 1.85;
-            color: var(--text-mid);
-            margin-bottom: 28px;
-        }
-
-        .post-body p {
-            margin-bottom: 18px;
-        }
-
-        .post-image {
-            width: 100%;
-            border-radius: var(--radius-md);
-            margin: 20px 0;
-            height: 380px;
-            object-fit: cover;
-        }
-
-        /* Interaction bar */
-        .interaction-bar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 18px 0;
-            border-top: 1px solid var(--border-light);
-            border-bottom: 1px solid var(--border-light);
-            margin-bottom: 28px;
-        }
-
-        .action-group {
-            display: flex;
-            gap: 8px;
-        }
-
-        .action-btn {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            padding: 9px 18px;
-            border-radius: var(--radius-full);
-            border: none;
-            cursor: pointer;
-            font-family: 'DM Sans', sans-serif;
-            font-size: 0.85rem;
-            font-weight: 600;
-            transition: all 0.2s;
-        }
-
-        .btn-like {
-            background: var(--accent-light);
-            color: var(--accent-dark);
-        }
-
-        .btn-like:hover,
-        .btn-like.active {
-            background: var(--accent);
-            color: white;
-        }
-
-        .btn-comment {
-            background: var(--primary-light);
-            color: var(--primary-dark);
-        }
-
-        .btn-comment:hover {
-            background: var(--primary);
-            color: white;
-        }
-
-        .btn-save {
-            background: var(--bg);
-            color: var(--text-muted);
-        }
-
-        .btn-save:hover {
-            color: var(--text);
-        }
-
-        .btn-report {
-            background: transparent;
-            border: none;
-            color: var(--text-muted);
-            font-family: 'DM Sans', sans-serif;
-            font-size: 0.82rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .btn-report:hover {
-            color: #991B1B;
-        }
-
-        .action-btn i {
-            font-size: 1rem;
-        }
-
-        /* Guest lock overlay */
-        .interaction-locked {
-            background: #F8FAFC;
-            border-radius: var(--radius-md);
-            padding: 24px;
-            border: 1.5px dashed var(--border);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .lock-mask {
-            filter: grayscale(1);
-            opacity: 0.4;
-            pointer-events: none;
-        }
-
-        .mock-actions {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 14px;
-        }
-
-        .mock-btn {
-            padding: 9px 18px;
-            background: white;
-            border: 1px solid var(--border);
-            border-radius: var(--radius-full);
-            color: var(--text-muted);
-            font-size: 0.85rem;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .mock-input {
-            height: 70px;
-            background: white;
-            border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            padding: 14px;
-            color: var(--text-subtle);
-            font-size: 0.875rem;
-            display: flex;
-            align-items: flex-start;
-        }
-
-        .guest-overlay {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(255, 255, 255, 0.96);
-            backdrop-filter: blur(4px);
-            padding: 24px 32px;
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-lg);
-            width: 80%;
-            text-align: center;
-            border: 1px solid var(--primary-light);
-            z-index: 10;
-        }
-
-        .guest-overlay i {
-            font-size: 1.5rem;
-            color: var(--primary);
-            display: block;
-            margin-bottom: 8px;
-        }
-
-        .guest-overlay h4 {
-            font-size: 1rem;
-            font-weight: 700;
-            margin-bottom: 5px;
-        }
-
-        .guest-overlay p {
-            font-size: 0.82rem;
-            color: var(--text-muted);
-            margin-bottom: 16px;
-        }
-
-        /* Comment section (logged in) */
-        .comments-section {
-            display: none;
-        }
-
-        .comment-input-row {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 24px;
-            align-items: flex-start;
-        }
-
-        .comment-input-row img {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            object-fit: cover;
-            flex-shrink: 0;
-            border: 2px solid var(--border);
-        }
-
-        .comment-input-wrap {
-            flex: 1;
-            position: relative;
-        }
-
-        .comment-textarea {
-            width: 100%;
-            padding: 12px 16px;
-            border: 1.5px solid var(--border);
-            border-radius: var(--radius-md);
-            background: white;
-            resize: none;
-            font-family: 'DM Sans', sans-serif;
-            font-size: 0.875rem;
-            color: var(--text);
-            height: 80px;
-            outline: none;
-            transition: border-color 0.2s;
-        }
-
-        .comment-textarea:focus {
-            border-color: var(--primary);
-        }
-
-        .comment-submit {
-            position: absolute;
-            bottom: 10px;
-            right: 10px;
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 6px 14px;
-            border-radius: var(--radius-full);
-            font-family: 'DM Sans', sans-serif;
-            font-size: 0.78rem;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        .comment-list {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        .comment-item {
-            display: flex;
-            gap: 12px;
-        }
-
-        .comment-item img {
-            width: 34px;
-            height: 34px;
-            border-radius: 50%;
-            object-fit: cover;
-            flex-shrink: 0;
-            border: 2px solid var(--border);
-        }
-
-        .comment-bubble {
-            flex: 1;
-            background: var(--bg);
-            padding: 13px 16px;
-            border-radius: var(--radius-md);
-        }
-
-        .comment-author {
-            font-size: 0.83rem;
-            font-weight: 700;
-            margin-bottom: 4px;
-            color: var(--text);
-        }
-
-        .comment-text {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            line-height: 1.55;
-        }
-
-        /* Sidebar */
-        .sidebar {
-            display: flex;
-            flex-direction: column;
-            gap: 18px;
-            position: sticky;
-            top: 88px;
-        }
-
-        .sidebar-section-title {
-            font-size: 0.85rem;
-            font-weight: 700;
-            margin-bottom: 14px;
-        }
-
-        .related-card {
-            background: var(--card);
-            border-radius: var(--radius-md);
-            padding: 16px;
-            border: 1px solid var(--border-light);
-            cursor: pointer;
-            transition: all 0.2s;
-            text-decoration: none;
-            color: inherit;
-            display: block;
-            margin-bottom: 10px;
-        }
-
-        .related-card:last-child {
-            margin-bottom: 0;
-        }
-
-        .related-card:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-            border-color: var(--border);
-        }
-
-        .related-tag {
-            font-size: 0.7rem;
-            font-weight: 700;
-            color: var(--primary);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: 6px;
-            display: block;
-        }
-
-        .related-title {
-            font-size: 0.875rem;
-            font-weight: 600;
-            line-height: 1.4;
-            color: var(--text);
-            margin-bottom: 8px;
-        }
-
-        .related-meta {
-            font-size: 0.72rem;
-            color: var(--text-muted);
-            display: flex;
-            justify-content: space-between;
-        }
-    </style>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ShareCare — Post</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/style.css">
+  <style>
+    .detail-layout{display:grid;grid-template-columns:1fr 300px;gap:28px;align-items:start;}
+    .post-hero{width:100%;height:280px;object-fit:cover;border-radius:var(--radius-lg);margin-bottom:24px;display:block;}
+    .post-meta-bar{display:flex;align-items:center;gap:16px;margin-bottom:16px;flex-wrap:wrap;}
+    .post-meta-bar .post-meta-item{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--text-muted);}
+    .post-meta-bar .post-meta-item i{font-size:15px;}
+    .author-row{display:flex;align-items:center;gap:12px;margin-bottom:20px;}
+    .author-info{flex:1;}
+    .author-name{font-size:14px;font-weight:600;}
+    .author-bio{font-size:12px;color:var(--text-muted);margin-top:2px;}
+    .post-body{font-size:14px;line-height:1.85;color:var(--text);}
+    .post-body h3{font-family:'DM Serif Display',serif;font-size:20px;margin:24px 0 10px;}
+    .post-body p{margin-bottom:14px;}
+    .post-body ul{margin:0 0 14px 20px;}
+    .post-body li{margin-bottom:6px;font-size:14px;line-height:1.7;}
+    .helpful-bar{display:flex;align-items:center;gap:12px;padding:20px 24px;background:var(--primary-light);border-radius:var(--radius-lg);margin:28px 0;}
+    .helpful-bar p{font-size:14px;color:var(--primary-dark);font-weight:500;flex:1;}
+    .helpful-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 22px;background:var(--primary);color:white;border:none;border-radius:var(--radius-full);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all 0.2s;}
+    .helpful-btn:hover{background:var(--primary-dark);}
+    .helpful-btn i{font-size:16px;}
+    .section-divider{margin:28px 0;border:none;border-top:1px solid var(--border-light);}
+    .comments-section h3{font-family:'DM Serif Display',serif;font-size:20px;margin-bottom:20px;}
+    .comment{display:flex;gap:12px;margin-bottom:20px;}
+    .comment-avatar{width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid var(--border);flex-shrink:0;}
+    .comment-bubble{flex:1;background:var(--bg);border-radius:0 var(--radius-md) var(--radius-md) var(--radius-md);padding:12px 16px;}
+    .comment-author{font-size:13px;font-weight:600;}
+    .comment-time{font-size:11px;color:var(--text-muted);margin-left:8px;}
+    .comment-text{font-size:13px;line-height:1.6;margin-top:6px;color:var(--text);}
+    .comment-actions{display:flex;gap:12px;margin-top:8px;}
+    .comment-action{font-size:12px;color:var(--text-muted);cursor:pointer;display:inline-flex;align-items:center;gap:4px;transition:color 0.2s;}
+    .comment-action:hover{color:var(--primary);}
+    .comment-action i{font-size:13px;}
+    .comment-input-area{display:flex;gap:12px;margin-top:20px;align-items:flex-start;}
+    .comment-input-box{flex:1;}
+    .comment-actions-row{display:flex;justify-content:flex-end;margin-top:8px;}
+    /* sidebar */
+    .sidebar-widget{background:var(--card);border-radius:var(--radius-lg);border:1px solid var(--border-light);padding:20px;}
+    .widget-title{font-family:'DM Serif Display',serif;font-size:16px;margin-bottom:14px;}
+    .related-post{display:flex;gap:10px;margin-bottom:14px;cursor:pointer;text-decoration:none;color:var(--text);}
+    .related-post:last-child{margin-bottom:0;}
+    .related-thumb{width:54px;height:54px;border-radius:var(--radius-sm);object-fit:cover;flex-shrink:0;background:var(--bg-alt);}
+    .related-title{font-size:13px;font-weight:600;line-height:1.4;margin-bottom:4px;}
+    .related-meta{font-size:11px;color:var(--text-muted);}
+    .tag-cloud{display:flex;flex-wrap:wrap;gap:6px;}
+    .tag{display:inline-flex;padding:5px 12px;border-radius:var(--radius-full);font-size:12px;font-weight:500;background:var(--bg-alt);color:var(--text-muted);cursor:pointer;transition:all 0.2s;border:1.5px solid var(--border);}
+    .tag:hover{border-color:var(--primary);color:var(--primary);}
+    /* report link */
+    .report-link{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--text-light);cursor:pointer;margin-top:4px;transition:color 0.2s;}
+    .report-link:hover{color:var(--accent);}
+  </style>
 </head>
-
 <body>
-
-    <nav class="sc-nav">
-        <a href="../index.html" class="sc-logo"><i class="ri-heart-pulse-fill"></i> ShareCare</a>
-        <ul class="sc-nav-links">
-            <li><a href="../patient/dashboard.html">Medicine</a></li>
-            <li><a href="feed.html" class="active">Community</a></li>
-        </ul>
-        <div class="sc-nav-right" id="nav-right">
-            <a href="../auth/login.html" class="btn btn-outline btn-sm">Log in</a>
-            <a href="../auth/signup.html" class="btn btn-primary btn-sm">Sign up</a>
+  <div class="sc-app">
+    <aside class="sc-sidebar">
+      <a href="../index.html" class="sc-logo"><i class="ri-heart-pulse-fill"></i> ShareCare</a>
+      <div class="sc-sidebar-section auth-required">Medicine</div>
+      <ul class="sc-sidebar-menu auth-required">
+        <li><a href="../patient/dashboard.html" class="sc-sidebar-item"><i class="ri-file-list-3-line"></i> My Requests</a></li>
+        <li><a href="../patient/new-request.html" class="sc-sidebar-item"><i class="ri-add-circle-line"></i> New Request</a></li>
+      </ul>
+      <div class="sc-sidebar-section">Community</div>
+      <ul class="sc-sidebar-menu">
+        <li><a href="feed.html" class="sc-sidebar-item active"><i class="ri-home-smile-2-line"></i> Feed</a></li>
+        <li><a href="new-post.html" class="sc-sidebar-item"><i class="ri-edit-line"></i> New Post</a></li>
+        <li><a href="feed.html" class="sc-sidebar-item"><i class="ri-bookmark-3-line"></i> Saved</a></li>
+      </ul>
+      <div class="sc-sidebar-footer">
+        <!-- Guest footer -->
+        <div id="guestFooter" style="display:none;">
+          <a href="../auth/login.html" class="btn btn-primary w-full btn-sm" style="justify-content:center;margin-bottom:8px;"><i class="ri-login-circle-line"></i> Sign In</a>
+          <a href="../auth/signup.html" class="btn btn-outline w-full btn-sm" style="justify-content:center;">Create Account</a>
         </div>
-    </nav>
-
-    <div class="post-layout">
-
-        <main>
-            <!-- Breadcrumb -->
-            <div class="sc-breadcrumb">
-                <a href="feed.html"><i class="ri-arrow-left-line"></i> Community Feed</a>
-                <i class="ri-arrow-right-s-line"></i>
-                <span>Recipes</span>
+        <!-- Logged-in footer -->
+        <div id="userFooter" style="display:none;">
+          <div class="sc-user-chip">
+            <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=80&q=80" alt="User">
+            <div><div class="sc-user-name">Rahul M.</div><div class="sc-user-role">Patient</div></div>
+            <i class="ri-logout-box-r-line sc-logout" title="Sign out"></i>
+          </div>
+        </div>
+      </div>
+    </aside>
+    <div class="sc-main">
+      <div class="sc-topbar">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <a href="feed.html" class="btn btn-ghost btn-sm" style="padding:8px 10px;"><i class="ri-arrow-left-line" style="font-size:18px;"></i></a>
+          <div>
+            <div class="sc-topbar-title">Community Post</div>
+            <div class="sc-topbar-sub">Recipes &middot; Posted by Priya Sharma</div>
+          </div>
+        </div>
+        <div class="sc-topbar-right">
+          <button class="notif-btn"><i class="ri-notification-3-line"></i><div class="notif-dot"></div></button>
+          <button class="btn btn-outline btn-sm"><i class="ri-bookmark-line"></i> Save</button>
+          <button class="btn btn-ghost btn-sm"><i class="ri-share-line"></i> Share</button>
+        </div>
+      </div>
+      <div class="sc-content">
+        <div class="detail-layout">
+          <!-- Post content -->
+          <div>
+            <div class="disclaimer mb-24">
+              <i class="ri-information-line"></i>
+              <span>Personal experience only — not medical advice. Talk to your doctor before changing your diet.</span>
             </div>
 
-            <div class="post-card">
-                <div class="post-tags">
-                    <span class="sc-tag">Recipe</span>
-                    <span class="sc-tag">LowGI</span>
-                    <span class="sc-tag">Dinner</span>
-                </div>
+            <img src="https://images.unsplash.com/photo-1547592180-85f173990554?w=1200&q=80" alt="Ragi Dosa" class="post-hero">
 
-                <h1 class="post-title">Cauliflower rice completely changed my dinner routine</h1>
+            <span class="badge badge-primary mb-16"><i class="ri-restaurant-line"></i> Recipe</span>
 
-                <div class="author-row">
-                    <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=80&auto=format&fit=crop"
-                        alt="Author">
-                    <div>
-                        <div class="author-name">Sarah J. <span class="sc-badge sc-badge-patient"
-                                style="margin-left:5px;">Type 2 · 4 yrs</span></div>
-                        <div class="author-meta">October 14, 2024 · 3 min read</div>
-                    </div>
-                </div>
+            <h2 style="font-family:'DM Serif Display',serif;font-size:28px;line-height:1.2;margin-bottom:12px;">Low-GI Ragi Dosa — My Sunday Morning Staple</h2>
 
-                <div class="post-body">
-                    <p>I was skeptical at first. Everyone kept recommending cauliflower rice but I was convinced it
-                        would taste like watery mush. Then my sugar readings kept spiking after dinner and I decided to
-                        actually try it properly.</p>
-                    <p>The key mistake most people make is steaming it. You have to dry fry it in a pan first — no oil,
-                        just heat. Let it sit on medium heat for about 8 minutes until some of the moisture cooks off.
-                        Then add your oil and season it like normal fried rice.</p>
-                    <img src="https://images.unsplash.com/photo-1551218808-94e220e084d2?w=900&auto=format&fit=crop"
-                        class="post-image" alt="Cauliflower rice">
-                    <p>After switching, my post-dinner readings dropped noticeably — not dramatically, but consistently.
-                        I've been doing this for 3 months now and I genuinely enjoy it. It goes well with curries,
-                        stir-fries, and dal.</p>
-                    <p>If you're new to this, start by mixing half cauliflower half regular rice. The difference in
-                        taste is subtle but the glycaemic impact is quite different.</p>
-                </div>
-
-                <!-- Interaction bar (logged in) -->
-                <div class="interaction-bar" id="interaction-bar" style="display:none;">
-                    <div class="action-group">
-                        <button class="action-btn btn-like" id="like-btn" onclick="toggleLike()"><i
-                                class="ri-heart-3-fill"></i> 124 helpful</button>
-                        <button class="action-btn btn-comment"><i class="ri-chat-3-line"></i> 32 comments</button>
-                        <button class="action-btn btn-save"><i class="ri-bookmark-line"></i> Save</button>
-                    </div>
-                    <button class="btn-report"><i class="ri-flag-line"></i> Report</button>
-                </div>
-
-                <!-- Guest lock -->
-                <div class="interaction-locked" id="guest-lock">
-                    <div class="lock-mask">
-                        <div class="mock-actions">
-                            <div class="mock-btn"><i class="ri-heart-line"></i> 124 helpful</div>
-                            <div class="mock-btn"><i class="ri-chat-1-line"></i> 32 comments</div>
-                            <div class="mock-btn"><i class="ri-bookmark-line"></i> Save</div>
-                        </div>
-                        <div class="mock-input">Join the discussion...</div>
-                    </div>
-                    <div class="guest-overlay">
-                        <i class="ri-lock-2-line"></i>
-                        <h4>Join to participate</h4>
-                        <p>Create a free account to like, comment, save posts, and share your own experiences.</p>
-                        <a href="../auth/signup.html" class="btn btn-primary btn-sm">Create free account</a>
-                    </div>
-                </div>
-
-                <!-- Comments (logged in) -->
-                <div class="comments-section" id="comments-section">
-                    <div class="comment-input-row">
-                        <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=80&auto=format&fit=crop"
-                            alt="You">
-                        <div class="comment-input-wrap">
-                            <textarea class="comment-textarea" placeholder="Share your experience or thoughts..."
-                                id="comment-input"></textarea>
-                            <button class="comment-submit" onclick="submitComment()">Post</button>
-                        </div>
-                    </div>
-                    <div class="comment-list" id="comment-list">
-                        <div class="comment-item">
-                            <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&auto=format&fit=crop"
-                                alt="User">
-                            <div class="comment-bubble">
-                                <div class="comment-author">David C. <span class="sc-badge"
-                                        style="margin-left:4px;background:var(--primary-light);color:var(--primary-dark);">Type
-                                        1</span></div>
-                                <div class="comment-text">The dry frying step is the key — took me 2 attempts to get
-                                    right but now it's automatic. Totally changed dinner for me too.</div>
-                            </div>
-                        </div>
-                        <div class="comment-item">
-                            <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&auto=format&fit=crop"
-                                alt="User">
-                            <div class="comment-bubble">
-                                <div class="comment-author">Priya M. <span class="sc-badge sc-badge-patient"
-                                        style="margin-left:4px;">Type 2</span></div>
-                                <div class="comment-text">Tried the half-and-half suggestion last week. My family didn't
-                                    even notice the difference! Saving this post. ❤️</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
+            <div class="author-row">
+              <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&q=80" alt="Priya" class="avatar avatar-md">
+              <div class="author-info">
+                <div class="author-name">Priya Sharma</div>
+                <div class="author-bio">Type 2 diabetic for 4 years &middot; Bangalore</div>
+              </div>
+              <div class="post-meta-bar" style="margin:0;gap:16px;">
+                <div class="post-meta-item"><i class="ri-calendar-line"></i> 12 Mar 2026</div>
+                <div class="post-meta-item"><i class="ri-time-line"></i> 4 min read</div>
+              </div>
             </div>
-        </main>
 
-        <aside class="sidebar">
-            <div>
-                <div class="sidebar-section-title">Related posts</div>
-                <a href="post-detail.html" class="related-card">
-                    <span class="related-tag">Exercise</span>
-                    <div class="related-title">Walking 20 minutes after meals — the most underrated tip</div>
-                    <div class="related-meta"><span>David C.</span><span><i class="ri-heart-line"></i> 89</span></div>
-                </a>
-                <a href="post-detail.html" class="related-card">
-                    <span class="related-tag">Snacks</span>
-                    <div class="related-title">5 snacks I keep at my desk that don't spike my sugar</div>
-                    <div class="related-meta"><span>Priya M.</span><span><i class="ri-heart-line"></i> 312</span></div>
-                </a>
-                <a href="post-detail.html" class="related-card">
-                    <span class="related-tag">Daily Tip</span>
-                    <div class="related-title">How I stopped obsessing over every reading</div>
-                    <div class="related-meta"><span>Elena R.</span><span><i class="ri-heart-line"></i> 201</span></div>
-                </a>
-                <a href="post-detail.html" class="related-card">
-                    <span class="related-tag">Caregiver</span>
-                    <div class="related-title">Managing festivals with a diabetic family member</div>
-                    <div class="related-meta"><span>Emily R.</span><span><i class="ri-heart-line"></i> 245</span></div>
-                </a>
-            </div>
-            <div class="sc-disclaimer">
-                <i class="ri-information-fill"></i>
-                <span>All posts are peer experiences only. Not medical advice.</span>
-            </div>
-        </aside>
+            <div class="post-body">
+              <p>I've been Type 2 for four years now. For the first two, I basically gave up on South Indian breakfast because I assumed dosa was off the table. Then I started experimenting with the batter, and the results genuinely surprised me.</p>
 
+              <h3>Why Ragi?</h3>
+              <p>Ragi (finger millet) has a glycemic index of around 68 compared to regular white rice at 73+. More importantly, it's high in fibre, which slows glucose absorption. Combined with oats, I got a batter that holds together beautifully and keeps me full well past lunch.</p>
+
+              <h3>The Batter (makes 8–10 dosas)</h3>
+              <ul>
+                <li>1 cup ragi flour</li>
+                <li>½ cup rolled oats (blended to a coarse flour)</li>
+                <li>¼ cup urad dal (soaked 4 hours, ground smooth)</li>
+                <li>Salt to taste, water to consistency</li>
+                <li>Ferment overnight — the sourness actually helps further lower GI</li>
+              </ul>
+
+              <h3>My Numbers Before and After</h3>
+              <p>Before switching: my 2-hour post-breakfast reading was typically 178–195 mg/dL. After three weeks of this batter (same quantity, same meal time): 138–152 mg/dL. I'm not saying this will work the same for everyone, but it's been consistent enough for me to call it my staple.</p>
+
+              <h3>Tips That Make a Difference</h3>
+              <ul>
+                <li>Eat with a protein-first — I always have a small bowl of curd before the dosa</li>
+                <li>Don't skip the coconut chutney — the fat actually helps slow absorption</li>
+                <li>Walk for 10 minutes after, even just around the house</li>
+                <li>Check your reading 2 hours post-meal at least the first few times so you know how your body responds</li>
+              </ul>
+
+              <p>I hope this helps someone who's given up on breakfast the way I did. Happy to answer questions in the comments.</p>
+            </div>
+
+            <div class="helpful-bar">
+              <p>Did this post help you?</p>
+              <button class="helpful-btn"><i class="ri-thumb-up-line"></i> Mark as Helpful (48)</button>
+            </div>
+
+            <hr class="section-divider">
+
+            <!-- Comments -->
+            <div class="comments-section">
+              <h3>14 Comments</h3>
+
+              <div class="comment">
+                <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&q=80" alt="" class="comment-avatar">
+                <div class="comment-bubble">
+                  <span class="comment-author">Suresh Iyer</span><span class="comment-time">2 hrs ago</span>
+                  <div class="comment-text">This is exactly what I needed. I tried a similar thing with bajra last month but it kept falling apart on the tawa. Will try your ratio — the oats as a binder is smart.</div>
+                  <div class="comment-actions">
+                    <span class="comment-action"><i class="ri-thumb-up-line"></i> Helpful (6)</span>
+                    <span class="comment-action"><i class="ri-reply-line"></i> Reply</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="comment">
+                <img src="https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=80&q=80" alt="" class="comment-avatar">
+                <div class="comment-bubble">
+                  <span class="comment-author">Anita Verma</span><span class="comment-time">Yesterday</span>
+                  <div class="comment-text">The protein-first tip is a game changer. My dietitian told me the same thing — eating protein and fat before carbs flattens the glucose curve noticeably. Glad you mentioned it here too.</div>
+                  <div class="comment-actions">
+                    <span class="comment-action"><i class="ri-thumb-up-line"></i> Helpful (11)</span>
+                    <span class="comment-action"><i class="ri-reply-line"></i> Reply</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="comment">
+                <img src="https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=80&q=80" alt="" class="comment-avatar">
+                <div class="comment-bubble">
+                  <span class="comment-author">Kiran Patil</span><span class="comment-time">2 days ago</span>
+                  <div class="comment-text">Question — do you refrigerate the batter between uses or keep it at room temperature? I've heard fermented batter can over-ferment in Bangalore's heat.</div>
+                  <div class="comment-actions">
+                    <span class="comment-action"><i class="ri-thumb-up-line"></i> Helpful (3)</span>
+                    <span class="comment-action"><i class="ri-reply-line"></i> Reply</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Add comment -->
+              <div class="comment-input-area">
+                <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=80&q=80" alt="" class="comment-avatar">
+                <div class="comment-input-box">
+                  <textarea class="form-input" style="min-height:80px;" placeholder="Add a comment…"></textarea>
+                  <div class="comment-actions-row">
+                    <button class="btn btn-primary btn-sm">Post Comment</button>
+                  </div>
+                </div>
+              </div>
+
+              <div style="margin-top:20px;">
+                <span class="report-link"><i class="ri-flag-line"></i> Report this post</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sidebar -->
+          <div style="display:flex;flex-direction:column;gap:16px;">
+            <div class="sidebar-widget">
+              <div class="widget-title">About the Author</div>
+              <div style="text-align:center;padding:8px 0 16px;">
+                <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&q=80" alt="Priya" style="width:64px;height:64px;border-radius:50%;object-fit:cover;border:2px solid var(--border);margin-bottom:10px;display:block;margin-left:auto;margin-right:auto;">
+                <div style="font-size:15px;font-weight:600;">Priya Sharma</div>
+                <div style="font-size:12px;color:var(--text-muted);margin-top:3px;">12 posts &middot; Bangalore</div>
+              </div>
+              <button class="btn btn-outline w-full btn-sm" style="justify-content:center;">Follow</button>
+            </div>
+
+            <div class="sidebar-widget">
+              <div class="widget-title">Related Posts</div>
+              <a href="post-detail.html" class="related-post">
+                <img src="https://images.unsplash.com/photo-1505253758473-96b7015fcd40?w=120&q=80" class="related-thumb" alt="">
+                <div><div class="related-title">5 Snacks You Can Find at Any Kirana Store</div><div class="related-meta">Deepa Nair &middot; Snacks</div></div>
+              </a>
+              <a href="post-detail.html" class="related-post">
+                <img src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=120&q=80" class="related-thumb" alt="">
+                <div><div class="related-title">The 15-Minute Walk That Changed My A1C</div><div class="related-meta">Anita Verma &middot; Exercise</div></div>
+              </a>
+              <a href="post-detail.html" class="related-post">
+                <div class="related-thumb" style="background:var(--accent-light);display:flex;align-items:center;justify-content:center;"><i class="ri-heart-3-line" style="font-size:22px;color:var(--accent);"></i></div>
+                <div><div class="related-title">Two Years with T2D — What I Wish I'd Known</div><div class="related-meta">Suresh Iyer &middot; Support</div></div>
+              </a>
+            </div>
+
+            <div class="sidebar-widget">
+              <div class="widget-title">Tags</div>
+              <div class="tag-cloud">
+                <span class="tag">ragi</span>
+                <span class="tag">low-GI</span>
+                <span class="tag">breakfast</span>
+                <span class="tag">dosa</span>
+                <span class="tag">South Indian</span>
+                <span class="tag">Type 2</span>
+                <span class="tag">blood sugar</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 
-    <script>
-        // Simulate logged-in state — replace with real auth check
-        const isLoggedIn = false;
+  <script>
+    // Auth state simulation — replace with Firebase onAuthStateChanged in Sprint 1
+    const currentUser = null; // null = guest, object = logged in
 
-        if (isLoggedIn) {
-            document.getElementById('guest-lock').style.display = 'none';
-            document.getElementById('interaction-bar').style.display = 'flex';
-            document.getElementById('comments-section').style.display = 'block';
-        }
+    function applyAuthState(user) {
+      const authItems = document.querySelectorAll('.auth-required');
+      const guestFooter = document.getElementById('guestFooter');
+      const userFooter = document.getElementById('userFooter');
+      const guestBanner = document.getElementById('guestBanner');
 
-        function toggleLike() {
-            const btn = document.getElementById('like-btn');
-            btn.classList.toggle('active');
-        }
+      if (user) {
+        authItems.forEach(el => el.style.display = '');
+        if (guestFooter) guestFooter.style.display = 'none';
+        if (userFooter) userFooter.style.display = '';
+        if (guestBanner) guestBanner.style.display = 'none';
+      } else {
+        authItems.forEach(el => el.style.display = 'none');
+        if (guestFooter) guestFooter.style.display = '';
+        if (userFooter) userFooter.style.display = 'none';
+        if (guestBanner) guestBanner.style.display = '';
+      }
+    }
 
-        function submitComment() {
-            const text = document.getElementById('comment-input').value.trim();
-            if (!text) return;
-            // TODO: write to Firestore
-            document.getElementById('comment-input').value = '';
-        }
-    </script>
+    applyAuthState(currentUser);
+  </script>
 </body>
-
 </html>
