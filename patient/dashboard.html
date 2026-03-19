@@ -4,151 +4,189 @@
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ShareCare — My Requests</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="../assets/styles.css">
+  <link rel="stylesheet" href="../assets/style.css">
   <style>
-    .request-grid{display:flex;flex-direction:column;gap:14px;}
-    .request-card{background:var(--card);border-radius:var(--r-lg);padding:22px 24px;border:1px solid var(--border-light);display:flex;align-items:center;gap:20px;cursor:pointer;transition:all 0.2s;text-decoration:none;color:inherit;}
-    .request-card:hover{box-shadow:var(--shadow);transform:translateY(-2px);border-color:var(--primary-mid);}
-    .req-icon{width:46px;height:46px;border-radius:var(--r);background:var(--primary-light);display:flex;align-items:center;justify-content:center;color:var(--primary);font-size:1.2rem;flex-shrink:0;}
-    .req-body{flex:1;min-width:0;}
-    .req-title{font-size:0.95rem;font-weight:600;color:var(--text);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-    .req-meta{font-size:0.8rem;color:var(--text-muted);}
-    .req-right{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0;}
-    .req-time{font-size:0.76rem;color:var(--text-light);}
+    /* === CRITICAL LAYOUT === */
+    html,body{margin:0;padding:0;}
+
+    .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px;}
+    .stat-card{background:var(--card);border-radius:var(--radius-lg);padding:20px 22px;border:1px solid var(--border-light);display:flex;align-items:center;gap:14px;}
+    .stat-icon{width:44px;height:44px;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+    .stat-val{font-family:'DM Serif Display',serif;font-size:24px;color:var(--text);}
+    .stat-label{font-size:12px;color:var(--text-muted);margin-top:2px;}
     .section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
-    .section-header h3{font-size:1rem;color:var(--text);}
-    .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px;}
-    .stat-card{background:var(--card);border-radius:var(--r-lg);padding:20px;border:1px solid var(--border-light);text-align:center;}
-    .stat-num{font-family:'DM Serif Display',serif;font-size:1.8rem;color:var(--text);display:block;}
-    .stat-label{font-size:0.78rem;color:var(--text-muted);margin-top:2px;}
-    .tabs{display:flex;gap:4px;background:var(--bg);border-radius:var(--r-full);padding:4px;margin-bottom:20px;width:fit-content;}
-    .tab{padding:7px 18px;border-radius:var(--r-full);font-size:0.85rem;font-weight:500;color:var(--text-muted);cursor:pointer;transition:all 0.15s;}
-    .tab.active{background:var(--card);color:var(--text);font-weight:600;box-shadow:var(--shadow-sm);}
+    .section-title{font-family:'DM Serif Display',serif;font-size:18px;}
+    .requests-list{display:flex;flex-direction:column;gap:12px;}
+    .request-card{background:var(--card);border-radius:var(--radius-lg);padding:20px 24px;border:1px solid var(--border-light);display:flex;align-items:center;gap:16px;transition:box-shadow 0.2s;cursor:pointer;text-decoration:none;color:var(--text);}
+    .request-card:hover{box-shadow:var(--shadow-md);}
+    .request-icon{width:44px;height:44px;border-radius:var(--radius-md);background:var(--primary-light);color:var(--primary);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+    .request-main{flex:1;}
+    .request-title{font-size:14px;font-weight:600;margin-bottom:4px;}
+    .request-meta{font-size:13px;color:var(--text-muted);}
+    .request-right{display:flex;flex-direction:column;align-items:flex-end;gap:6px;}
+    .request-time{font-size:12px;color:var(--text-light);}
+    .tab-bar{display:flex;gap:4px;background:var(--bg-alt);padding:4px;border-radius:var(--radius-full);margin-bottom:20px;width:fit-content;}
+    .tab{padding:7px 18px;border-radius:var(--radius-full);font-size:13px;font-weight:600;color:var(--text-muted);cursor:pointer;transition:all 0.2s;}
+    .tab.active{background:var(--card);color:var(--text);box-shadow:var(--shadow-sm);}
   </style>
 </head>
 <body>
-  <div class="app-shell">
-    <aside class="sidebar">
-      <a href="../index.html" class="sidebar-logo"><i class="ri-heart-pulse-fill"></i> ShareCare</a>
-      <div class="sidebar-label">Medicine</div>
-      <a href="dashboard.html" class="nav-item active"><i class="ri-file-list-3-line"></i> My Requests</a>
-      <a href="new-request.html" class="nav-item"><i class="ri-add-circle-line"></i> New Request</a>
-      <div class="sidebar-label">Community</div>
-      <a href="../community/feed.html" class="nav-item"><i class="ri-group-line"></i> Feed</a>
-      <a href="../community/new-post.html" class="nav-item"><i class="ri-edit-line"></i> New Post</a>
-      <div class="sidebar-label">Account</div>
-      <a href="#" class="nav-item"><i class="ri-settings-4-line"></i> Settings</a>
-      <div class="sidebar-footer">
-        <div class="user-chip">
-          <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=80&auto=format&fit=crop" alt="User">
-          <div><div class="user-chip-name">Ravi Kumar</div><div class="user-chip-role">Patient · Type 2</div></div>
-          <i class="ri-logout-box-r-line logout-icon" onclick="logOut()"></i>
+  <div class="sc-app">
+    <aside class="sc-sidebar">
+      <a href="../index.html" class="sc-logo"><i class="ri-heart-pulse-fill"></i> ShareCare</a>
+      <div class="sc-sidebar-section">Medicine</div>
+      <ul class="sc-sidebar-menu">
+        <li><a href="dashboard.html" class="sc-sidebar-item active"><i class="ri-file-list-3-line"></i> My Requests</a></li>
+        <li><a href="new-request.html" class="sc-sidebar-item"><i class="ri-add-circle-line"></i> New Request</a></li>
+      </ul>
+      <div class="sc-sidebar-section">Community</div>
+      <ul class="sc-sidebar-menu">
+        <li><a href="../community/feed.html" class="sc-sidebar-item"><i class="ri-home-smile-2-line"></i> Feed</a></li>
+        <li><a href="../community/new-post.html" class="sc-sidebar-item"><i class="ri-edit-line"></i> New Post</a></li>
+        <li><a href="../community/feed.html" class="sc-sidebar-item"><i class="ri-bookmark-3-line"></i> Saved</a></li>
+      </ul>
+      <div class="sc-sidebar-footer">
+        <div class="sc-user-chip">
+          <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=80&q=80" alt="User">
+          <div><div class="sc-user-name" id="userName">Loading...</div><div class="sc-user-role">Patient</div></div>
+          <i class="ri-logout-box-r-line sc-logout" onclick="logOut()"></i>
         </div>
       </div>
     </aside>
-
-    <div class="main">
-      <div class="topbar">
-        <div>
-          <div class="topbar-title">My Requests</div>
-          <div class="topbar-sub">Track your medicine requests in real time</div>
-        </div>
-        <div style="display:flex;gap:10px;align-items:center;">
-          <div class="search-bar"><i class="ri-search-line"></i><input type="text" placeholder="Search requests..."></div>
+    <div class="sc-main">
+      <div class="sc-topbar">
+        <div><div class="sc-topbar-title">My Requests</div><div class="sc-topbar-sub">Track your medicine restock requests</div></div>
+        <div class="sc-topbar-right">
+          <div class="notif-btn"><i class="ri-notification-3-line"></i><div class="notif-dot"></div></div>
           <a href="new-request.html" class="btn btn-primary btn-sm"><i class="ri-add-line"></i> New Request</a>
         </div>
       </div>
-
-      <div class="page-body">
-        <!-- Stats -->
-        <div class="stats-row fade-up">
-          <div class="stat-card"><span class="stat-num">8</span><span class="stat-label">Total Requests</span></div>
-          <div class="stat-card"><span class="stat-num" style="color:var(--pending);">2</span><span class="stat-label">Pending</span></div>
-          <div class="stat-card"><span class="stat-num" style="color:var(--ready);">1</span><span class="stat-label">Ready for Pickup</span></div>
-          <div class="stat-card"><span class="stat-num" style="color:var(--collected);">5</span><span class="stat-label">Collected</span></div>
+      <div class="sc-content">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon" style="background:var(--primary-light);color:var(--primary);"><i class="ri-file-list-3-line"></i></div>
+            <div><div class="stat-val" id="totalCount">0</div><div class="stat-label">Total Requests</div></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background:#FFFBEB;color:#92610A;"><i class="ri-time-line"></i></div>
+            <div><div class="stat-val" id="pendingCount">0</div><div class="stat-label">Pending</div></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background:#ECFDF5;color:#065F46;"><i class="ri-checkbox-circle-line"></i></div>
+            <div><div class="stat-val" id="readyCount">0</div><div class="stat-label">Ready for Pickup</div></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background:var(--bg-alt);color:var(--text-muted);"><i class="ri-archive-line"></i></div>
+            <div><div class="stat-val" id="collectedCount">0</div><div class="stat-label">Collected</div></div>
+          </div>
         </div>
 
-        <!-- Tabs -->
-        <div class="tabs fade-up-2">
+        <div class="tab-bar">
           <div class="tab active" onclick="filterTab(this,'all')">All</div>
-          <div class="tab" onclick="filterTab(this,'active')">Active</div>
+          <div class="tab" onclick="filterTab(this,'pending')">Pending</div>
+          <div class="tab" onclick="filterTab(this,'confirmed')">Confirmed</div>
+          <div class="tab" onclick="filterTab(this,'ready')">Ready</div>
           <div class="tab" onclick="filterTab(this,'collected')">Collected</div>
         </div>
 
-        <!-- Requests -->
-        <div class="request-grid fade-up-3">
+        <div class="section-header">
+          <h2 class="section-title">Your requests</h2>
+        </div>
 
-          <a href="request-detail.html" class="request-card">
-            <div class="req-icon" style="background:var(--ready-bg);color:var(--ready);"><i class="ri-checkbox-circle-line"></i></div>
-            <div class="req-body">
-              <div class="req-title">Metformin 500mg × 30 + Glimepiride 1mg × 15</div>
-              <div class="req-meta">Apollo Pharmacy, Koramangala · Pickup: Evening</div>
-            </div>
-            <div class="req-right">
-              <span class="badge badge-ready">Ready for pickup</span>
-              <span class="req-time">Today, 2:30 PM</span>
-            </div>
-          </a>
+        <div class="requests-list" id="requestsList">
+          <!-- Injected by JS -->
+          <div class="empty-state" id="emptyState" style="display:none;">
+            <i class="ri-inbox-line"></i>
+            <h3>No requests yet</h3>
+            <p>Submit your first medicine restock request to get started.</p>
+            <a href="new-request.html" class="btn btn-primary" style="margin-top:16px;">New Request</a>
+          </div>
+        </div>
 
-          <a href="request-detail.html" class="request-card">
-            <div class="req-icon"><i class="ri-medicine-bottle-line"></i></div>
-            <div class="req-body">
-              <div class="req-title">Januvia 50mg × 30</div>
-              <div class="req-meta">MedPlus, Indiranagar · Pickup: Morning</div>
-            </div>
-            <div class="req-right">
-              <span class="badge badge-confirmed">Confirmed</span>
-              <span class="req-time">Today, 10:15 AM</span>
-            </div>
-          </a>
-
-          <a href="request-detail.html" class="request-card">
-            <div class="req-icon" style="background:var(--pending-bg);color:var(--pending);"><i class="ri-time-line"></i></div>
-            <div class="req-body">
-              <div class="req-title">Telmisartan 40mg × 30 + Amlodipine 5mg × 30</div>
-              <div class="req-meta">Apollo Pharmacy, Koramangala · Pickup: Afternoon</div>
-            </div>
-            <div class="req-right">
-              <span class="badge badge-pending">Pending</span>
-              <span class="req-time">Yesterday, 6:00 PM</span>
-            </div>
-          </a>
-
-          <a href="request-detail.html" class="request-card" style="opacity:0.7;">
-            <div class="req-icon" style="background:var(--collected-bg);color:var(--collected);"><i class="ri-check-double-line"></i></div>
-            <div class="req-body">
-              <div class="req-title">Metformin 500mg × 60</div>
-              <div class="req-meta">MedPlus, Indiranagar · Collected</div>
-            </div>
-            <div class="req-right">
-              <span class="badge badge-collected">Collected</span>
-              <span class="req-time">Mar 14</span>
-            </div>
-          </a>
-
-          <a href="request-detail.html" class="request-card" style="opacity:0.7;">
-            <div class="req-icon" style="background:var(--collected-bg);color:var(--collected);"><i class="ri-check-double-line"></i></div>
-            <div class="req-body">
-              <div class="req-title">Glimepiride 2mg × 30</div>
-              <div class="req-meta">Apollo Pharmacy, Koramangala · Collected</div>
-            </div>
-            <div class="req-right">
-              <span class="badge badge-collected">Collected</span>
-              <span class="req-time">Mar 8</span>
-            </div>
-          </a>
-
+        <div class="disclaimer" style="margin-top:28px;">
+          <i class="ri-information-line"></i>
+          <span>Medicine availability is confirmed by your pharmacy. ShareCare is not responsible for stock levels or pickup times.</span>
         </div>
       </div>
     </div>
   </div>
   <script>
-    function filterTab(el,type){document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');}
+    function filterTab(el, status) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      el.classList.add('active');
+      document.querySelectorAll('.request-card').forEach(c => {
+        c.style.display = (status === 'all' || c.dataset.status === status) ? 'flex' : 'none';
+      });
+    }
   </script>
   <script src="../js/env.js"></script>
   <script type="module">
-    import { logOut, requireAuth } from '../js/auth.js';
+    import { requireAuth, logOut }                    from '../js/auth.js';
+    import { getPatientRequests, getStatusLabel, getStatusClass } from '../js/patient.js';
+    import { onSnapshot, collection, query, where, orderBy } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+    import { db } from '../js/firebase-config.js';
+
     window.logOut = logOut;
-</script>
+
+    const statusIcons = {
+      pending:   'ri-time-line',
+      confirmed: 'ri-check-line',
+      ready:     'ri-checkbox-circle-line',
+      collected: 'ri-archive-line',
+      cancelled: 'ri-close-circle-line'
+    };
+
+    requireAuth(async (profile) => {
+      document.getElementById('userName').textContent = profile.name || 'User';
+
+      // Live listener so status updates reflect instantly
+      const q = query(
+        collection(db, 'requests'),
+        where('patientId', '==', profile.uid),
+        orderBy('createdAt', 'desc')
+      );
+
+      onSnapshot(q, (snapshot) => {
+        const docs  = snapshot.docs;
+        const list  = document.getElementById('requestsList');
+        const empty = document.getElementById('emptyState');
+
+        // Update stat counts
+        document.getElementById('totalCount').textContent     = docs.length;
+        document.getElementById('pendingCount').textContent   = docs.filter(d => d.data().status === 'pending').length;
+        document.getElementById('readyCount').textContent     = docs.filter(d => d.data().status === 'ready').length;
+        document.getElementById('collectedCount').textContent = docs.filter(d => d.data().status === 'collected').length;
+
+        if (docs.length === 0) { empty.style.display = 'flex'; list.innerHTML = ''; return; }
+        empty.style.display = 'none';
+        list.innerHTML = '';
+
+        docs.forEach(d => {
+          const r      = d.data();
+          const meds   = r.medicines?.map(m => m.name).join(', ') || '—';
+          const label  = getStatusLabel(r.status);
+          const cls    = getStatusClass(r.status);
+          const icon   = statusIcons[r.status] || 'ri-question-line';
+          const date   = r.createdAt?.toDate().toLocaleDateString('en-IN') || '';
+
+          const card = document.createElement('a');
+          card.href         = `request-detail.html?id=${d.id}`;
+          card.className    = 'request-card';
+          card.dataset.status = r.status;
+          card.innerHTML    = `
+            <div class="request-icon"><i class="ri-medicine-bottle-line"></i></div>
+            <div class="request-main">
+              <div class="request-title">${meds}</div>
+              <div class="request-meta">${r.pharmacyName || 'Pharmacy'} &middot; Pickup: ${r.preferredPickupTime || '—'}</div>
+            </div>
+            <div class="request-right">
+              <span class="${cls}"><i class="${icon}"></i> ${label}</span>
+              <span class="request-time">${date}</span>
+            </div>`;
+          list.appendChild(card);
+        });
+      });
+    });
+  </script>
 </body>
 </html>

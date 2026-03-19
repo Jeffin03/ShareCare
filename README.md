@@ -2,6 +2,11 @@
 
 A web application for people living with diabetes — combining a **medicine restock request portal** with a **peer support community feed**.
 
+*Check Out the Live Sites Using the Links Below*:
+
+[![Dev](https://img.shields.io/badge/Dev-GitHub%20Pages-222?style=flat&logo=github)](https://jeffin03.github.io/ShareCare)
+[![Prod](https://img.shields.io/badge/Prod-Vercel-000?style=flat&logo=vercel)](https://share-care-bice.vercel.app/)
+
 ---
 
 ## Abstract
