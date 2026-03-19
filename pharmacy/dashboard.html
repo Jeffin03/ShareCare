@@ -48,7 +48,7 @@
         <div class="sc-user-chip">
             <img src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=80&auto=format&fit=crop" alt="Pharmacy">
             <div><div class="sc-user-chip-name">Apollo Pharmacy</div><div class="sc-user-chip-role">Koramangala</div></div>
-            <i class="ri-logout-box-r-line"></i>
+            <i class="ri-logout-box-r-line" onclick="logOut()"></i>
         </div>
     </div>
 </aside>
@@ -110,5 +110,10 @@ function setTab(el,tab){
     document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
     el.classList.add('active');
 }
+</script>
+ <script src="../js/env.js"></script>
+  <script type="module">
+    import { logOut, requireAuth } from '../js/auth.js';
+    window.logOut = logOut;
 </script>
 </body></html>

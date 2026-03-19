@@ -1,0 +1,19 @@
+{
+  "name": "sharecare",
+  "version": "1.0.0",
+  "description": "Medicine request portal and community platform for diabetes patients",
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "seed": "node scripts/seed.js"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testMatch": [
+      "**/tests/**/*.test.js"
+    ]
+  }
+}

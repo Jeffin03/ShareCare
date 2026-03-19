@@ -1,0 +1,97 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── Helpers ──────────────────────────────────────────────
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+
+    function getUserRole() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
+    }
+
+    function isPatient() {
+      return isSignedIn() && getUserRole() == 'patient';
+    }
+
+    function isPharmacy() {
+      return isSignedIn() && getUserRole() == 'pharmacy';
+    }
+
+    // ── Users ─────────────────────────────────────────────────
+    // Users can only read and write their own document
+    match /users/{userId} {
+      allow read:   if isSignedIn() && isOwner(userId);
+      allow create: if isSignedIn() && isOwner(userId);
+      allow update: if isSignedIn() && isOwner(userId);
+      allow delete: if false;
+    }
+
+    // ── Pharmacies ────────────────────────────────────────────
+    // Anyone signed in can read pharmacies (needed for the request form dropdown)
+    // Only the pharmacy owner can update their own record
+    match /pharmacies/{pharmacyId} {
+      allow read:   if isSignedIn();
+      allow create: if isPharmacy();
+      allow update: if isSignedIn() && isOwner(resource.data.ownerId);
+      allow delete: if false;
+    }
+
+    // ── Requests ──────────────────────────────────────────────
+    // Patients can create requests and read their own
+    // Pharmacies can read requests sent to them and update status
+    match /requests/{requestId} {
+      allow create: if isPatient();
+      allow read:   if isSignedIn() && (
+                      isOwner(resource.data.patientId) ||
+                      resource.data.pharmacyId == get(/databases/$(database)/documents/users/$(request.auth.uid)).data.pharmacyId
+                    );
+      allow update: if isSignedIn() && (
+                      // Patient can cancel (status: pending → cancelled)
+                      (isOwner(resource.data.patientId) && request.resource.data.status == 'cancelled') ||
+                      // Pharmacy can update status
+                      resource.data.pharmacyId == get(/databases/$(database)/documents/users/$(request.auth.uid)).data.pharmacyId
+                    );
+      allow delete: if false;
+    }
+
+    // ── Posts ─────────────────────────────────────────────────
+    // Anyone signed in can read posts
+    // Only the author can update or delete their own post
+    match /posts/{postId} {
+      allow read:   if isSignedIn();
+      allow create: if isSignedIn();
+      allow update: if isSignedIn() && isOwner(resource.data.authorId);
+      allow delete: if isSignedIn() && isOwner(resource.data.authorId);
+    }
+
+    // ── Comments ──────────────────────────────────────────────
+    match /comments/{commentId} {
+      allow read:   if isSignedIn();
+      allow create: if isSignedIn();
+      allow update: if isSignedIn() && isOwner(resource.data.authorId);
+      allow delete: if isSignedIn() && isOwner(resource.data.authorId);
+    }
+
+    // ── Reports ───────────────────────────────────────────────
+    // Anyone signed in can file a report, no one can read/edit them (admin only)
+    match /reports/{reportId} {
+      allow create: if isSignedIn();
+      allow read:   if false;
+      allow update: if false;
+      allow delete: if false;
+    }
+
+    // ── Saved Posts ───────────────────────────────────────────
+    match /saved/{userId}/posts/{postId} {
+      allow read:   if isSignedIn() && isOwner(userId);
+      allow write:  if isSignedIn() && isOwner(userId);
+    }
+
+  }
+}
