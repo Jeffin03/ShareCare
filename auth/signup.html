@@ -135,6 +135,7 @@
       text-decoration: none;
     }
   </style>
+  <script src="../js/env.js"></script>
 </head>
 
 <body>
@@ -147,52 +148,122 @@
         <h2>Join ShareCare</h2>
         <p>Connect with a community that understands</p>
       </div>
-      <form>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="label">First name</label>
-            <div class="input-wrap"><i class="ri-user-line i-left"></i><input type="text" class="input"
-                placeholder="Ravi"></div>
-          </div>
-          <div class="form-group">
-            <label class="label">Last name</label>
-            <div class="input-wrap"><i class="ri-user-line i-left"></i><input type="text" class="input"
-                placeholder="Kumar"></div>
-          </div>
+      <div class="error-msg" id="errorMsg" style="display:none;">
+  <i class="ri-error-warning-line"></i><span id="errorText"></span>
+</div>
+
+  <form id="signupForm">
+    <div class="form-row">
+      <div class="form-group">
+        <label class="label">First name</label>
+        <div class="input-wrap">
+          <i class="ri-user-line i-left"></i>
+          <input type="text" class="input" id="firstName" placeholder="Ravi" required>
         </div>
-        <div class="form-group">
-          <label class="label">Email address</label>
-          <div class="input-wrap"><i class="ri-mail-line i-left"></i><input type="email" class="input"
-              placeholder="name@example.com"></div>
+      </div>
+      <div class="form-group">
+        <label class="label">Last name</label>
+        <div class="input-wrap">
+          <i class="ri-user-line i-left"></i>
+          <input type="text" class="input" id="lastName" placeholder="Kumar" required>
         </div>
-        <div class="form-group">
-          <label class="label">Password</label>
-          <div class="input-wrap">
-            <i class="ri-lock-2-line i-left"></i>
-            <input type="password" class="input" placeholder="••••••••" id="pw">
-            <i class="ri-eye-off-line i-right" onclick="togglePw()"></i>
-          </div>
-          <div class="hint">At least 8 characters</div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="label">Email address</label>
+      <div class="input-wrap">
+        <i class="ri-mail-line i-left"></i>
+        <input type="email" class="input" id="email" placeholder="name@example.com" required>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="label">Password</label>
+      <div class="input-wrap">
+        <i class="ri-lock-2-line i-left"></i>
+        <input type="password" class="input" id="password" placeholder="••••••••">
+        <i class="ri-eye-off-line i-right" onclick="togglePw()"></i>
+      </div>
+      <div class="hint">At least 8 characters</div>
+    </div>
+    <div class="form-group">
+      <label class="label">I am a</label>
+      <div class="role-options">
+        <div class="role-opt selected" onclick="selectRole(this, 'patient')">
+          <i class="ri-user-heart-line"></i>Patient
         </div>
-        <div class="form-group">
-          <label class="label">I am a</label>
-          <div class="role-options">
-            <div class="role-opt selected" onclick="selectRole(this)"><i class="ri-user-heart-line"></i>Patient</div>
-            <div class="role-opt" onclick="selectRole(this)"><i class="ri-parent-line"></i>Caregiver</div>
-            <div class="role-opt" onclick="selectRole(this)"><i class="ri-store-2-line"></i>Pharmacy</div>
-          </div>
+        <div class="role-opt" onclick="selectRole(this, 'caregiver')">
+          <i class="ri-parent-line"></i>Caregiver
         </div>
-        <button type="button" class="btn-submit">Create account</button>
-        <p class="terms">By signing up you agree to our <a href="#">Terms</a> and <a href="#">Privacy Policy</a>.</p>
-      </form>
+        <div class="role-opt" onclick="selectRole(this, 'pharmacy')">
+          <i class="ri-store-2-line"></i>Pharmacy
+        </div>
+      </div>
+      <input type="hidden" id="role" value="patient">
+    </div>
+    <div class="form-group" id="pharmacyNameGroup" style="display:none;">
+      <label class="label">Pharmacy name</label>
+      <div class="input-wrap">
+        <i class="ri-store-2-line i-left"></i>
+        <input type="text" class="input" id="pharmacyName" placeholder="e.g. Apollo Pharmacy, Koramangala">
+      </div>
+    </div>
+    <button type="submit" class="btn-submit" id="submitBtn">Create account</button>
+    <p class="terms">By signing up you agree to our <a href="#">Terms</a> and <a href="#">Privacy Policy</a>.</p>
+  </form>
       <div class="divider"><span>or</span></div>
       <div class="auth-footer">Already have an account? <a href="login.html">Log in</a></div>
     </div>
   </div>
   <script>
-    function selectRole(el) { document.querySelectorAll('.role-opt').forEach(o => o.classList.remove('selected')); el.classList.add('selected'); }
-    function togglePw() { const i = document.getElementById('pw'); i.type = i.type === 'password' ? 'text' : 'password'; }
+  function selectRole(el, role) {
+    document.querySelectorAll('.role-opt').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+    document.getElementById('role').value = role;
+    document.getElementById('pharmacyNameGroup').style.display = role === 'pharmacy' ? 'block' : 'none';
+  }
+  function togglePw() { const i = document.getElementById('password'); i.type = i.type === 'password' ? 'text' : 'password'; }
   </script>
+  <script type="module">
+  import { signUp, redirectAfterLogin, redirectIfLoggedIn } from '../js/auth.js';
+
+  redirectIfLoggedIn();
+
+  const form      = document.getElementById('signupForm');
+  const errorEl   = document.getElementById('errorMsg');
+  const errorTx   = document.getElementById('errorText');
+  const submitBtn = document.getElementById('submitBtn');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    errorEl.style.display = 'none';
+
+    const role     = document.getElementById('role').value;
+    const name     = `${document.getElementById('firstName').value.trim()} ${document.getElementById('lastName').value.trim()}`;
+    const email    = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+
+    if (password.length < 8) {
+      errorEl.style.display = 'flex';
+      errorTx.textContent   = 'Password must be at least 8 characters.';
+      return;
+    }
+
+    submitBtn.textContent = 'Creating account…';
+    submitBtn.disabled    = true;
+
+    try {
+      await signUp(name, email, password, role);
+      redirectAfterLogin(role);
+    } catch (err) {
+      errorEl.style.display = 'flex';
+      errorTx.textContent   = err.code === 'auth/email-already-in-use'
+        ? 'An account with this email already exists.'
+        : err.message;
+      submitBtn.textContent = 'Create account';
+      submitBtn.disabled    = false;
+    }
+  });
+</script>
 </body>
 
 </html>
