@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Medicine request portal and community platform for diabetes patients",
   "scripts": {
+    "build": "node scripts/build-env.js",
     "test": "jest",
     "test:watch": "jest --watch",
     "seed": "node scripts/seed.js"
