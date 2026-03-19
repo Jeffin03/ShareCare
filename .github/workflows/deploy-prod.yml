@@ -36,14 +36,14 @@ jobs:
       - name: Run tests
         run: npm test
 
-      - name: Seed Firestore with demo data
-        run: npm run seed
-        env:
-          PROD_FIREBASE_API_KEY:             ${{ secrets.PROD_FIREBASE_API_KEY }}
-          PROD_FIREBASE_AUTH_DOMAIN:         ${{ secrets.PROD_FIREBASE_AUTH_DOMAIN }}
-          PROD_FIREBASE_PROJECT_ID:          ${{ secrets.PROD_FIREBASE_PROJECT_ID }}
-          PROD_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.PROD_FIREBASE_MESSAGING_SENDER_ID }}
-          PROD_FIREBASE_APP_ID:              ${{ secrets.PROD_FIREBASE_APP_ID }}
+      # - name: Seed Firestore with demo data
+      #   run: npm run seed
+      #   env:
+      #     PROD_FIREBASE_API_KEY:             ${{ secrets.PROD_FIREBASE_API_KEY }}
+      #     PROD_FIREBASE_AUTH_DOMAIN:         ${{ secrets.PROD_FIREBASE_AUTH_DOMAIN }}
+      #     PROD_FIREBASE_PROJECT_ID:          ${{ secrets.PROD_FIREBASE_PROJECT_ID }}
+      #     PROD_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.PROD_FIREBASE_MESSAGING_SENDER_ID }}
+      #     PROD_FIREBASE_APP_ID:              ${{ secrets.PROD_FIREBASE_APP_ID }}
 
       - name: Trigger Vercel deploy
         run: curl -X POST "${{ secrets.VERCEL_DEPLOY_HOOK }}"
