@@ -1,134 +1,242 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ShareCare — New Request</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/style.css">
-    <style>
-        body{display:flex;}
-        .medicine-row{display:grid;grid-template-columns:1fr 120px 36px;gap:10px;align-items:center;margin-bottom:10px;}
-        .remove-btn{width:36px;height:36px;border-radius:8px;background:var(--bg-alt);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text-muted);transition:all 0.2s;}
-        .remove-btn:hover{background:#FEE2E2;color:#DC2626;}
-        .add-medicine-btn{display:flex;align-items:center;gap:6px;font-size:0.82rem;font-weight:600;color:var(--primary);background:none;border:1.5px dashed var(--primary-mid);border-radius:8px;padding:8px 14px;cursor:pointer;transition:all 0.2s;font-family:var(--font-body);margin-top:4px;}
-        .add-medicine-btn:hover{background:var(--primary-light);border-color:var(--primary);}
-        .pharmacy-option{border:1.5px solid var(--border);border-radius:12px;padding:14px 16px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:14px;margin-bottom:10px;}
-        .pharmacy-option:hover{border-color:var(--primary-mid);}
-        .pharmacy-option.selected{border-color:var(--primary);background:var(--primary-light);}
-        .pharmacy-opt-icon{width:40px;height:40px;border-radius:10px;background:var(--bg-alt);display:flex;align-items:center;justify-content:center;font-size:1.1rem;color:var(--text-muted);flex-shrink:0;}
-        .pharmacy-option.selected .pharmacy-opt-icon{background:var(--primary-light);color:var(--primary);}
-        .ph-name{font-size:0.875rem;font-weight:600;}
-        .ph-area{font-size:0.78rem;color:var(--text-muted);margin-top:2px;}
-        .ph-dist{margin-left:auto;font-size:0.75rem;color:var(--text-muted);}
-        .check-icon{width:22px;height:22px;border-radius:50%;background:var(--primary);color:white;display:none;align-items:center;justify-content:center;font-size:0.75rem;flex-shrink:0;}
-        .pharmacy-option.selected .check-icon{display:flex;}
-        .time-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
-        .time-option{border:1.5px solid var(--border);border-radius:10px;padding:12px 8px;text-align:center;cursor:pointer;transition:all 0.2s;font-size:0.82rem;font-weight:500;color:var(--text-muted);}
-        .time-option:hover{border-color:var(--primary-mid);}
-        .time-option.selected{border-color:var(--primary);background:var(--primary-light);color:var(--primary-dark);}
-        .time-option i{display:block;font-size:1.2rem;margin-bottom:4px;}
-        .form-layout{display:grid;grid-template-columns:1fr 280px;gap:24px;max-width:960px;}
-        .form-card{background:var(--card);border-radius:20px;padding:26px;border:1px solid var(--border);margin-bottom:16px;}
-        .form-card-title{font-family:var(--font-display);font-size:1.1rem;margin-bottom:18px;}
-        .form-actions{display:flex;justify-content:flex-end;align-items:center;gap:12px;margin-top:20px;padding-top:18px;border-top:1px solid var(--border);}
-        .tip-card{background:var(--card);border-radius:14px;padding:18px;border:1px solid var(--border);margin-bottom:14px;}
-        .tip-header{display:flex;align-items:center;gap:7px;font-size:0.82rem;font-weight:700;color:var(--primary);margin-bottom:8px;}
-        .tip-text{font-size:0.8rem;color:var(--text-muted);line-height:1.65;}
-    </style>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ShareCare — New Request</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/style.css">
+  <style>
+    /* === CRITICAL LAYOUT === */
+    html,body{margin:0;padding:0;}
+
+    .form-layout{display:grid;grid-template-columns:1fr 320px;gap:24px;align-items:start;}
+    .form-card{background:var(--card);border-radius:var(--radius-xl);padding:36px;border:1px solid var(--border-light);box-shadow:var(--shadow-sm);}
+    .form-card h2{font-size:20px;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid var(--border-light);}
+    .step-label{display:inline-flex;align-items:center;gap:7px;background:var(--primary-light);color:var(--primary-dark);padding:4px 12px;border-radius:var(--radius-full);font-size:12px;font-weight:700;margin-bottom:14px;letter-spacing:0.03em;}
+    .pharmacy-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+    .pharmacy-opt{border:1.5px solid var(--border);border-radius:var(--radius-md);padding:16px;cursor:pointer;transition:all 0.2s;}
+    .pharmacy-opt:hover{border-color:var(--primary);}
+    .pharmacy-opt.selected{border-color:var(--primary);background:var(--primary-light);}
+    .pharmacy-name{font-size:14px;font-weight:600;margin-bottom:3px;}
+    .pharmacy-area{font-size:12px;color:var(--text-muted);}
+    .pharmacy-opt.selected .pharmacy-name{color:var(--primary-dark);}
+    .med-rows{display:flex;flex-direction:column;gap:10px;}
+    .med-row{display:grid;grid-template-columns:1fr 100px 36px;gap:8px;align-items:center;}
+    .btn-add-med{display:flex;align-items:center;gap:6px;color:var(--primary);font-size:13px;font-weight:600;background:none;border:1.5px dashed var(--primary-mid);border-radius:var(--radius-md);padding:10px;width:100%;justify-content:center;cursor:pointer;margin-top:6px;transition:all 0.2s;}
+    .btn-add-med:hover{background:var(--primary-light);}
+    .btn-remove{width:36px;height:36px;background:var(--bg-alt);border:none;border-radius:var(--radius-sm);cursor:pointer;color:var(--text-muted);display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
+    .btn-remove:hover{background:#FEF2F2;color:#C0392B;}
+    .upload-area{border:2px dashed var(--border);border-radius:var(--radius-md);padding:32px;text-align:center;cursor:pointer;transition:all 0.2s;background:var(--bg);}
+    .upload-area:hover{border-color:var(--primary);background:var(--primary-light);}
+    .upload-icon{font-size:28px;color:var(--primary);margin-bottom:8px;display:block;}
+    .upload-text{font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px;}
+    .upload-hint{font-size:12px;color:var(--text-muted);}
+    .time-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+    .time-opt{border:1.5px solid var(--border);border-radius:var(--radius-md);padding:12px;text-align:center;cursor:pointer;transition:all 0.2s;}
+    .time-opt:hover{border-color:var(--primary);}
+    .time-opt.selected{border-color:var(--primary);background:var(--primary-light);color:var(--primary-dark);}
+    .time-opt i{display:block;font-size:20px;margin-bottom:4px;}
+    .time-opt span{font-size:13px;font-weight:600;}
+    .side-card{background:var(--card);border-radius:var(--radius-lg);padding:22px;border:1px solid var(--border-light);margin-bottom:16px;}
+    .side-card-title{font-size:14px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px;color:var(--primary);}
+    .side-card-title i{font-size:16px;}
+    .side-card p{font-size:13px;color:var(--text-muted);line-height:1.6;}
+    .form-actions{display:flex;justify-content:flex-end;gap:12px;margin-top:28px;padding-top:20px;border-top:1px solid var(--border-light);}
+  </style>
 </head>
 <body>
-<aside class="sc-sidebar">
-    <a href="../index.html" class="sc-logo"><i class="ri-heart-pulse-fill"></i> ShareCare</a>
-    <ul class="sc-sidebar-menu">
+  <div class="sc-app">
+    <aside class="sc-sidebar">
+      <a href="../index.html" class="sc-logo"><i class="ri-heart-pulse-fill"></i> ShareCare</a>
+      <div class="sc-sidebar-section">Medicine</div>
+      <ul class="sc-sidebar-menu">
         <li><a href="dashboard.html" class="sc-sidebar-item"><i class="ri-file-list-3-line"></i> My Requests</a></li>
         <li><a href="new-request.html" class="sc-sidebar-item active"><i class="ri-add-circle-line"></i> New Request</a></li>
-        <li><a href="../community/feed.html" class="sc-sidebar-item"><i class="ri-chat-heart-line"></i> Community</a></li>
-    </ul>
-    <div class="sc-sidebar-footer">
+      </ul>
+      <div class="sc-sidebar-section">Community</div>
+      <ul class="sc-sidebar-menu">
+        <li><a href="../community/feed.html" class="sc-sidebar-item"><i class="ri-home-smile-2-line"></i> Feed</a></li>
+        <li><a href="../community/new-post.html" class="sc-sidebar-item"><i class="ri-edit-line"></i> New Post</a></li>
+      </ul>
+      <div class="sc-sidebar-footer">
         <div class="sc-user-chip">
-            <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=80&auto=format&fit=crop" alt="User">
-            <div><div class="sc-user-chip-name">Ravi Kumar</div><div class="sc-user-chip-role">Patient · Type 2</div></div>
-            <i class="ri-logout-box-r-line"></i>
+          <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=80&q=80" alt="User">
+          <div><div class="sc-user-name" id="userName">Loading...</div><div class="sc-user-role">Patient</div></div>
+          <i class="ri-logout-box-r-line sc-logout" onclick="logOut()"></i>
         </div>
-    </div>
-</aside>
-<div class="sc-main">
-    <div class="sc-topbar">
-        <div><div class="sc-topbar-title">New Medicine Request</div><div class="sc-topbar-sub">Raise a restock request to your pharmacy</div></div>
-    </div>
-    <div class="sc-content">
+      </div>
+    </aside>
+    <div class="sc-main">
+      <div class="sc-topbar">
+        <div><div class="sc-topbar-title">New Medicine Request</div><div class="sc-topbar-sub">Submit a restock request to your pharmacy</div></div>
+        <div class="sc-topbar-right">
+          <a href="dashboard.html" class="btn btn-outline btn-sm"><i class="ri-arrow-left-line"></i> Back</a>
+        </div>
+      </div>
+      <div class="sc-content">
+        <form id="requestForm">
         <div class="form-layout">
-            <form id="req-form">
-                <div class="form-card">
-                    <div class="form-card-title">Choose a pharmacy</div>
-                    <div class="form-group">
-                        <div class="input-wrap"><i class="ri-search-line input-icon"></i><input type="text" class="sc-input" placeholder="Search by name or area..."></div>
-                    </div>
-                    <div class="pharmacy-option selected" onclick="selPh(this)">
-                        <div class="pharmacy-opt-icon"><i class="ri-store-2-line"></i></div>
-                        <div><div class="ph-name">Apollo Pharmacy</div><div class="ph-area">80ft Road, Koramangala</div></div>
-                        <div class="ph-dist">0.8 km</div>
-                        <div class="check-icon"><i class="ri-check-line"></i></div>
-                    </div>
-                    <div class="pharmacy-option" onclick="selPh(this)">
-                        <div class="pharmacy-opt-icon"><i class="ri-store-2-line"></i></div>
-                        <div><div class="ph-name">MedPlus</div><div class="ph-area">CMH Road, Indiranagar</div></div>
-                        <div class="ph-dist">2.1 km</div>
-                        <div class="check-icon"><i class="ri-check-line"></i></div>
-                    </div>
-                    <div class="pharmacy-option" onclick="selPh(this)">
-                        <div class="pharmacy-opt-icon"><i class="ri-store-2-line"></i></div>
-                        <div><div class="ph-name">Wellness Forever</div><div class="ph-area">Sarjapur Road, HSR Layout</div></div>
-                        <div class="ph-dist">3.4 km</div>
-                        <div class="check-icon"><i class="ri-check-line"></i></div>
-                    </div>
-                </div>
-                <div class="form-card">
-                    <div class="form-card-title">Medicines needed</div>
-                    <div id="med-rows">
-                        <div class="medicine-row"><div class="input-wrap"><i class="ri-medicine-bottle-line input-icon"></i><input type="text" class="sc-input" placeholder="Medicine name + dosage" value="Metformin 500mg"></div><input type="number" class="sc-input" style="padding:11px 14px;" placeholder="Qty" value="30" min="1"><button type="button" class="remove-btn" onclick="remRow(this)"><i class="ri-delete-bin-line"></i></button></div>
-                        <div class="medicine-row"><div class="input-wrap"><i class="ri-medicine-bottle-line input-icon"></i><input type="text" class="sc-input" placeholder="Medicine name + dosage" value="Glimepiride 1mg"></div><input type="number" class="sc-input" style="padding:11px 14px;" placeholder="Qty" value="15" min="1"><button type="button" class="remove-btn" onclick="remRow(this)"><i class="ri-delete-bin-line"></i></button></div>
-                    </div>
-                    <button type="button" class="add-medicine-btn" onclick="addRow()"><i class="ri-add-line"></i> Add another medicine</button>
-                </div>
-                <div class="form-card">
-                    <div class="form-card-title">Prescription & pickup</div>
-                    <div class="form-group">
-                        <label class="form-label">Upload prescription (recommended)</label>
-                        <div class="upload-area"><div class="upload-icon"><i class="ri-camera-line"></i></div><div style="font-size:0.875rem;font-weight:600;">Click to upload or drag & drop</div><div style="font-size:0.75rem;color:var(--text-muted);">JPG, PNG or PDF · Max 5MB</div></div>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Preferred pickup time</label>
-                        <div class="time-grid">
-                            <div class="time-option selected" onclick="selTime(this)"><i class="ri-sun-line"></i>Morning<br><span style="font-size:0.7rem;">8am–12pm</span></div>
-                            <div class="time-option" onclick="selTime(this)"><i class="ri-sun-foggy-line"></i>Afternoon<br><span style="font-size:0.7rem;">12pm–4pm</span></div>
-                            <div class="time-option" onclick="selTime(this)"><i class="ri-moon-line"></i>Evening<br><span style="font-size:0.7rem;">4pm–8pm</span></div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Notes (optional)</label>
-                        <textarea class="sc-input" style="padding:11px 14px;min-height:80px;resize:none;" placeholder="Any specific instructions for the pharmacy..."></textarea>
-                    </div>
-                    <div class="form-actions">
-                        <button type="button" class="btn btn-ghost" onclick="location.href='dashboard.html'">Cancel</button>
-                        <button type="submit" class="btn btn-primary"><i class="ri-send-plane-fill"></i> Submit request</button>
-                    </div>
-                </div>
-            </form>
-            <div>
-                <div class="tip-card"><div class="tip-header"><i class="ri-lightbulb-flash-line"></i> Tips</div><p class="tip-text">Include the full medicine name with dosage (e.g. "Metformin 500mg") so the pharmacy can confirm availability accurately.</p></div>
-                <div class="tip-card"><div class="tip-header"><i class="ri-time-line"></i> What happens next</div><p class="tip-text">Your pharmacy will receive this request and confirm availability. You'll see the status update on your dashboard in real time.</p></div>
-                <div class="disclaimer"><i class="ri-information-fill"></i><span>Only submit requests for medicines prescribed by your doctor. This platform does not provide medical advice.</span></div>
+          <div>
+            <!-- Step 1: Pharmacy -->
+            <div class="form-card" style="margin-bottom:20px;">
+              <div class="step-label"><i class="ri-store-2-line"></i> Step 1</div>
+              <h2>Select a pharmacy</h2>
+              <div class="pharmacy-grid" id="pharmacyGrid">
+                <!-- loaded from Firestore -->
+                <div style="color:var(--text-muted);font-size:14px;grid-column:1/-1;">Loading pharmacies...</div>
+              </div>
+              <input type="hidden" id="selectedPharmacyId">
+              <input type="hidden" id="selectedPharmacyName">
             </div>
+
+            <!-- Step 2: Medicines -->
+            <div class="form-card" style="margin-bottom:20px;">
+              <div class="step-label"><i class="ri-medicine-bottle-line"></i> Step 2</div>
+              <h2>Medicines needed</h2>
+              <div class="med-rows" id="medRows">
+                <div class="med-row">
+                  <input type="text" class="form-input med-name" placeholder="Medicine name (e.g. Metformin 500mg)" required>
+                  <input type="number" class="form-input med-qty" placeholder="Qty" min="1" value="1" required>
+                  <button type="button" class="btn-remove" onclick="removeMed(this)"><i class="ri-delete-bin-line"></i></button>
+                </div>
+              </div>
+              <button type="button" class="btn-add-med" onclick="addMed()"><i class="ri-add-line"></i> Add another medicine</button>
+            </div>
+
+            <!-- Step 3: Pickup time -->
+            <div class="form-card">
+              <div class="step-label"><i class="ri-time-line"></i> Step 3</div>
+              <h2>Preferred pickup time</h2>
+              <div class="time-grid">
+                <div class="time-opt selected" onclick="selectTime(this,'Morning')"><i class="ri-sun-line"></i><span>Morning (9am–12pm)</span></div>
+                <div class="time-opt" onclick="selectTime(this,'Afternoon')"><i class="ri-sun-foggy-line"></i><span>Afternoon (12–4pm)</span></div>
+                <div class="time-opt" onclick="selectTime(this,'Evening')"><i class="ri-moon-line"></i><span>Evening (4–8pm)</span></div>
+                <div class="time-opt" onclick="selectTime(this,'Any time')"><i class="ri-calendar-check-line"></i><span>Any time</span></div>
+              </div>
+              <input type="hidden" id="pickupTime" value="Morning">
+              <div class="form-group" style="margin-top:18px;margin-bottom:0;">
+                <label class="form-label">Additional notes (optional)</label>
+                <textarea class="form-input" id="notes" placeholder="Any specific details for the pharmacy..." style="min-height:80px;"></textarea>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <a href="dashboard.html" class="btn btn-outline">Cancel</a>
+              <button type="submit" class="btn btn-primary"><i class="ri-send-plane-fill"></i> Submit Request</button>
+            </div>
+          </div>
+
+          <!-- Side info -->
+          <div>
+            <div class="side-card">
+              <div class="side-card-title"><i class="ri-lightbulb-line"></i> How it works</div>
+              <p>Your request goes directly to the selected pharmacy. They'll confirm availability and let you know when your medicines are ready for pickup.</p>
+            </div>
+            <div class="side-card">
+              <div class="side-card-title"><i class="ri-time-line"></i> Typical turnaround</div>
+              <p>Most pharmacies confirm within a few hours. If the medicine needs to be ordered, it typically arrives the same evening or next morning.</p>
+            </div>
+            <div class="disclaimer">
+              <i class="ri-information-line"></i>
+              <span>ShareCare does not guarantee medicine availability. Always confirm with your pharmacy before visiting.</span>
+            </div>
+          </div>
         </div>
+        </form>
+      </div>
     </div>
-</div>
-<script>
-function selPh(el){document.querySelectorAll('.pharmacy-option').forEach(o=>o.classList.remove('selected'));el.classList.add('selected');}
-function selTime(el){document.querySelectorAll('.time-option').forEach(o=>o.classList.remove('selected'));el.classList.add('selected');}
-function addRow(){const r=document.createElement('div');r.className='medicine-row';r.innerHTML='<div class="input-wrap"><i class="ri-medicine-bottle-line input-icon"></i><input type="text" class="sc-input" placeholder="Medicine name + dosage"></div><input type="number" class="sc-input" style="padding:11px 14px;" placeholder="Qty" min="1"><button type="button" class="remove-btn" onclick="remRow(this)"><i class="ri-delete-bin-line"></i></button>';document.getElementById('med-rows').appendChild(r);}
-function remRow(btn){const rows=document.querySelectorAll('.medicine-row');if(rows.length>1)btn.closest('.medicine-row').remove();}
-document.getElementById('req-form').addEventListener('submit',function(e){e.preventDefault();location.href='dashboard.html';});
-</script>
-</body></html>
+  </div>
+
+  <script>
+    function addMed(){const row=document.createElement('div');row.className='med-row';row.innerHTML='<input type="text" class="form-input med-name" placeholder="Medicine name" required><input type="number" class="form-input med-qty" placeholder="Qty" min="1" value="1" required><button type="button" class="btn-remove" onclick="removeMed(this)"><i class="ri-delete-bin-line"></i></button>';document.getElementById('medRows').appendChild(row);}
+    function removeMed(btn){const rows=document.querySelectorAll('.med-row');if(rows.length>1)btn.closest('.med-row').remove();}
+    function selectTime(el,val){document.querySelectorAll('.time-opt').forEach(t=>t.classList.remove('selected'));el.classList.add('selected');document.getElementById('pickupTime').value=val;}
+    function showFile(inp){if(inp.files[0]){const prev=document.getElementById('filePreview');prev.style.display='flex';document.getElementById('fileName').textContent=inp.files[0].name;}}
+    function selectPharmacy(el,id,name){document.querySelectorAll('.pharmacy-opt').forEach(p=>p.classList.remove('selected'));el.classList.add('selected');document.getElementById('selectedPharmacyId').value=id;document.getElementById('selectedPharmacyName').value=name;}
+  </script>
+
+  <script src="../js/env.js"></script>
+  <script type="module">
+    import { requireAuth, logOut } from '../js/auth.js';
+    import { getPharmacies, submitRequest, validateMedicines } from '../js/patient.js';
+
+    window.logOut = logOut;
+
+    requireAuth(async (profile) => {
+      document.getElementById('userName').textContent = profile.name || 'User';
+      window.__currentUserId = profile.uid;
+      loadPharmacies();
+    });
+
+    async function loadPharmacies() {
+      const grid = document.getElementById('pharmacyGrid');
+      try {
+        const pharmacies = await getPharmacies();
+        grid.innerHTML = '';
+        if (pharmacies.length === 0) {
+          grid.innerHTML = '<div style="color:var(--text-muted);font-size:14px;grid-column:1/-1;">No pharmacies registered yet.</div>';
+          return;
+        }
+        pharmacies.forEach(p => {
+          const div = document.createElement('div');
+          div.className = 'pharmacy-opt';
+          div.onclick = () => selectPharmacy(div, p.id, p.name);
+          div.innerHTML = `<div class="pharmacy-name">${p.name}</div><div class="pharmacy-area"><i class="ri-map-pin-line"></i> ${p.area} &middot; ${p.address}</div>`;
+          grid.appendChild(div);
+        });
+      } catch (err) {
+        grid.innerHTML = '<div style="color:var(--text-muted);font-size:14px;grid-column:1/-1;">Failed to load pharmacies.</div>';
+      }
+    }
+
+    document.getElementById('requestForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const pharmacyId   = document.getElementById('selectedPharmacyId').value;
+      const pharmacyName = document.getElementById('selectedPharmacyName').value;
+      if (!pharmacyId) { showError('Please select a pharmacy.'); return; }
+
+      const names    = [...document.querySelectorAll('.med-name')].map(i => i.value.trim());
+      const qtys     = [...document.querySelectorAll('.med-qty')].map(i => parseInt(i.value));
+      const medicines = names.map((name, i) => ({ name, quantity: qtys[i] }));
+
+      const errors = validateMedicines(medicines);
+      if (errors.length > 0) { showError(errors[0]); return; }
+
+      const submitBtn = document.querySelector('button[type="submit"]');
+      submitBtn.textContent = 'Submitting...';
+      submitBtn.disabled = true;
+
+      try {
+        await submitRequest(
+          window.__currentUserId,
+          pharmacyId,
+          medicines,
+          document.getElementById('notes').value,
+          document.getElementById('pickupTime').value
+        );
+        window.location.href = 'dashboard.html';
+      } catch (err) {
+        showError('Failed to submit request. Please try again.');
+        submitBtn.textContent = 'Submit Request';
+        submitBtn.disabled = false;
+      }
+    });
+
+    function showError(msg) {
+      let el = document.getElementById('formError');
+      if (!el) {
+        el = document.createElement('div');
+        el.id = 'formError';
+        el.className = 'disclaimer';
+        el.style.marginBottom = '16px';
+        document.querySelector('.form-actions').before(el);
+      }
+      el.innerHTML = `<i class="ri-error-warning-line"></i><span>${msg}</span>`;
+      el.style.background = '#FEF2F2';
+      el.style.borderColor = '#FECACA';
+      el.style.color = '#991B1B';
+    }
+  </script>
+</body>
+</html>
