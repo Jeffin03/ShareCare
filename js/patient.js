@@ -34,10 +34,12 @@ export async function getPharmacies() {
 
 
 // ── Submit a new medicine request ─────────────────────────────────────────────
-export async function submitRequest(patientId, pharmacyId, medicines, notes, preferredPickupTime) {
+export async function submitRequest(patientId, patientName, pharmacyId, pharmacyName, medicines, notes, preferredPickupTime) {
   const ref = await addDoc(collection(db, "requests"), {
     patientId,
+    patientName,
     pharmacyId,
+    pharmacyName,
     medicines,         // array of { name, quantity }
     notes,
     preferredPickupTime,
@@ -85,6 +87,15 @@ export async function cancelRequest(requestId) {
   }
   await updateDoc(doc(db, "requests", requestId), {
     status:    "cancelled",
+    updatedAt: serverTimestamp()
+  });
+}
+
+
+// ── Set delivery preference (called when status is ready) ────────────────────
+export async function setDeliveryPreference(requestId, preference) {
+  await updateDoc(doc(db, "requests", requestId), {
+    deliveryPreference: preference,
     updatedAt: serverTimestamp()
   });
 }
