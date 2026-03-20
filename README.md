@@ -1,5 +1,7 @@
 # ShareCare
 
+![ShareCare_LandingPage](assets/image.png)
+
 A web application for people living with diabetes — combining a **medicine restock request portal** with a **peer support community feed**.
 
 ---
@@ -41,8 +43,7 @@ The project includes user authentication, role-based dashboards (patient and pha
 | Fonts & Icons | DM Sans, DM Serif Display (Google Fonts), Remixicon |
 | Authentication | Firebase Authentication (Email/Password) |
 | Database | Cloud Firestore |
-| Hosting (Dev) | GitHub Pages |
-| Hosting (Prod) | Vercel |
+| Hosting | Vercel (preview + production) |
 | Testing | Jest |
 | CI/CD | GitHub Actions |
 
@@ -52,21 +53,23 @@ The project includes user authentication, role-based dashboards (patient and pha
 
 The project follows Agile methodology with four iterative sprints:
 
-| Sprint | Deliverable |
-|---|---|
-| 1 | Firebase setup, authentication, CI/CD pipeline |
-| 2 | Medicine portal — patient side (request submission & tracking) |
-| 3 | Pharmacy dashboard — order management & status updates |
-| 4 | Community feed, seed script, final deployment |
+| Sprint | Deliverable | Status |
+|---|---|---|
+| 1 | Firebase setup, authentication, CI/CD pipeline | ✅ Complete |
+| 2 | Medicine portal — patient side (request submission & tracking) | ✅ Complete |
+| 3 | Pharmacy dashboard — order management, delivery preference | ✅ Complete |
+| 4 | Community feed, seed script, final deployment | 🔲 In Progress |
 
 ---
 
 ## Branching & Deployment Strategy
 
-| Branch | Hosting | Firebase Project | Purpose |
-|---|---|---|---|
-| `master` | GitHub Pages | `sharecare-dev` | Development & testing |
-| `prod` | Vercel | `sharecare-prod` | Production demo |
+| Branch | Environment | Purpose |
+|---|---|---|
+| `master` | Vercel Preview | Development & testing |
+| `prod` | Vercel Production | Production demo |
+
+Both environments use the same `build-env.js` script to generate `js/env.js` from Vercel environment variables at build time. The `env.js` file is never committed to the repository.
 
 ---
 
@@ -105,6 +108,17 @@ npx serve .
 ```bash
 npm test
 ```
+
+---
+
+## Future Enhancements
+
+- Push notifications for request status updates (Firebase Cloud Messaging)
+- Delivery tracking integration for dispatched orders
+- Advanced community filtering and search
+- Pharmacy inventory management dashboard
+- Accessibility improvements (WCAG 2.1 compliance)
+- Progressive Web App (PWA) support for offline access
 
 ---
 
