@@ -37,7 +37,7 @@ service cloud.firestore {
     // Only the pharmacy owner can update their own record
     match /pharmacies/{pharmacyId} {
       allow read:   if isSignedIn();
-      allow create: if isPharmacy();
+      allow create: if isSignedIn();
       allow update: if isSignedIn() && isOwner(resource.data.ownerId);
       allow delete: if false;
     }
@@ -54,6 +54,8 @@ service cloud.firestore {
       allow update: if isSignedIn() && (
                       // Patient can cancel (status: pending → cancelled)
                       (isOwner(resource.data.patientId) && request.resource.data.status == 'cancelled') ||
+                      // Patient can set delivery preference (only when status is ready)
+                      (isOwner(resource.data.patientId) && resource.data.status == 'ready' && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['deliveryPreference', 'updatedAt'])) ||
                       // Pharmacy can update status
                       resource.data.pharmacyId == get(/databases/$(database)/documents/users/$(request.auth.uid)).data.pharmacyId
                     );

@@ -1,119 +1,269 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ShareCare — Pharmacy Dashboard</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/style.css">
-    <style>
-        body{display:flex;}
-        .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px;}
-        .stat-card{background:var(--card);border-radius:16px;padding:20px;border:1px solid var(--border);}
-        .stat-label{font-size:0.78rem;color:var(--text-muted);margin-bottom:8px;font-weight:500;}
-        .stat-val{font-family:var(--font-display);font-size:1.8rem;color:var(--text);}
-        .stat-sub{font-size:0.75rem;color:var(--text-muted);margin-top:4px;}
-        .stat-icon{float:right;width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;}
-        .si-amber{background:#FEF9C3;color:#CA8A04;}
-        .si-blue{background:#EFF6FF;color:#3B82F6;}
-        .si-green{background:#F0FDF4;color:#16A34A;}
-        .si-gray{background:var(--bg-alt);color:var(--text-muted);}
-        .tabs{display:flex;gap:4px;background:var(--bg-alt);padding:4px;border-radius:12px;margin-bottom:24px;width:fit-content;}
-        .tab{padding:7px 16px;border-radius:9px;font-size:0.875rem;font-weight:500;cursor:pointer;transition:all 0.2s;color:var(--text-muted);border:none;background:transparent;font-family:var(--font-body);}
-        .tab.active{background:var(--card);color:var(--text);font-weight:600;box-shadow:0 1px 4px rgba(0,0,0,0.06);}
-        .order-card{background:var(--card);border-radius:16px;padding:20px 24px;border:1px solid var(--border);display:grid;grid-template-columns:auto 1fr auto auto;align-items:center;gap:18px;transition:all 0.2s;cursor:pointer;text-decoration:none;color:var(--text);margin-bottom:12px;}
-        .order-card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(44,58,53,0.08);border-color:var(--primary-mid);}
-        .order-card.urgent{border-left:3px solid var(--accent);}
-        .ord-icon{width:44px;height:44px;border-radius:12px;background:var(--primary-light);display:flex;align-items:center;justify-content:center;font-size:1.2rem;color:var(--primary);flex-shrink:0;}
-        .ord-patient{font-size:0.78rem;color:var(--text-muted);margin-bottom:3px;}
-        .ord-meds{font-size:0.9rem;font-weight:600;}
-        .ord-meta{font-size:0.75rem;color:var(--text-muted);margin-top:4px;display:flex;gap:12px;}
-        .ord-time{font-size:0.78rem;color:var(--text-muted);text-align:right;}
-        .search-filter-row{display:flex;align-items:center;gap:12px;margin-bottom:20px;}
-        .sc-search{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);padding:9px 16px;border-radius:999px;flex:1;max-width:320px;}
-        .sc-search input{border:none;outline:none;background:transparent;font-family:var(--font-body);font-size:0.875rem;color:var(--text);width:100%;}
-        .filter-btn{display:flex;align-items:center;gap:6px;padding:9px 16px;border-radius:999px;background:var(--card);border:1px solid var(--border);font-size:0.82rem;font-weight:500;cursor:pointer;color:var(--text-muted);font-family:var(--font-body);transition:all 0.2s;}
-        .filter-btn:hover{border-color:var(--primary);color:var(--primary);}
-    </style>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ShareCare — Pharmacy Dashboard</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/style.css">
+  <style>
+    /* === CRITICAL LAYOUT === */
+    html,body{margin:0;padding:0;}
+
+    .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px;}
+    .stat-card{background:var(--card);border-radius:var(--radius-lg);padding:20px 22px;border:1px solid var(--border-light);display:flex;align-items:center;gap:14px;}
+    .stat-icon{width:44px;height:44px;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+    .stat-val{font-family:'DM Serif Display',serif;font-size:24px;}
+    .stat-label{font-size:12px;color:var(--text-muted);margin-top:2px;}
+    .tab-bar{display:flex;gap:4px;background:var(--bg-alt);padding:4px;border-radius:var(--radius-full);margin-bottom:20px;width:fit-content;}
+    .tab{padding:7px 18px;border-radius:var(--radius-full);font-size:13px;font-weight:600;color:var(--text-muted);cursor:pointer;transition:all 0.2s;}
+    .tab.active{background:var(--card);color:var(--text);box-shadow:var(--shadow-sm);}
+    .orders-list{display:flex;flex-direction:column;gap:12px;}
+    .order-card{background:var(--card);border-radius:var(--radius-lg);padding:20px 24px;border:1px solid var(--border-light);display:flex;align-items:center;gap:16px;transition:box-shadow 0.2s,border-color 0.2s;cursor:pointer;text-decoration:none;color:var(--text);}
+    .order-card:hover{box-shadow:var(--shadow-md);border-color:var(--primary-mid);}
+    .order-icon{width:44px;height:44px;border-radius:var(--radius-md);background:var(--accent-light);color:var(--accent-dark);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+    .order-main{flex:1;}
+    .order-patient{font-size:14px;font-weight:700;margin-bottom:3px;}
+    .order-meds{font-size:13px;color:var(--text-muted);margin-bottom:3px;}
+    .order-time{font-size:12px;color:var(--text-light);}
+    .order-right{display:flex;flex-direction:column;align-items:flex-end;gap:8px;}
+    .new-badge{background:var(--accent);color:white;font-size:11px;font-weight:700;padding:2px 8px;border-radius:var(--radius-full);}
+    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:500;display:flex;align-items:center;justify-content:center;}
+    .modal-card{background:var(--card);border-radius:var(--radius-xl);padding:36px 40px;width:100%;max-width:480px;box-shadow:var(--shadow-lg);}
+    .modal-title{font-family:'DM Serif Display',serif;font-size:22px;margin-bottom:6px;}
+    .modal-sub{font-size:14px;color:var(--text-muted);margin-bottom:24px;}
+  </style>
 </head>
 <body>
-<aside class="sc-sidebar">
-    <a href="../index.html" class="sc-logo"><i class="ri-heart-pulse-fill"></i> ShareCare</a>
-    <ul class="sc-sidebar-nav">
-        <li><a href="dashboard.html" class="sc-sidebar-item active"><i class="ri-dashboard-line"></i> Orders</a></li>
-        <li><a href="#" class="sc-sidebar-item"><i class="ri-notification-3-line"></i> Notifications <span class="sc-nav-badge">3</span></a></li>
-        <li><a href="#" class="sc-sidebar-item"><i class="ri-settings-4-line"></i> Settings</a></li>
-    </ul>
-    <div class="sc-sidebar-footer">
+  <div class="sc-app">
+    <aside class="sc-sidebar">
+      <a href="../index.html" class="sc-logo"><i class="ri-heart-pulse-fill"></i> ShareCare</a>
+      <div class="sc-sidebar-section">Pharmacy</div>
+      <ul class="sc-sidebar-menu">
+        <li><a href="dashboard.html" class="sc-sidebar-item active"><i class="ri-dashboard-line"></i> All Orders</a></li>
+      </ul>
+      <div class="sc-sidebar-footer">
         <div class="sc-user-chip">
-            <img src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=80&auto=format&fit=crop" alt="Pharmacy">
-            <div><div class="sc-user-chip-name">Apollo Pharmacy</div><div class="sc-user-chip-role">Koramangala</div></div>
-            <i class="ri-logout-box-r-line" onclick="logOut()"></i>
+          <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=80&q=80" alt="Pharmacy">
+          <div><div class="sc-user-name" id="pharmacyName">Loading...</div><div class="sc-user-role">Pharmacy</div></div>
+          <i class="ri-logout-box-r-line sc-logout" onclick="logOut()"></i>
         </div>
+      </div>
+    </aside>
+    <div class="sc-main">
+      <div class="sc-topbar">
+        <div><div class="sc-topbar-title">Order Management</div><div class="sc-topbar-sub">All incoming medicine requests from patients</div></div>
+        <div class="sc-topbar-right">
+          <div class="search-bar"><i class="ri-search-line"></i><input type="text" placeholder="Search patient or medicine..." id="searchInput" oninput="filterSearch(this.value)"></div>
+          <div class="notif-btn"><i class="ri-notification-3-line"></i><div class="notif-dot" id="notifDot" style="display:none;"></div></div>
+        </div>
+      </div>
+      <div class="sc-content">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon" style="background:#FFFBEB;color:#92610A;"><i class="ri-time-line"></i></div>
+            <div><div class="stat-val" id="pendingCount">0</div><div class="stat-label">Pending</div></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background:#EFF6FF;color:#1D4ED8;"><i class="ri-check-double-line"></i></div>
+            <div><div class="stat-val" id="confirmedCount">0</div><div class="stat-label">Confirmed</div></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background:#ECFDF5;color:#065F46;"><i class="ri-checkbox-circle-line"></i></div>
+            <div><div class="stat-val" id="readyCount">0</div><div class="stat-label">Ready for Pickup</div></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background:var(--bg-alt);color:var(--text-muted);"><i class="ri-archive-line"></i></div>
+            <div><div class="stat-val" id="collectedCount">0</div><div class="stat-label">Collected Today</div></div>
+          </div>
+        </div>
+
+        <div class="tab-bar">
+          <div class="tab active" onclick="filterTab(this,'all')">All</div>
+          <div class="tab" onclick="filterTab(this,'pending')">Pending</div>
+          <div class="tab" onclick="filterTab(this,'confirmed')">Confirmed</div>
+          <div class="tab" onclick="filterTab(this,'ready')">Ready</div>
+          <div class="tab" onclick="filterTab(this,'collected')">Collected</div>
+        </div>
+
+        <div class="orders-list" id="ordersList">
+          <div class="empty-state" id="emptyState" style="display:none;">
+            <i class="ri-inbox-line"></i>
+            <h3>No orders yet</h3>
+            <p>When patients submit medicine requests to your pharmacy, they'll appear here.</p>
+          </div>
+        </div>
+      </div>
     </div>
-</aside>
-<div class="sc-main">
-    <div class="sc-topbar">
-        <div><div class="sc-topbar-title">Order Management</div><div class="sc-topbar-sub">Apollo Pharmacy, Koramangala · Today</div></div>
-        <div style="display:flex;align-items:center;gap:10px;">
-            <div class="notif-btn"><i class="ri-notification-3-line"></i><div class="notif-dot"></div></div>
-        </div>
+  </div>
+  <!-- Pharmacy Setup Modal -->
+  <div class="modal-overlay" id="setupModal" style="display:none;">
+    <div class="modal-card">
+      <div class="modal-title">Set up your pharmacy</div>
+      <div class="modal-sub">Add your pharmacy details so patients can send you requests.</div>
+      <div id="setupError" class="error-msg" style="display:none;"><i class="ri-error-warning-line"></i><span id="setupErrorText"></span></div>
+      <div class="form-group">
+        <label class="form-label">Pharmacy name <span style="color:var(--accent);">*</span></label>
+        <input type="text" class="form-input" id="setupName" placeholder="e.g. Apollo Pharmacy">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Address <span style="color:var(--accent);">*</span></label>
+        <input type="text" class="form-input" id="setupAddress" placeholder="e.g. 5th Block, Koramangala">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Area <span style="color:var(--accent);">*</span></label>
+        <input type="text" class="form-input" id="setupArea" placeholder="e.g. Koramangala">
+      </div>
+      <div class="form-group" style="margin-bottom:24px;">
+        <label class="form-label">Phone number <span style="color:var(--accent);">*</span></label>
+        <input type="tel" class="form-input" id="setupPhone" placeholder="e.g. 080-41234567">
+      </div>
+      <div style="display:flex;gap:10px;">
+        <button class="btn btn-primary" id="setupSaveBtn" onclick="savePharmacySetup()"><i class="ri-save-line"></i> Save & Continue</button>
+        <button class="btn btn-outline" onclick="document.getElementById('setupModal').style.display='none'">Cancel</button>
+      </div>
     </div>
-    <div class="sc-content">
-        <div class="stats-row">
-            <div class="stat-card"><div class="stat-icon si-amber"><i class="ri-time-line"></i></div><div class="stat-label">Pending</div><div class="stat-val">3</div><div class="stat-sub">Needs attention</div></div>
-            <div class="stat-card"><div class="stat-icon si-blue"><i class="ri-checkbox-circle-line"></i></div><div class="stat-label">Confirmed</div><div class="stat-val">2</div><div class="stat-sub">Being prepared</div></div>
-            <div class="stat-card"><div class="stat-icon si-green"><i class="ri-store-line"></i></div><div class="stat-label">Ready</div><div class="stat-val">1</div><div class="stat-sub">Awaiting pickup</div></div>
-            <div class="stat-card"><div class="stat-icon si-gray"><i class="ri-archive-line"></i></div><div class="stat-label">Today's total</div><div class="stat-val">12</div><div class="stat-sub">Orders processed</div></div>
-        </div>
-        <div class="search-filter-row">
-            <div class="sc-search"><i class="ri-search-line" style="color:var(--text-muted);flex-shrink:0;"></i><input type="text" placeholder="Search by patient or medicine..."></div>
-            <button class="filter-btn"><i class="ri-filter-line"></i> Filter</button>
-            <button class="filter-btn"><i class="ri-sort-asc"></i> Sort: Newest</button>
-        </div>
-        <div class="tabs">
-            <button class="tab active" onclick="setTab(this,'all')">All</button>
-            <button class="tab" onclick="setTab(this,'pending')">Pending</button>
-            <button class="tab" onclick="setTab(this,'confirmed')">Confirmed</button>
-            <button class="tab" onclick="setTab(this,'ready')">Ready</button>
-        </div>
-        <div id="orders-list">
-            <a href="order-detail.html" class="order-card urgent">
-                <div class="ord-icon"><i class="ri-user-line"></i></div>
-                <div><div class="ord-patient">Ravi Kumar · Type 2</div><div class="ord-meds">Metformin 500mg × 30, Glimepiride 1mg × 15</div><div class="ord-meta"><span><i class="ri-time-line"></i> Evening pickup</span><span><i class="ri-attachment-line"></i> Prescription attached</span></div></div>
-                <div class="ord-time">Just now</div>
-                <span class="badge status-pending">Pending</span>
-            </a>
-            <a href="order-detail.html" class="order-card">
-                <div class="ord-icon"><i class="ri-user-line"></i></div>
-                <div><div class="ord-patient">Priya Sharma · Type 1</div><div class="ord-meds">Insulin Glargine 100IU × 2 vials</div><div class="ord-meta"><span><i class="ri-time-line"></i> Morning pickup</span><span><i class="ri-attachment-line"></i> Prescription attached</span></div></div>
-                <div class="ord-time">15 min ago</div>
-                <span class="badge status-pending">Pending</span>
-            </a>
-            <a href="order-detail.html" class="order-card">
-                <div class="ord-icon" style="background:#DBEAFE;color:#1E40AF;"><i class="ri-user-line"></i></div>
-                <div><div class="ord-patient">Arun Mehta · Type 2</div><div class="ord-meds">Sitagliptin 100mg × 30</div><div class="ord-meta"><span><i class="ri-time-line"></i> Afternoon pickup</span></div></div>
-                <div class="ord-time">1h ago</div>
-                <span class="badge status-confirmed">Confirmed</span>
-            </a>
-            <a href="order-detail.html" class="order-card">
-                <div class="ord-icon" style="background:#D1FAE5;color:#065F46;"><i class="ri-user-line"></i></div>
-                <div><div class="ord-patient">Meena Nair · Caregiver</div><div class="ord-meds">Metformin 1000mg × 60, Atorvastatin 10mg × 30</div><div class="ord-meta"><span><i class="ri-time-line"></i> Evening pickup</span></div></div>
-                <div class="ord-time">3h ago</div>
-                <span class="badge status-ready">Ready</span>
-            </a>
-        </div>
-    </div>
-</div>
-<script>
-function setTab(el,tab){
-    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-    el.classList.add('active');
-}
-</script>
- <script src="../js/env.js"></script>
+  </div>
+
+  <script>
+    let currentFilter='all';
+    function filterTab(el,status){document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');currentFilter=status;applyFilters();}
+    function filterSearch(val){applyFilters(val);}
+    function applyFilters(search=''){
+      const sv=search.toLowerCase();
+      document.querySelectorAll('.order-card').forEach(c=>{
+        // Hide collected and cancelled from 'all' tab — only show when explicitly selected
+        const hiddenInAll = currentFilter === 'all' && (c.dataset.status === 'collected' || c.dataset.status === 'cancelled');
+        const statusOk = !hiddenInAll && (currentFilter === 'all' || c.dataset.status === currentFilter);
+        const textOk = !sv || c.textContent.toLowerCase().includes(sv);
+        c.style.display = (statusOk && textOk) ? 'flex' : 'none';
+      });
+    }
+  </script>
+  <script src="../js/env.js"></script>
   <script type="module">
-    import { logOut, requireAuth } from '../js/auth.js';
+    import { requireAuth, logOut }                                from '../js/auth.js';
+    import { getPharmacyProfile, listenToPharmacyOrders,
+             getStatusLabel, getStatusClass, getOrderCounts,
+             registerPharmacy }                                  from '../js/pharmacy.js';
+
+    window.savePharmacySetup = async () => {
+      const name    = document.getElementById('setupName').value.trim();
+      const address = document.getElementById('setupAddress').value.trim();
+      const area    = document.getElementById('setupArea').value.trim();
+      const phone   = document.getElementById('setupPhone').value.trim();
+      const errorEl = document.getElementById('setupError');
+      const errorTx = document.getElementById('setupErrorText');
+      const saveBtn = document.getElementById('setupSaveBtn');
+
+      errorEl.style.display = 'none';
+
+      if (!name || !address || !area || !phone) {
+        errorEl.style.display = 'flex';
+        errorTx.textContent   = 'Please fill in all fields.';
+        return;
+      }
+
+      saveBtn.textContent = 'Saving...';
+      saveBtn.disabled    = true;
+
+      try {
+        await registerPharmacy(window.__currentUserId, name, address, area, phone);
+        document.getElementById('setupModal').style.display = 'none';
+        window.location.reload();
+      } catch (err) {
+        console.error('Setup failed:', err);
+        errorEl.style.display = 'flex';
+        errorTx.textContent   = 'Setup failed: ' + err.message;
+        saveBtn.textContent   = 'Save & Continue';
+        saveBtn.disabled      = false;
+      }
+    };
+
     window.logOut = logOut;
-</script>
-</body></html>
+
+    requireAuth(async (profile) => {
+      if (profile.role !== 'pharmacy') {
+        window.location.href = '../patient/dashboard.html';
+        return;
+      }
+
+      window.__currentUserId = profile.uid;
+
+      let pharmacy;
+      try {
+        pharmacy = await getPharmacyProfile(profile.uid);
+      } catch (err) {
+        document.getElementById('pharmacyName').textContent = profile.name || 'Pharmacy';
+        document.getElementById('ordersList').innerHTML = `
+          <div class="empty-state" style="display:flex;flex-direction:column;align-items:center;">
+            <i class="ri-store-2-line" style="font-size:48px;color:var(--border);margin-bottom:16px;"></i>
+            <h3 style="margin-bottom:8px;">Pharmacy not set up</h3>
+            <p style="margin-bottom:20px;">Your account is not linked to a pharmacy yet.</p>
+            <button class="btn btn-primary" onclick="document.getElementById('setupModal').style.display='flex'">
+              <i class="ri-store-2-line"></i> Set Up Pharmacy
+            </button>
+          </div>`;
+        return;
+      }
+
+      document.getElementById('pharmacyName').textContent = pharmacy.name;
+
+      listenToPharmacyOrders(pharmacy.id, (orders) => {
+        const counts = getOrderCounts(orders);
+
+        document.getElementById('pendingCount').textContent   = counts.pending;
+        document.getElementById('confirmedCount').textContent = counts.confirmed;
+        document.getElementById('readyCount').textContent     = counts.ready;
+        document.getElementById('collectedCount').textContent = counts.collected;
+
+        // Show notif dot if there are pending orders
+        const notifDot = document.getElementById('notifDot');
+        if (notifDot) notifDot.style.display = counts.pending > 0 ? 'block' : 'none';
+
+        const list  = document.getElementById('ordersList');
+        const empty = document.getElementById('emptyState');
+
+        if (orders.length === 0) {
+          list.innerHTML = '';
+          empty.style.display = 'flex';
+          return;
+        }
+        empty.style.display = 'none';
+        list.innerHTML = '';
+
+        orders.forEach(r => {
+          const meds  = r.medicines?.map(m => `${m.name} ×${m.quantity}`).join(', ') || '—';
+          const label = getStatusLabel(r.status);
+          const cls   = getStatusClass(r.status);
+          const date  = r.createdAt?.toDate().toLocaleDateString('en-IN') || '';
+
+          const iconMap = {
+            pending:   'ri-time-line',
+            confirmed: 'ri-check-line',
+            ready:     'ri-checkbox-circle-line',
+            collected: 'ri-archive-line',
+            cancelled: 'ri-close-circle-line'
+          };
+
+          const card = document.createElement('a');
+          card.href           = `order-detail.html?id=${r.id}`;
+          card.className      = 'order-card';
+          card.dataset.status = r.status;
+          card.innerHTML      = `
+            <div class="order-icon"><i class="ri-user-heart-line"></i></div>
+            <div class="order-main">
+              <div class="order-patient">${r.patientName || 'Patient'}</div>
+              <div class="order-meds">${meds}</div>
+              <div class="order-time">Pickup: ${r.preferredPickupTime || '—'} &middot; ${date}</div>
+            </div>
+            <div class="order-right">
+              <span class="${cls}"><i class="${iconMap[r.status] || 'ri-question-line'}"></i> ${label}</span>
+              ${r.status === 'pending' ? '<span class="new-badge">NEW</span>' : ''}
+            </div>`;
+          list.appendChild(card);
+        });
+      });
+    });
+  </script>
+</body>
+</html>

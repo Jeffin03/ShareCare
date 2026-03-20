@@ -44,15 +44,29 @@ function canCancel(status) {
   return status === 'pending';
 }
 
-function buildRequestData(patientId, pharmacyId, medicines, notes, preferredPickupTime) {
+// Updated to include patientName and pharmacyName
+function buildRequestData(patientId, patientName, pharmacyId, pharmacyName, medicines, notes, preferredPickupTime) {
   return {
     patientId,
+    patientName,
     pharmacyId,
+    pharmacyName,
     medicines,
     notes,
     preferredPickupTime,
     status: 'pending'
   };
+}
+
+function isDeliveryAllowed() {
+  const hour = new Date().getHours();
+  return hour >= 9 && hour < 21;
+}
+
+function getDeliveryLabel(preference) {
+  if (preference === 'delivery') return 'Delivery requested — the pharmacy will dispatch your order.';
+  if (preference === 'pickup')   return 'You will pick up in person. Visit the pharmacy when your order is ready.';
+  return '';
 }
 
 
@@ -158,17 +172,83 @@ describe('canCancel', () => {
 
 describe('buildRequestData', () => {
   test('builds request with correct default status', () => {
-    const data = buildRequestData('uid1', 'pharm1', [{ name: 'Metformin', quantity: 1 }], '', 'Morning');
+    const data = buildRequestData('uid1', 'Ravi Kumar', 'pharm1', 'Apollo Pharmacy', [{ name: 'Metformin', quantity: 1 }], '', 'Morning');
     expect(data.status).toBe('pending');
     expect(data.patientId).toBe('uid1');
+    expect(data.patientName).toBe('Ravi Kumar');
     expect(data.pharmacyId).toBe('pharm1');
+    expect(data.pharmacyName).toBe('Apollo Pharmacy');
     expect(data.preferredPickupTime).toBe('Morning');
   });
 
   test('includes medicines array in request', () => {
     const meds = [{ name: 'Metformin', quantity: 2 }, { name: 'Glipizide', quantity: 1 }];
-    const data = buildRequestData('uid1', 'pharm1', meds, 'urgent', 'Evening');
+    const data = buildRequestData('uid1', 'Ravi Kumar', 'pharm1', 'Apollo Pharmacy', meds, 'urgent', 'Evening');
     expect(data.medicines).toHaveLength(2);
     expect(data.medicines[0].name).toBe('Metformin');
+  });
+
+  test('stores notes correctly', () => {
+    const data = buildRequestData('uid1', 'Ravi Kumar', 'pharm1', 'Apollo Pharmacy', [{ name: 'Metformin', quantity: 1 }], 'Please pack separately', 'Morning');
+    expect(data.notes).toBe('Please pack separately');
+  });
+});
+
+
+describe('isDeliveryAllowed', () => {
+  test('returns a boolean', () => {
+    expect(typeof isDeliveryAllowed()).toBe('boolean');
+  });
+
+  test('delivery is allowed between 9am and 9pm', () => {
+    // Mock hours within window
+    const originalDate = global.Date;
+    global.Date = class extends Date {
+      getHours() { return 14; } // 2 PM
+    };
+    expect(isDeliveryAllowed()).toBe(true);
+    global.Date = originalDate;
+  });
+
+  test('delivery is not allowed before 9am', () => {
+    const originalDate = global.Date;
+    global.Date = class extends Date {
+      getHours() { return 7; } // 7 AM
+    };
+    expect(isDeliveryAllowed()).toBe(false);
+    global.Date = originalDate;
+  });
+
+  test('delivery is not allowed after 9pm', () => {
+    const originalDate = global.Date;
+    global.Date = class extends Date {
+      getHours() { return 22; } // 10 PM
+    };
+    expect(isDeliveryAllowed()).toBe(false);
+    global.Date = originalDate;
+  });
+
+  test('delivery is not allowed exactly at 9pm', () => {
+    const originalDate = global.Date;
+    global.Date = class extends Date {
+      getHours() { return 21; } // 9 PM exactly
+    };
+    expect(isDeliveryAllowed()).toBe(false);
+    global.Date = originalDate;
+  });
+});
+
+
+describe('getDeliveryLabel', () => {
+  test('returns correct label for delivery preference', () => {
+    expect(getDeliveryLabel('delivery')).toBe('Delivery requested — the pharmacy will dispatch your order.');
+  });
+
+  test('returns correct label for pickup preference', () => {
+    expect(getDeliveryLabel('pickup')).toBe('You will pick up in person. Visit the pharmacy when your order is ready.');
+  });
+
+  test('returns empty string for unknown preference', () => {
+    expect(getDeliveryLabel('unknown')).toBe('');
   });
 });

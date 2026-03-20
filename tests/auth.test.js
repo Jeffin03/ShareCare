@@ -173,3 +173,129 @@ describe('getStatusLabel', () => {
     expect(getStatusLabel('something_random')).toBe('Unknown');
   });
 });
+
+
+describe('validateEmail', () => {
+  function validateEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
+
+  test('accepts valid email', () => {
+    expect(validateEmail('ravi@example.com')).toBe(true);
+  });
+
+  test('accepts email with subdomain', () => {
+    expect(validateEmail('ravi@mail.example.com')).toBe(true);
+  });
+
+  test('rejects email without @', () => {
+    expect(validateEmail('raviexample.com')).toBe(false);
+  });
+
+  test('rejects email without domain', () => {
+    expect(validateEmail('ravi@')).toBe(false);
+  });
+
+  test('rejects email with spaces', () => {
+    expect(validateEmail('ravi @example.com')).toBe(false);
+  });
+
+  test('rejects empty string', () => {
+    expect(validateEmail('')).toBe(false);
+  });
+});
+
+
+describe('validatePassword', () => {
+  function validatePassword(password) {
+    if (password.length < 8) return 'Password must be at least 8 characters.';
+    if (!/(?=.*[a-zA-Z])(?=.*[0-9])/.test(password)) return 'Password must contain at least one letter and one number.';
+    return null;
+  }
+
+  test('accepts valid password with letters and numbers', () => {
+    expect(validatePassword('password123')).toBeNull();
+  });
+
+  test('accepts mixed case with numbers', () => {
+    expect(validatePassword('MyPass99')).toBeNull();
+  });
+
+  test('rejects password shorter than 8 chars', () => {
+    expect(validatePassword('pass1')).toBe('Password must be at least 8 characters.');
+  });
+
+  test('rejects password with only letters', () => {
+    expect(validatePassword('passwordonly')).toBe('Password must contain at least one letter and one number.');
+  });
+
+  test('rejects password with only numbers', () => {
+    expect(validatePassword('12345678')).toBe('Password must contain at least one letter and one number.');
+  });
+});
+
+
+describe('validateName', () => {
+  function validateName(name) {
+    return /^[a-zA-Z\s'-]{2,50}$/.test(name);
+  }
+
+  test('accepts simple name', () => {
+    expect(validateName('Ravi')).toBe(true);
+  });
+
+  test('accepts name with hyphen', () => {
+    expect(validateName('Mary-Jane')).toBe(true);
+  });
+
+  test('accepts name with apostrophe', () => {
+    expect(validateName("O'Brien")).toBe(true);
+  });
+
+  test('rejects single character name', () => {
+    expect(validateName('R')).toBe(false);
+  });
+
+  test('rejects name with numbers', () => {
+    expect(validateName('Ravi123')).toBe(false);
+  });
+
+  test('rejects name with special characters', () => {
+    expect(validateName('Ravi@Kumar')).toBe(false);
+  });
+
+  test('rejects empty string', () => {
+    expect(validateName('')).toBe(false);
+  });
+});
+
+
+describe('validatePhone', () => {
+  function validatePhone(phone) {
+    return /^[0-9\s\-\+\(\)]{7,15}$/.test(phone);
+  }
+
+  test('accepts standard phone number', () => {
+    expect(validatePhone('9876543210')).toBe(true);
+  });
+
+  test('accepts phone with dashes', () => {
+    expect(validatePhone('080-41234567')).toBe(true);
+  });
+
+  test('accepts phone with country code', () => {
+    expect(validatePhone('+91 9876543210')).toBe(true);
+  });
+
+  test('rejects phone with letters', () => {
+    expect(validatePhone('9876abc210')).toBe(false);
+  });
+
+  test('rejects phone too short', () => {
+    expect(validatePhone('123')).toBe(false);
+  });
+
+  test('rejects empty string', () => {
+    expect(validatePhone('')).toBe(false);
+  });
+});

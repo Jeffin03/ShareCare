@@ -38,6 +38,19 @@
     .pharmacy-info-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
     .pharmacy-info-row i{color:var(--primary);font-size:17px;}
     .pharmacy-info-row span{font-size:14px;}
+    .delivery-card{background:linear-gradient(135deg,var(--primary-light),var(--accent-light));border:1px solid var(--primary-mid);border-radius:var(--radius-lg);padding:20px 24px;margin-top:20px;}
+    .delivery-card h4{font-family:'DM Serif Display',serif;font-size:17px;margin-bottom:6px;}
+    .delivery-card p{font-size:13px;color:var(--text-muted);margin-bottom:16px;}
+    .delivery-opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+    .delivery-opt{border:2px solid var(--border);border-radius:var(--radius-md);padding:14px;text-align:center;cursor:pointer;background:var(--card);transition:all 0.2s;}
+    .delivery-opt:hover{border-color:var(--primary);}
+    .delivery-opt i{font-size:24px;display:block;margin-bottom:6px;color:var(--text-muted);}
+    .delivery-opt span{font-size:13px;font-weight:600;color:var(--text-muted);}
+    .delivery-opt.selected{border-color:var(--primary);background:var(--primary-light);}
+    .delivery-opt.selected i,.delivery-opt.selected span{color:var(--primary-dark);}
+    .delivery-confirmed{display:flex;align-items:center;gap:10px;padding:14px 16px;background:var(--card);border-radius:var(--radius-md);border:1px solid var(--border-light);}
+    .delivery-confirmed i{font-size:20px;color:var(--primary);}
+    .delivery-confirmed span{font-size:14px;font-weight:500;}
   </style>
 </head>
 <body>
@@ -99,6 +112,34 @@
                 <div class="info-icon" style="background:var(--accent-light);color:var(--accent-dark);"><i class="ri-store-2-line"></i></div>
                 <div><div class="info-label">Pharmacy Notes</div><div class="info-val" id="rPharmacyNotes">—</div></div>
               </div>
+
+              <!-- Delivery preference — shown only when status is ready -->
+              <div id="deliverySection" style="display:none;">
+                <div class="delivery-card">
+                  <h4>Your order is ready!</h4>
+                  <p>How would you like to receive your medicines?</p>
+                  <div id="deliveryTimeWarning" style="display:none;background:#FFFBEB;border:1px solid #FDE68A;border-radius:var(--radius-md);padding:10px 14px;font-size:13px;color:#78500A;margin-bottom:12px;">
+                    <i class="ri-time-line" style="margin-right:6px;"></i>
+                    Delivery is only available between <strong>9 AM – 9 PM</strong>. Please come back during delivery hours or choose pickup.
+                  </div>
+                  <div class="delivery-opts" id="deliveryOpts">
+                    <div class="delivery-opt" id="optPickup" onclick="chooseDelivery('pickup')">
+                      <i class="ri-walk-line"></i>
+                      <span>Pick up in person</span>
+                    </div>
+                    <div class="delivery-opt" id="optDelivery" onclick="chooseDelivery('delivery')">
+                      <i class="ri-e-bike-line"></i>
+                      <span>Request delivery</span>
+                    </div>
+                  </div>
+                  <div id="deliveryConfirmed" style="display:none;margin-top:12px;">
+                    <div class="delivery-confirmed">
+                      <i class="ri-checkbox-circle-fill"></i>
+                      <span id="deliveryConfirmedText">Preference saved.</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
           <div>
@@ -124,7 +165,7 @@
   <script src="../js/env.js"></script>
   <script type="module">
     import { requireAuth, logOut }                         from '../js/auth.js';
-    import { listenToRequest, cancelRequest, getStatusLabel, getStatusClass } from '../js/patient.js';
+    import { listenToRequest, cancelRequest, getStatusLabel, getStatusClass, setDeliveryPreference } from '../js/patient.js';
     import { db }                                          from '../js/firebase-config.js';
     import { doc, getDoc }                                 from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
@@ -203,6 +244,28 @@
           };
         }
 
+        // Delivery section — show when status is ready
+        const deliverySection = document.getElementById('deliverySection');
+        if (deliverySection) {
+          if (r.status === 'ready') {
+            deliverySection.style.display = 'block';
+            // If preference already set, show confirmed state
+            if (r.deliveryPreference) {
+              document.getElementById('deliveryOpts').style.display = 'none';
+              document.getElementById('deliveryConfirmed').style.display = 'block';
+              const label = r.deliveryPreference === 'delivery'
+                ? 'Delivery requested — pharmacy will dispatch your order.'
+                : 'You will pick up in person. Visit the pharmacy when ready.';
+              document.getElementById('deliveryConfirmedText').textContent = label;
+            } else {
+              document.getElementById('deliveryOpts').style.display = 'grid';
+              document.getElementById('deliveryConfirmed').style.display = 'none';
+            }
+          } else {
+            deliverySection.style.display = 'none';
+          }
+        }
+
         // Pharmacy contact details
         try {
           const ps = await getDoc(doc(db, 'pharmacies', r.pharmacyId));
@@ -214,6 +277,45 @@
         } catch (_) {}
       });
     });
+
+    window.chooseDelivery = async (preference) => {
+      if (!id) return;
+
+      // Enforce delivery time window: 9 AM – 9 PM
+      if (preference === 'delivery') {
+        const hour = new Date().getHours();
+        const warning = document.getElementById('deliveryTimeWarning');
+        if (hour < 9 || hour >= 21) {
+          warning.style.display = 'block';
+          document.getElementById('optDelivery').classList.remove('selected');
+          return;
+        } else {
+          warning.style.display = 'none';
+        }
+      }
+
+      // Highlight selected option
+      document.getElementById('optPickup').classList.toggle('selected', preference === 'pickup');
+      document.getElementById('optDelivery').classList.toggle('selected', preference === 'delivery');
+
+      try {
+        await setDeliveryPreference(id, preference);
+        // Only show confirmed state after successful save
+        document.getElementById('deliveryOpts').style.display = 'none';
+        document.getElementById('deliveryConfirmed').style.display = 'block';
+        const label = preference === 'delivery'
+          ? 'Delivery requested — the pharmacy will dispatch your order.'
+          : 'You will pick up in person. Visit the pharmacy when your order is ready.';
+        document.getElementById('deliveryConfirmedText').textContent = label;
+      } catch (err) {
+        // Reset selection on failure
+        document.getElementById('optPickup').classList.remove('selected');
+        document.getElementById('optDelivery').classList.remove('selected');
+        document.getElementById('deliveryOpts').style.display = 'grid';
+        document.getElementById('deliveryConfirmed').style.display = 'none';
+        alert('Failed to save preference. Please try again.');
+      }
+    };
   </script>
 </body>
 </html>

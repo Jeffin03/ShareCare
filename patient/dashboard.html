@@ -115,7 +115,8 @@
       document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
       el.classList.add('active');
       document.querySelectorAll('.request-card').forEach(c => {
-        c.style.display = (status === 'all' || c.dataset.status === status) ? 'flex' : 'none';
+        const hiddenInAll = status === 'all' && (c.dataset.status === 'collected' || c.dataset.status === 'cancelled');
+        c.style.display = (!hiddenInAll && (status === 'all' || c.dataset.status === status)) ? 'flex' : 'none';
       });
     }
   </script>
