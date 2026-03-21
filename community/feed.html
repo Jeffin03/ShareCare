@@ -1,629 +1,308 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ShareCare — Community Feed</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
   <link rel="stylesheet" href="../assets/style.css">
   <style>
-    /* ── Feed layout ── */
-    .feed-layout {
-      display: grid;
-      grid-template-columns: 1fr 280px;
-      gap: 24px;
-      align-items: start;
-    }
+    /* === CRITICAL LAYOUT === */
+    html,body{margin:0;padding:0;}
 
-    /* ── Category pills ── */
-    .category-pills { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
-    .pill {
-      display: inline-flex; align-items: center; gap: 6px;
-      padding: 6px 16px; border-radius: var(--radius-full);
-      font-size: 13px; font-weight: 500; cursor: pointer;
-      border: 1.5px solid var(--border); background: var(--card);
-      color: var(--text-muted); transition: all 0.2s; user-select: none;
-    }
-    .pill:hover  { border-color: var(--primary); color: var(--primary); }
-    .pill.active { background: var(--primary); border-color: var(--primary); color: #fff; }
-    .pill i      { font-size: 15px; }
-
-    /* ── Sort bar ── */
-    .sort-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
-    .sort-label { font-size: 13px; color: var(--text-muted); }
-    .sort-options { display: flex; gap: 4px; }
-    .sort-opt {
-      padding: 5px 12px; border-radius: var(--radius-full);
-      font-size: 12px; font-weight: 600; color: var(--text-muted);
-      cursor: pointer; transition: all 0.2s; background: transparent;
-      border: 1.5px solid var(--border); user-select: none;
-    }
-    .sort-opt.active {
-      background: var(--primary-light); color: var(--primary-dark);
-      border-color: var(--primary-mid);
-    }
-
-    /* ── Posts list ── */
-    .posts-list { display: flex; flex-direction: column; gap: 14px; }
-
-    /* ── Post card ── */
-    .post-card {
-      background: var(--card); border-radius: var(--radius-lg);
-      border: 1px solid var(--border-light); overflow: hidden;
-      transition: box-shadow 0.2s; cursor: pointer;
-      text-decoration: none; color: var(--text); display: block;
-    }
-    .post-card:hover   { box-shadow: var(--shadow-md); }
-    .post-card-body    { padding: 18px 20px; }
-    .post-header       { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-    .post-avatar {
-      width: 34px; height: 34px; border-radius: 50%;
-      border: 2px solid var(--border); flex-shrink: 0;
-      background: var(--primary-light);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 13px; font-weight: 700; color: var(--primary);
-      overflow: hidden;
-    }
-    .post-avatar img   { width: 100%; height: 100%; object-fit: cover; }
-    .post-author-name  { font-size: 13px; font-weight: 600; }
-    .post-author-role  { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
-    .post-title {
-      font-family: 'DM Serif Display', serif;
-      font-size: 17px; margin-bottom: 6px; line-height: 1.3;
-    }
-    .post-excerpt {
-      font-size: 13px; color: var(--text-muted); line-height: 1.6;
-      display: -webkit-box; -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical; overflow: hidden;
-    }
-    .post-footer {
-      display: flex; align-items: center; justify-content: space-between;
-      margin-top: 14px; padding-top: 12px;
-      border-top: 1px solid var(--border-light);
-    }
-    .post-meta      { display: flex; align-items: center; gap: 14px; }
-    .post-meta-item { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--text-light); }
-    .post-meta-item i { font-size: 14px; }
-    .post-actions   { display: flex; align-items: center; gap: 6px; }
-    .post-action-btn {
-      width: 32px; height: 32px; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 16px; color: var(--text-muted);
-      cursor: pointer; transition: all 0.2s;
-      background: transparent; border: none;
-    }
-    .post-action-btn:hover    { background: var(--bg); color: var(--primary); }
-    .post-action-btn.saved    { color: var(--accent); }
-    .post-action-btn:disabled { opacity: 0.4; cursor: default; }
-
-    /* ── Guest banner ── */
-    .guest-banner {
-      background: linear-gradient(135deg, var(--primary-light), var(--accent-light));
-      border: 1px solid var(--primary-mid); border-radius: var(--radius-lg);
-      padding: 20px 24px; display: flex; align-items: center;
-      justify-content: space-between; margin-bottom: 20px; gap: 16px;
-    }
-    .guest-banner-text h3 {
-      font-family: 'DM Serif Display', serif; font-size: 16px; margin-bottom: 4px;
-    }
-    .guest-banner-text p    { font-size: 13px; color: var(--text-muted); }
-    .guest-banner-actions   { display: flex; gap: 8px; flex-shrink: 0; }
-
-    /* ── Sidebar widgets ── */
-    .sidebar-widget {
-      background: var(--card); border-radius: var(--radius-lg);
-      border: 1px solid var(--border-light); padding: 20px;
-    }
-    .widget-title { font-family: 'DM Serif Display', serif; font-size: 16px; margin-bottom: 14px; }
-    .trend-item {
-      display: flex; align-items: center; gap: 10px;
-      padding: 8px 0; border-bottom: 1px solid var(--border-light);
-      text-decoration: none; color: var(--text);
-    }
-    .trend-item:last-child { border-bottom: none; padding-bottom: 0; }
-    .trend-num   { font-family: 'DM Serif Display', serif; font-size: 16px; color: var(--primary-mid); min-width: 24px; }
-    .trend-text  { font-size: 13px; font-weight: 500; }
-    .trend-count { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
-
-    /* ── Loading skeleton ── */
-    .skeleton-card {
-      background: var(--card); border-radius: var(--radius-lg);
-      border: 1px solid var(--border-light); padding: 18px 20px;
-    }
-    .skel {
-      background: linear-gradient(90deg, var(--bg-alt) 25%, var(--border-light) 50%, var(--bg-alt) 75%);
-      background-size: 200% 100%;
-      animation: shimmer 1.4s infinite;
-      border-radius: 6px;
-    }
-    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-    .skel-avatar { width: 34px; height: 34px; border-radius: 50%; }
-    .skel-line   { height: 12px; margin-bottom: 8px; }
-    .skel-title  { height: 18px; margin-bottom: 10px; width: 75%; }
+    .feed-layout{display:grid;grid-template-columns:1fr 280px;gap:24px;align-items:start;}
+    .category-pills{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;}
+    .pill{display:inline-flex;align-items:center;gap:6px;padding:6px 16px;border-radius:var(--radius-full);font-size:13px;font-weight:500;cursor:pointer;border:1.5px solid var(--border);background:var(--card);color:var(--text-muted);transition:all 0.2s;}
+    .pill:hover{border-color:var(--primary);color:var(--primary);}
+    .pill.active{background:var(--primary);border-color:var(--primary);color:white;}
+    .pill i{font-size:15px;}
+    .posts-list{display:flex;flex-direction:column;gap:14px;}
+    .post-card{background:var(--card);border-radius:var(--radius-lg);border:1px solid var(--border-light);overflow:hidden;transition:box-shadow 0.2s;cursor:pointer;text-decoration:none;color:var(--text);display:block;}
+    .post-card:hover{box-shadow:var(--shadow-md);}
+    .post-card-img{width:100%;height:180px;object-fit:cover;display:block;}
+    .post-card-body{padding:18px 20px;}
+    .post-header{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+    .post-avatar{width:34px;height:34px;border-radius:50%;object-fit:cover;border:2px solid var(--border);flex-shrink:0;}
+    .post-author-name{font-size:13px;font-weight:600;}
+    .post-author-role{font-size:11px;color:var(--text-muted);margin-top:1px;}
+    .post-title{font-family:'DM Serif Display',serif;font-size:17px;margin-bottom:6px;line-height:1.3;}
+    .post-excerpt{font-size:13px;color:var(--text-muted);line-height:1.6;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+    .post-footer{display:flex;align-items:center;justify-content:space-between;margin-top:14px;padding-top:12px;border-top:1px solid var(--border-light);}
+    .post-meta{display:flex;align-items:center;gap:14px;}
+    .post-meta-item{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text-light);}
+    .post-meta-item i{font-size:14px;}
+    .post-actions{display:flex;align-items:center;gap:6px;}
+    .post-action-btn{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--text-muted);cursor:pointer;transition:all 0.2s;background:transparent;border:none;}
+    .post-action-btn:hover{background:var(--bg);color:var(--primary);}
+    .post-action-btn.saved{color:var(--accent);}
+    .sidebar-widget{background:var(--card);border-radius:var(--radius-lg);border:1px solid var(--border-light);padding:20px;}
+    .widget-title{font-family:'DM Serif Display',serif;font-size:16px;margin-bottom:14px;}
+    .trend-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border-light);cursor:pointer;}
+    .trend-item:last-child{border-bottom:none;padding-bottom:0;}
+    .trend-num{font-family:'DM Serif Display',serif;font-size:16px;color:var(--primary-mid);min-width:24px;}
+    .trend-text{font-size:13px;font-weight:500;}
+    .trend-count{font-size:11px;color:var(--text-muted);margin-top:1px;}
+    .member-row{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+    .member-row:last-child{margin-bottom:0;}
+    .member-info{flex:1;}
+    .member-name{font-size:13px;font-weight:600;}
+    .member-tag{font-size:11px;color:var(--text-muted);}
+    .follow-btn{padding:5px 12px;border-radius:var(--radius-full);font-size:12px;font-weight:600;border:1.5px solid var(--border);background:transparent;color:var(--text-muted);cursor:pointer;transition:all 0.2s;}
+    .follow-btn:hover{border-color:var(--primary);color:var(--primary);}
+    .guest-banner{background:linear-gradient(135deg,var(--primary-light),var(--accent-light));border:1px solid var(--primary-mid);border-radius:var(--radius-lg);padding:20px 24px;display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;gap:16px;}
+    .guest-banner-text h3{font-family:'DM Serif Display',serif;font-size:16px;margin-bottom:4px;}
+    .guest-banner-text p{font-size:13px;color:var(--text-muted);}
+    .guest-banner-actions{display:flex;gap:8px;flex-shrink:0;}
+    .sort-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+    .sort-label{font-size:13px;color:var(--text-muted);}
+    .sort-options{display:flex;gap:4px;}
+    .sort-opt{padding:5px 12px;border-radius:var(--radius-full);font-size:12px;font-weight:600;color:var(--text-muted);cursor:pointer;transition:all 0.2s;background:transparent;border:1.5px solid var(--border);}
+    .sort-opt.active{background:var(--primary-light);color:var(--primary-dark);border-color:var(--primary-mid);}
   </style>
 </head>
 <body>
-<div class="sc-app">
-
-  <!-- ── Sidebar ─────────────────────────────────────────────────────── -->
-  <aside class="sc-sidebar">
-    <a href="../index.html" class="sc-logo">
-      <i class="ri-heart-pulse-fill"></i> ShareCare
-    </a>
-
-    <div class="sc-sidebar-section auth-required" style="display:none;">Medicine</div>
-    <ul class="sc-sidebar-menu auth-required" style="display:none;">
-      <li><a href="../patient/dashboard.html" class="sc-sidebar-item"><i class="ri-file-list-3-line"></i> My Requests</a></li>
-      <li><a href="../patient/new-request.html" class="sc-sidebar-item"><i class="ri-add-circle-line"></i> New Request</a></li>
-    </ul>
-
-    <div class="sc-sidebar-section">Community</div>
-    <ul class="sc-sidebar-menu">
-      <li><a href="feed.html" class="sc-sidebar-item active"><i class="ri-home-smile-2-line"></i> Feed</a></li>
-      <li><a href="new-post.html" class="sc-sidebar-item auth-required" style="display:none;"><i class="ri-edit-line"></i> New Post</a></li>
-      <li><a href="saved.html"   class="sc-sidebar-item auth-required" style="display:none;"><i class="ri-bookmark-3-line"></i> Saved</a></li>
-    </ul>
-
-    <!-- Logged-in user footer -->
-    <div class="sc-sidebar-footer auth-required" id="authFooter" style="display:none;">
-      <div class="sc-user-chip">
-        <img src="" alt="User" id="userAvatar">
+  <div class="sc-app">
+    <aside class="sc-sidebar">
+      <a href="../index.html" class="sc-logo"><i class="ri-heart-pulse-fill"></i> ShareCare</a>
+      <div class="sc-sidebar-section">Medicine</div>
+      <ul class="sc-sidebar-menu">
+        <li><a href="../patient/dashboard.html" class="sc-sidebar-item"><i class="ri-file-list-3-line"></i> My Requests</a></li>
+        <li><a href="../patient/new-request.html" class="sc-sidebar-item"><i class="ri-add-circle-line"></i> New Request</a></li>
+      </ul>
+      <div class="sc-sidebar-section">Community</div>
+      <ul class="sc-sidebar-menu">
+        <li><a href="feed.html" class="sc-sidebar-item active"><i class="ri-home-smile-2-line"></i> Feed</a></li>
+        <li><a href="new-post.html" class="sc-sidebar-item"><i class="ri-edit-line"></i> New Post</a></li>
+        <li><a href="feed.html" class="sc-sidebar-item"><i class="ri-bookmark-3-line"></i> Saved</a></li>
+      </ul>
+      <div class="sc-sidebar-footer">
+        <div class="sc-user-chip">
+          <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=80&q=80" alt="User">
+          <div><div class="sc-user-name" id="userName">Rahul M.</div><div class="sc-user-role">Patient</div></div>
+          <i class="ri-logout-box-r-line sc-logout" title="Sign out"></i>
+        </div>
+      </div>
+    </aside>
+    <div class="sc-main">
+      <div class="sc-topbar">
         <div>
-          <div class="sc-user-name" id="userName">Loading…</div>
-          <div class="sc-user-role">Patient</div>
+          <div class="sc-topbar-title">Community Feed</div>
+          <div class="sc-topbar-sub">Recipes, tips &amp; support from people like you</div>
         </div>
-        <i class="ri-logout-box-r-line sc-logout" onclick="logOut()" title="Sign out"></i>
-      </div>
-    </div>
-
-    <!-- Guest footer -->
-    <div class="sc-sidebar-footer" id="guestFooter">
-      <a href="../auth/login.html" class="btn btn-outline w-full" style="justify-content:center;font-size:13px;">
-        <i class="ri-login-box-line"></i> Sign In
-      </a>
-    </div>
-  </aside>
-
-  <!-- ── Main ────────────────────────────────────────────────────────── -->
-  <div class="sc-main">
-    <div class="sc-topbar">
-      <div>
-        <div class="sc-topbar-title">Community Feed</div>
-        <div class="sc-topbar-sub">Recipes, tips &amp; support from people like you</div>
-      </div>
-      <div class="sc-topbar-right">
-        <div class="search-bar" style="width:220px;">
-          <i class="ri-search-line"></i>
-          <input type="text" id="searchInput" placeholder="Search posts…">
-        </div>
-        <a href="new-post.html" class="btn btn-primary btn-sm auth-required" style="display:none;">
-          <i class="ri-add-line"></i> New Post
-        </a>
-      </div>
-    </div>
-
-    <div class="sc-content">
-
-      <!-- Guest banner — hidden once logged in -->
-      <div class="guest-banner" id="guestBanner">
-        <div class="guest-banner-text">
-          <h3>Join the ShareCare community</h3>
-          <p>Sign in to post, save, and interact with the community.</p>
-        </div>
-        <div class="guest-banner-actions">
-          <a href="../auth/login.html"  class="btn btn-outline btn-sm">Sign In</a>
-          <a href="../auth/signup.html" class="btn btn-primary btn-sm">Create Account</a>
-        </div>
-      </div>
-
-      <!-- Medical disclaimer — always visible -->
-      <div class="disclaimer mb-24">
-        <i class="ri-information-line"></i>
-        <span>This community shares personal experiences only — nothing here is medical advice. Always consult your doctor before making changes to your treatment.</span>
-      </div>
-
-      <!-- Category pills -->
-      <div class="category-pills" id="categoryPills">
-        <div class="pill active" data-category="All"><i class="ri-apps-2-line"></i> All</div>
-        <div class="pill" data-category="Recipes"><i class="ri-restaurant-line"></i> Recipes</div>
-        <div class="pill" data-category="Exercise"><i class="ri-run-line"></i> Exercise</div>
-        <div class="pill" data-category="Snacks"><i class="ri-snack-line"></i> Snacks</div>
-        <div class="pill" data-category="Support"><i class="ri-heart-3-line"></i> Support</div>
-        <div class="pill" data-category="Tips &amp; Tricks"><i class="ri-lightbulb-line"></i> Tips &amp; Tricks</div>
-        <div class="pill" data-category="Ask Community"><i class="ri-question-answer-line"></i> Ask Community</div>
-      </div>
-
-      <!-- Feed + right sidebar -->
-      <div class="feed-layout">
-
-        <!-- Posts column -->
-        <div>
-          <div class="sort-bar">
-            <span class="sort-label" id="postCount">Loading…</span>
-            <div class="sort-options" id="sortOptions">
-              <div class="sort-opt active" data-sort="recent">Latest</div>
-              <div class="sort-opt" data-sort="helpful">Most Helpful</div>
-              <div class="sort-opt" data-sort="comments">Trending</div>
-            </div>
+        <div class="sc-topbar-right">
+          <div class="search-bar" style="width:240px;">
+            <i class="ri-search-line"></i>
+            <input type="text" placeholder="Search posts…">
           </div>
-
-          <div class="posts-list" id="postsList">
-            <!-- Loading skeletons -->
-            <div class="skeleton-card" id="skel1">
-              <div style="display:flex;gap:10px;align-items:center;margin-bottom:12px;">
-                <div class="skel skel-avatar"></div>
-                <div style="flex:1;">
-                  <div class="skel skel-line" style="width:40%;"></div>
-                  <div class="skel skel-line" style="width:25%;"></div>
-                </div>
-              </div>
-              <div class="skel skel-title"></div>
-              <div class="skel skel-line"></div>
-              <div class="skel skel-line" style="width:80%;"></div>
-            </div>
-            <div class="skeleton-card" id="skel2">
-              <div style="display:flex;gap:10px;align-items:center;margin-bottom:12px;">
-                <div class="skel skel-avatar"></div>
-                <div style="flex:1;">
-                  <div class="skel skel-line" style="width:35%;"></div>
-                  <div class="skel skel-line" style="width:20%;"></div>
-                </div>
-              </div>
-              <div class="skel skel-title" style="width:65%;"></div>
-              <div class="skel skel-line"></div>
-              <div class="skel skel-line" style="width:70%;"></div>
-            </div>
-            <div class="skeleton-card" id="skel3">
-              <div style="display:flex;gap:10px;align-items:center;margin-bottom:12px;">
-                <div class="skel skel-avatar"></div>
-                <div style="flex:1;">
-                  <div class="skel skel-line" style="width:45%;"></div>
-                  <div class="skel skel-line" style="width:30%;"></div>
-                </div>
-              </div>
-              <div class="skel skel-title" style="width:80%;"></div>
-              <div class="skel skel-line"></div>
-              <div class="skel skel-line" style="width:55%;"></div>
-            </div>
+          <div class="notif-btn"><i class="ri-notification-3-line"></i><div class="notif-dot"></div></div>
+          <a href="new-post.html" class="btn btn-primary btn-sm"><i class="ri-add-line"></i> New Post</a>
+        </div>
+      </div>
+      <div class="sc-content">
+        <div class="guest-banner" id="guestBanner">
+          <div class="guest-banner-text">
+            <h3>Join the ShareCare community</h3>
+            <p>Sign in to post, save, and interact with the community.</p>
+          </div>
+          <div class="guest-banner-actions">
+            <a href="../auth/login.html" class="btn btn-outline btn-sm">Sign In</a>
+            <a href="../auth/signup.html" class="btn btn-primary btn-sm">Create Account</a>
           </div>
         </div>
-
-        <!-- Right sidebar -->
-        <div style="display:flex;flex-direction:column;gap:16px;">
-
-          <!-- Trending widget — populated from live data -->
-          <div class="sidebar-widget">
-            <div class="widget-title">Trending This Week</div>
-            <div id="trendingList">
-              <div class="trend-item">
-                <div class="trend-num">—</div>
-                <div><div class="trend-text" style="color:var(--text-light);">Loading…</div></div>
+        <div class="disclaimer mb-24">
+          <i class="ri-information-line"></i>
+          <span>This community shares personal experiences only — nothing here is medical advice. Always consult your doctor before making changes to your treatment.</span>
+        </div>
+        <div class="category-pills">
+          <div class="pill active"><i class="ri-apps-2-line"></i> All</div>
+          <div class="pill"><i class="ri-restaurant-line"></i> Recipes</div>
+          <div class="pill"><i class="ri-run-line"></i> Exercise</div>
+          <div class="pill"><i class="ri-snack-line"></i> Snacks</div>
+          <div class="pill"><i class="ri-heart-3-line"></i> Support</div>
+          <div class="pill"><i class="ri-lightbulb-line"></i> Tips &amp; Tricks</div>
+          <div class="pill"><i class="ri-question-answer-line"></i> Ask the Community</div>
+        </div>
+        <div class="feed-layout">
+          <div>
+            <div class="sort-bar">
+              <span class="sort-label">42 posts</span>
+              <div class="sort-options">
+                <div class="sort-opt active">Latest</div>
+                <div class="sort-opt">Most Helpful</div>
+                <div class="sort-opt">Trending</div>
               </div>
             </div>
-          </div>
-
-          <!-- Community stats -->
-          <div class="sidebar-widget">
-            <div class="widget-title">Community</div>
-            <div style="display:flex;flex-direction:column;gap:10px;">
-              <div style="display:flex;justify-content:space-between;font-size:13px;">
-                <span style="color:var(--text-muted);">Posts</span>
-                <span style="font-weight:600;" id="statPosts">—</span>
-              </div>
-              <div style="display:flex;justify-content:space-between;font-size:13px;">
-                <span style="color:var(--text-muted);">Helpful marks given</span>
-                <span style="font-weight:600;" id="statHelpful">—</span>
-              </div>
-            </div>
-            <div style="margin-top:14px;" class="auth-required" style="display:none;">
-              <a href="new-post.html" class="btn btn-primary w-full" style="justify-content:center;">
-                <i class="ri-edit-line"></i> Share Something
+            <div class="posts-list">
+              <a href="post-detail.html" class="post-card">
+                <img src="https://images.unsplash.com/photo-1547592180-85f173990554?w=800&q=80" alt="Dosa" class="post-card-img">
+                <div class="post-card-body">
+                  <div class="post-header">
+                    <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&q=80" alt="Priya" class="post-avatar">
+                    <div><div class="post-author-name">Priya Sharma</div><div class="post-author-role">Patient &middot; 3 hrs ago</div></div>
+                    <span class="badge badge-primary" style="margin-left:auto;"><i class="ri-restaurant-line"></i> Recipe</span>
+                  </div>
+                  <div class="post-title">Low-GI Ragi Dosa — My Sunday Morning Staple</div>
+                  <div class="post-excerpt">Swapped regular rice dosa with a ragi-oats blend and it changed my post-breakfast glucose numbers completely. Here's exactly what I do, with timing and quantity tips.</div>
+                  <div class="post-footer">
+                    <div class="post-meta">
+                      <div class="post-meta-item"><i class="ri-thumb-up-line"></i> 48 helpful</div>
+                      <div class="post-meta-item"><i class="ri-chat-3-line"></i> 14 comments</div>
+                      <div class="post-meta-item"><i class="ri-time-line"></i> 4 min read</div>
+                    </div>
+                    <div class="post-actions">
+                      <button class="post-action-btn saved" onclick="event.preventDefault()"><i class="ri-bookmark-fill"></i></button>
+                      <button class="post-action-btn" onclick="event.preventDefault()"><i class="ri-share-line"></i></button>
+                    </div>
+                  </div>
+                </div>
               </a>
+              <a href="post-detail.html" class="post-card">
+                <div class="post-card-body">
+                  <div class="post-header">
+                    <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&q=80" alt="Suresh" class="post-avatar">
+                    <div><div class="post-author-name">Suresh Iyer</div><div class="post-author-role">Patient &middot; Yesterday</div></div>
+                    <span class="badge badge-accent" style="margin-left:auto;"><i class="ri-heart-3-line"></i> Support</span>
+                  </div>
+                  <div class="post-title">Two Years with T2D — What I Wish Someone Had Told Me</div>
+                  <div class="post-excerpt">Nobody warns you about the emotional side. Managing blood sugar is one thing — managing the anxiety around it every single meal is another. If you're newly diagnosed, I want you to know it gets easier.</div>
+                  <div class="post-footer">
+                    <div class="post-meta">
+                      <div class="post-meta-item"><i class="ri-thumb-up-line"></i> 91 helpful</div>
+                      <div class="post-meta-item"><i class="ri-chat-3-line"></i> 38 comments</div>
+                      <div class="post-meta-item"><i class="ri-time-line"></i> 6 min read</div>
+                    </div>
+                    <div class="post-actions">
+                      <button class="post-action-btn" onclick="event.preventDefault()"><i class="ri-bookmark-line"></i></button>
+                      <button class="post-action-btn" onclick="event.preventDefault()"><i class="ri-share-line"></i></button>
+                    </div>
+                  </div>
+                </div>
+              </a>
+              <a href="post-detail.html" class="post-card">
+                <img src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=800&q=80" alt="Exercise" class="post-card-img">
+                <div class="post-card-body">
+                  <div class="post-header">
+                    <img src="https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=80&q=80" alt="Anita" class="post-avatar">
+                    <div><div class="post-author-name">Anita Verma</div><div class="post-author-role">Patient &middot; 2 days ago</div></div>
+                    <span class="badge badge-success" style="margin-left:auto;"><i class="ri-run-line"></i> Exercise</span>
+                  </div>
+                  <div class="post-title">The 15-Minute Walk After Dinner That Changed My A1C</div>
+                  <div class="post-excerpt">My doctor mentioned it in passing. I didn't believe a 15-minute walk could make a dent. Three months later, my A1C went from 8.1 to 6.9. Here's my exact routine.</div>
+                  <div class="post-footer">
+                    <div class="post-meta">
+                      <div class="post-meta-item"><i class="ri-thumb-up-line"></i> 73 helpful</div>
+                      <div class="post-meta-item"><i class="ri-chat-3-line"></i> 22 comments</div>
+                      <div class="post-meta-item"><i class="ri-time-line"></i> 3 min read</div>
+                    </div>
+                    <div class="post-actions">
+                      <button class="post-action-btn" onclick="event.preventDefault()"><i class="ri-bookmark-line"></i></button>
+                      <button class="post-action-btn" onclick="event.preventDefault()"><i class="ri-share-line"></i></button>
+                    </div>
+                  </div>
+                </div>
+              </a>
+              <a href="post-detail.html" class="post-card">
+                <div class="post-card-body">
+                  <div class="post-header">
+                    <img src="https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=80&q=80" alt="Kiran" class="post-avatar">
+                    <div><div class="post-author-name">Kiran Patil</div><div class="post-author-role">Patient &middot; 3 days ago</div></div>
+                    <span class="badge badge-info" style="margin-left:auto;"><i class="ri-question-answer-line"></i> Ask</span>
+                  </div>
+                  <div class="post-title">Good Snack Options for Long Travel Days?</div>
+                  <div class="post-excerpt">Flying to Delhi next week — 3 hour flight, then 2 hours in transit. What do you all carry? Everything at airports seems to be either sugar bombs or plain unappetising.</div>
+                  <div class="post-footer">
+                    <div class="post-meta">
+                      <div class="post-meta-item"><i class="ri-thumb-up-line"></i> 12 helpful</div>
+                      <div class="post-meta-item"><i class="ri-chat-3-line"></i> 29 comments</div>
+                      <div class="post-meta-item"><i class="ri-time-line"></i> 1 min read</div>
+                    </div>
+                    <div class="post-actions">
+                      <button class="post-action-btn" onclick="event.preventDefault()"><i class="ri-bookmark-line"></i></button>
+                      <button class="post-action-btn" onclick="event.preventDefault()"><i class="ri-share-line"></i></button>
+                    </div>
+                  </div>
+                </div>
+              </a>
+              <a href="post-detail.html" class="post-card">
+                <img src="https://images.unsplash.com/photo-1505253758473-96b7015fcd40?w=800&q=80" alt="Snacks" class="post-card-img">
+                <div class="post-card-body">
+                  <div class="post-header">
+                    <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=80&q=80" alt="Deepa" class="post-avatar">
+                    <div><div class="post-author-name">Deepa Nair</div><div class="post-author-role">Patient &middot; 4 days ago</div></div>
+                    <span class="badge badge-warning" style="margin-left:auto;"><i class="ri-snack-line"></i> Snacks</span>
+                  </div>
+                  <div class="post-title">5 Diabetes-Friendly Snacks You Can Find at Any Kirana Store</div>
+                  <div class="post-excerpt">You don't need a speciality health store. Roasted chana, fox nuts, peanuts, cucumber — all under ₹30 each and genuinely filling without the glucose spike.</div>
+                  <div class="post-footer">
+                    <div class="post-meta">
+                      <div class="post-meta-item"><i class="ri-thumb-up-line"></i> 64 helpful</div>
+                      <div class="post-meta-item"><i class="ri-chat-3-line"></i> 11 comments</div>
+                      <div class="post-meta-item"><i class="ri-time-line"></i> 3 min read</div>
+                    </div>
+                    <div class="post-actions">
+                      <button class="post-action-btn" onclick="event.preventDefault()"><i class="ri-bookmark-line"></i></button>
+                      <button class="post-action-btn" onclick="event.preventDefault()"><i class="ri-share-line"></i></button>
+                    </div>
+                  </div>
+                </div>
+              </a>
+              <div style="text-align:center;padding:8px;">
+                <button class="btn btn-outline">Load more posts <i class="ri-arrow-down-line"></i></button>
+              </div>
             </div>
           </div>
-
+          <div style="display:flex;flex-direction:column;gap:16px;">
+            <div class="sidebar-widget">
+              <div class="widget-title">Trending This Week</div>
+              <div class="trend-item"><div class="trend-num">1</div><div><div class="trend-text">Ragi Dosa Recipe</div><div class="trend-count">48 helpful marks</div></div></div>
+              <div class="trend-item"><div class="trend-num">2</div><div><div class="trend-text">Post-dinner walk routine</div><div class="trend-count">73 helpful marks</div></div></div>
+              <div class="trend-item"><div class="trend-num">3</div><div><div class="trend-text">Kirana store snacks</div><div class="trend-count">64 helpful marks</div></div></div>
+              <div class="trend-item"><div class="trend-num">4</div><div><div class="trend-text">Two years with T2D</div><div class="trend-count">91 helpful marks</div></div></div>
+            </div>
+            <div class="sidebar-widget">
+              <div class="widget-title">Active Members</div>
+              <div class="member-row">
+                <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&q=80" alt="" class="avatar avatar-sm">
+                <div class="member-info"><div class="member-name">Priya Sharma</div><div class="member-tag">12 posts &middot; Recipes</div></div>
+                <button class="follow-btn">Follow</button>
+              </div>
+              <div class="member-row">
+                <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&q=80" alt="" class="avatar avatar-sm">
+                <div class="member-info"><div class="member-name">Suresh Iyer</div><div class="member-tag">8 posts &middot; Support</div></div>
+                <button class="follow-btn">Follow</button>
+              </div>
+              <div class="member-row">
+                <img src="https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=80&q=80" alt="" class="avatar avatar-sm">
+                <div class="member-info"><div class="member-name">Anita Verma</div><div class="member-tag">6 posts &middot; Exercise</div></div>
+                <button class="follow-btn">Follow</button>
+              </div>
+            </div>
+            <div class="sidebar-widget">
+              <div class="widget-title">Community</div>
+              <div style="display:flex;flex-direction:column;gap:10px;">
+                <div style="display:flex;justify-content:space-between;font-size:13px;"><span class="text-muted">Members</span><span style="font-weight:600;">1,248</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:13px;"><span class="text-muted">Posts this month</span><span style="font-weight:600;">87</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:13px;"><span class="text-muted">Helpful marks given</span><span style="font-weight:600;">2,341</span></div>
+              </div>
+              <div style="margin-top:14px;">
+                <a href="new-post.html" class="btn btn-primary w-full" style="justify-content:center;"><i class="ri-edit-line"></i> Share Something</a>
+              </div>
+            </div>
+          </div>
         </div>
-      </div><!-- /feed-layout -->
-
-    </div><!-- /sc-content -->
-  </div><!-- /sc-main -->
-</div><!-- /sc-app -->
-
-<script src="../js/env.js"></script>
-<script type="module">
-  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { logOut } from '../js/auth.js';
-  import { listenToPosts, savePost, unsavePost, isSaved } from '../js/community.js';
-  import { app } from '../js/env.js';
-
-  window.logOut = logOut;
-
-  // ── State ──────────────────────────────────────────────────────────────
-  const auth         = getAuth(app);
-  let currentUser    = null;     // Firebase User | null
-  let activeCategory = 'All';
-  let activeSort     = 'recent';
-  let allPosts       = [];       // latest snapshot from Firestore
-  let savedSet       = new Set(); // postIds the current user has saved
-  let unsubFeed      = null;     // Firestore onSnapshot teardown fn
-  let searchQuery    = '';
-
-  // ── Auth state ──────────────────────────────────────────────────────────
-  onAuthStateChanged(auth, async (user) => {
-    currentUser = user;
-    applyAuthState(user);
-
-    if (user) {
-      const displayName = user.displayName || user.email || 'User';
-      document.getElementById('userName').textContent = displayName;
-      document.getElementById('userAvatar').src = user.photoURL ||
-        `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=C2DDD4&color=3A6E59`;
-
-      // Pre-load saved set so bookmark icons render correctly
-      await refreshSavedSet();
-    } else {
-      savedSet.clear();
-    }
-
-    // Re-render current posts with correct bookmark states
-    renderPosts(filteredAndSorted());
-  });
-
-  function applyAuthState(user) {
-    const authed = !!user;
-    document.querySelectorAll('.auth-required').forEach(el => {
-      el.style.display = authed ? '' : 'none';
-    });
-    document.getElementById('guestBanner').style.display = authed ? 'none' : '';
-    document.getElementById('guestFooter').style.display = authed ? 'none' : '';
-    document.getElementById('authFooter').style.display  = authed ? ''     : 'none';
-  }
-
-  // ── Saved set refresh ───────────────────────────────────────────────────
-  async function refreshSavedSet() {
-    if (!currentUser || allPosts.length === 0) return;
-    savedSet.clear();
-    await Promise.all(
-      allPosts.map(async (post) => {
-        const saved = await isSaved(currentUser.uid, post.id);
-        if (saved) savedSet.add(post.id);
-      })
-    );
-  }
-
-  // ── Firestore real-time listener ────────────────────────────────────────
-  function startFeedListener() {
-    if (unsubFeed) unsubFeed();
-
-    unsubFeed = listenToPosts(
-      activeCategory === 'All' ? null : activeCategory,
-      async (posts) => {
-        // Remove loading skeletons on first delivery
-        ['skel1', 'skel2', 'skel3'].forEach(id => {
-          const el = document.getElementById(id);
-          if (el) el.remove();
+      </div>
+    </div>
+  </div>
+  <script>
+    // Guest mode: redirect all sidebar links to login
+    const isGuest = true; // replace with Firebase auth check in Sprint 1
+    if (isGuest) {
+      document.querySelectorAll('.sc-sidebar a, .sc-sidebar-footer .sc-logout').forEach(el => {
+        el.addEventListener('click', function(e) {
+          e.preventDefault();
+          window.location.href = '../auth/login.html';
         });
-
-        allPosts = posts;
-
-        if (currentUser) await refreshSavedSet();
-
-        renderPosts(filteredAndSorted());
-        renderTrending();
-        updateStats();
-      }
-    );
-  }
-
-  // ── Client-side filter + sort ───────────────────────────────────────────
-  function filteredAndSorted() {
-    let list = [...allPosts];
-
-    // Search
-    if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase();
-      list = list.filter(p =>
-        (p.title      || '').toLowerCase().includes(q) ||
-        (p.body       || '').toLowerCase().includes(q) ||
-        (p.authorName || '').toLowerCase().includes(q)
-      );
+      });
     }
-
-    // Sort (Firestore already orders by createdAt; other sorts applied client-side)
-    if (activeSort === 'helpful') {
-      list.sort((a, b) => (b.helpfulCount || 0) - (a.helpfulCount || 0));
-    } else if (activeSort === 'comments') {
-      list.sort((a, b) => (b.commentCount || 0) - (a.commentCount || 0));
-    }
-
-    return list;
-  }
-
-  // ── Render helpers ──────────────────────────────────────────────────────
-  const categoryMeta = {
-    'Recipes':       { icon: 'ri-restaurant-line',     badge: 'badge-success'  },
-    'Exercise':      { icon: 'ri-run-line',             badge: 'badge-primary'  },
-    'Snacks':        { icon: 'ri-snack-line',           badge: 'badge-warning'  },
-    'Support':       { icon: 'ri-heart-3-line',         badge: 'badge-accent'   },
-    'Tips & Tricks': { icon: 'ri-lightbulb-line',       badge: 'badge-gray'     },
-    'Ask Community': { icon: 'ri-question-answer-line', badge: 'badge-primary'  },
-  };
-
-  function timeAgo(ts) {
-    if (!ts) return '';
-    const date = ts.toDate ? ts.toDate() : new Date(ts);
-    const diff = (Date.now() - date.getTime()) / 1000;
-    if (diff < 60)     return 'just now';
-    if (diff < 3600)   return `${Math.floor(diff / 60)} min ago`;
-    if (diff < 86400)  return `${Math.floor(diff / 3600)} hrs ago`;
-    if (diff < 172800) return 'Yesterday';
-    return `${Math.floor(diff / 86400)} days ago`;
-  }
-
-  function initials(name) {
-    if (!name) return '?';
-    return name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
-  }
-
-  function buildPostCard(post) {
-    const meta        = categoryMeta[post.category] || { icon: 'ri-tag-line', badge: 'badge-gray' };
-    const isPostSaved = savedSet.has(post.id);
-    const excerpt     = (post.body || '').replace(/<[^>]+>/g, '').slice(0, 180);
-
-    const avatarHtml = post.authorPhoto
-      ? `<img src="${post.authorPhoto}" alt="${post.authorName || ''}">`
-      : `<span>${initials(post.authorName)}</span>`;
-
-    const saveIcon    = isPostSaved ? 'ri-bookmark-fill' : 'ri-bookmark-line';
-    const saveCls     = isPostSaved ? 'saved' : '';
-    const saveTitle   = isPostSaved ? 'Unsave post' : 'Save post';
-    const saveDisabled = currentUser ? '' : 'disabled title="Sign in to save posts"';
-
-    return `
-      <a href="post-detail.html?id=${post.id}" class="post-card">
-        <div class="post-card-body">
-          <div class="post-header">
-            <div class="post-avatar">${avatarHtml}</div>
-            <div>
-              <div class="post-author-name">${post.authorName || 'Anonymous'}</div>
-              <div class="post-author-role">Patient &middot; ${timeAgo(post.createdAt)}</div>
-            </div>
-            <span class="badge ${meta.badge}" style="margin-left:auto;">
-              <i class="${meta.icon}"></i> ${post.category || ''}
-            </span>
-          </div>
-          <div class="post-title">${post.title || '(Untitled)'}</div>
-          <div class="post-excerpt">${excerpt}</div>
-          <div class="post-footer">
-            <div class="post-meta">
-              <div class="post-meta-item"><i class="ri-thumb-up-line"></i> ${post.helpfulCount || 0} helpful</div>
-              <div class="post-meta-item"><i class="ri-chat-3-line"></i> ${post.commentCount || 0} comments</div>
-            </div>
-            <div class="post-actions">
-              <button
-                class="post-action-btn ${saveCls}"
-                data-post-id="${post.id}"
-                title="${saveTitle}"
-                ${saveDisabled}
-                onclick="handleSave(event, '${post.id}')"
-              ><i class="${saveIcon}"></i></button>
-            </div>
-          </div>
-        </div>
-      </a>`;
-  }
-
-  function renderPosts(posts) {
-    const list  = document.getElementById('postsList');
-    const count = document.getElementById('postCount');
-
-    if (posts.length === 0) {
-      list.innerHTML = `
-        <div class="empty-state">
-          <i class="ri-inbox-line"></i>
-          <h3>No posts yet</h3>
-          <p>${
-            activeCategory === 'All'
-              ? 'Be the first to share something with the community.'
-              : `No posts in <strong>${activeCategory}</strong> yet — be the first!`
-          }</p>
-        </div>`;
-      count.textContent = '0 posts';
-      return;
-    }
-
-    count.textContent = `${posts.length} post${posts.length === 1 ? '' : 's'}`;
-    list.innerHTML = posts.map(buildPostCard).join('');
-  }
-
-  function renderTrending() {
-    const top = [...allPosts]
-      .sort((a, b) => (b.helpfulCount || 0) - (a.helpfulCount || 0))
-      .slice(0, 4);
-
-    const el = document.getElementById('trendingList');
-
-    if (top.length === 0) {
-      el.innerHTML = `
-        <div class="trend-item">
-          <div class="trend-num">—</div>
-          <div><div class="trend-text" style="color:var(--text-light);">No posts yet</div></div>
-        </div>`;
-      return;
-    }
-
-    el.innerHTML = top.map((p, i) => `
-      <a href="post-detail.html?id=${p.id}" class="trend-item">
-        <div class="trend-num">${i + 1}</div>
-        <div>
-          <div class="trend-text">${p.title || '(Untitled)'}</div>
-          <div class="trend-count">${p.helpfulCount || 0} helpful marks</div>
-        </div>
-      </a>`).join('');
-  }
-
-  function updateStats() {
-    const totalHelpful = allPosts.reduce((sum, p) => sum + (p.helpfulCount || 0), 0);
-    document.getElementById('statPosts').textContent   = allPosts.length;
-    document.getElementById('statHelpful').textContent = totalHelpful.toLocaleString('en-IN');
-  }
-  window.handleSave = async function(event, postId) {
-    event.preventDefault();
-    event.stopPropagation();
-    if (!currentUser) return;
-
-    const btn = event.currentTarget;
-    btn.disabled = true;
-
-    try {
-      if (savedSet.has(postId)) {
-        await unsavePost(currentUser.uid, postId);
-        savedSet.delete(postId);
-        btn.classList.remove('saved');
-        btn.querySelector('i').className = 'ri-bookmark-line';
-        btn.title = 'Save post';
-      } else {
-        await savePost(currentUser.uid, postId);
-        savedSet.add(postId);
-        btn.classList.add('saved');
-        btn.querySelector('i').className = 'ri-bookmark-fill';
-        btn.title = 'Unsave post';
-      }
-    } catch (err) {
-      console.error('Save/unsave error:', err);
-    } finally {
-      btn.disabled = false;
-    }
-  };
-
-  // ── Category pills ─────────────────────────────────────────────────────
-  document.getElementById('categoryPills').addEventListener('click', (e) => {
-    const pill = e.target.closest('.pill');
-    if (!pill) return;
-    document.querySelectorAll('#categoryPills .pill').forEach(p => p.classList.remove('active'));
-    pill.classList.add('active');
-    activeCategory = pill.dataset.category;
-    startFeedListener();   // re-subscribe Firestore listener with new category
-  });
-
-  // ── Sort options ────────────────────────────────────────────────────────
-  document.getElementById('sortOptions').addEventListener('click', (e) => {
-    const opt = e.target.closest('.sort-opt');
-    if (!opt) return;
-    document.querySelectorAll('.sort-opt').forEach(o => o.classList.remove('active'));
-    opt.classList.add('active');
-    activeSort = opt.dataset.sort;
-    renderPosts(filteredAndSorted());
-  });
-
-  // ── Search ──────────────────────────────────────────────────────────────
-  document.getElementById('searchInput').addEventListener('input', (e) => {
-    searchQuery = e.target.value;
-    renderPosts(filteredAndSorted());
-  });
-
-  // ── Boot ────────────────────────────────────────────────────────────────
-  startFeedListener();
-</script>
+  </script>
 </body>
 </html>

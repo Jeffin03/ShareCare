@@ -1,933 +1,278 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ShareCare — Post</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
   <link rel="stylesheet" href="../assets/style.css">
   <style>
-    /* ── Page layout ── */
-    .detail-layout {
-      display: grid;
-      grid-template-columns: 1fr 300px;
-      gap: 28px;
-      align-items: start;
-    }
+    /* === CRITICAL LAYOUT === */
+    html,body{margin:0;padding:0;}
 
-    /* ── Post article ── */
-    .post-article {
-      background: var(--card);
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--border-light);
-      overflow: hidden;
-    }
-    .post-article-header {
-      padding: 28px 32px 0;
-    }
-    .post-article-body {
-      padding: 24px 32px 28px;
-      font-size: 15px;
-      line-height: 1.8;
-      color: var(--text);
-    }
-    .post-article-body p  { margin-bottom: 16px; }
-    .post-article-body p:last-child { margin-bottom: 0; }
-
-    .post-meta-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 18px;
-    }
-    .post-avatar-lg {
-      width: 44px; height: 44px;
-      border-radius: 50%;
-      border: 2px solid var(--border);
-      background: var(--primary-light);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 15px; font-weight: 700; color: var(--primary);
-      flex-shrink: 0; overflow: hidden;
-    }
-    .post-avatar-lg img { width: 100%; height: 100%; object-fit: cover; }
-    .post-author-name   { font-size: 14px; font-weight: 600; }
-    .post-author-meta   { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
-
-    .post-title-lg {
-      font-family: 'DM Serif Display', serif;
-      font-size: 26px;
-      line-height: 1.25;
-      margin-bottom: 16px;
-      color: var(--text);
-    }
-
-    /* ── Tags ── */
-    .tag-list { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 20px; }
-    .tag {
-      display: inline-flex; align-items: center; gap: 4px;
-      padding: 4px 12px; border-radius: var(--radius-full);
-      font-size: 12px; font-weight: 500;
-      background: var(--bg); border: 1.5px solid var(--border);
-      color: var(--text-muted); cursor: pointer; text-decoration: none;
-      transition: all 0.18s;
-    }
-    .tag:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
-    .tag i     { font-size: 13px; }
-
-    /* ── Action bar ── */
-    .action-bar {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 16px 32px;
-      border-top: 1px solid var(--border-light);
-      border-bottom: 1px solid var(--border-light);
-      background: var(--bg);
-    }
-    .action-bar .spacer { flex: 1; }
-    .action-btn {
-      display: inline-flex; align-items: center; gap: 7px;
-      padding: 8px 16px; border-radius: var(--radius-full);
-      font-size: 13px; font-weight: 600; cursor: pointer;
-      border: 1.5px solid var(--border); background: var(--card);
-      color: var(--text-muted); transition: all 0.2s;
-    }
-    .action-btn:hover            { border-color: var(--primary); color: var(--primary); }
-    .action-btn.active           { background: var(--primary-light); border-color: var(--primary-mid); color: var(--primary-dark); }
-    .action-btn.saved-active     { background: var(--accent-light); border-color: var(--accent); color: var(--accent-dark); }
-    .action-btn i                { font-size: 16px; }
-    .action-btn:disabled         { opacity: 0.5; cursor: default; }
-    .action-btn-ghost {
-      display: inline-flex; align-items: center; gap: 5px;
-      padding: 8px 14px; border-radius: var(--radius-full);
-      font-size: 12px; font-weight: 600; cursor: pointer;
-      background: transparent; border: none;
-      color: var(--text-light); transition: color 0.2s;
-    }
-    .action-btn-ghost:hover { color: var(--text-muted); }
-    .action-btn-ghost.danger:hover { color: #d32f2f; }
-
-    /* ── Comments section ── */
-    .comments-section { padding: 28px 32px; }
-    .comments-title {
-      font-family: 'DM Serif Display', serif;
-      font-size: 18px; margin-bottom: 20px;
-    }
-
-    .comment-input-wrap {
-      display: flex; gap: 12px; margin-bottom: 28px;
-    }
-    .comment-avatar {
-      width: 36px; height: 36px; border-radius: 50%;
-      border: 2px solid var(--border); flex-shrink: 0;
-      background: var(--primary-light);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 13px; font-weight: 700; color: var(--primary);
-      overflow: hidden;
-    }
-    .comment-avatar img { width: 100%; height: 100%; object-fit: cover; }
-    .comment-input-inner { flex: 1; }
-    .comment-input-inner textarea {
-      width: 100%; resize: none; min-height: 80px;
-    }
-    .comment-input-inner .comment-actions {
-      display: flex; justify-content: flex-end;
-      gap: 8px; margin-top: 8px;
-    }
-
-    .comment-list { display: flex; flex-direction: column; gap: 0; }
-    .comment-item {
-      display: flex; gap: 12px;
-      padding: 16px 0;
-      border-bottom: 1px solid var(--border-light);
-    }
-    .comment-item:last-child { border-bottom: none; }
-    .comment-body           { flex: 1; }
-    .comment-header         { display: flex; align-items: baseline; gap: 8px; margin-bottom: 5px; }
-    .comment-author         { font-size: 13px; font-weight: 600; }
-    .comment-time           { font-size: 11px; color: var(--text-light); }
-    .comment-text           { font-size: 14px; color: var(--text); line-height: 1.65; }
-
-    /* ── Sidebar widgets ── */
-    .sidebar-widget {
-      background: var(--card);
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--border-light);
-      padding: 20px;
-      margin-bottom: 16px;
-    }
-    .sidebar-widget:last-child { margin-bottom: 0; }
-    .widget-title {
-      font-family: 'DM Serif Display', serif;
-      font-size: 16px; margin-bottom: 16px;
-    }
-
-    /* ── Related post mini-cards ── */
-    .related-card {
-      display: block; text-decoration: none; color: var(--text);
-      padding: 12px 0;
-      border-bottom: 1px solid var(--border-light);
-      transition: color 0.15s;
-    }
-    .related-card:last-child { border-bottom: none; padding-bottom: 0; }
-    .related-card:hover .related-title { color: var(--primary); }
-    .related-title { font-size: 13px; font-weight: 600; line-height: 1.35; margin-bottom: 4px; }
-    .related-meta  { font-size: 11px; color: var(--text-light); display: flex; gap: 10px; }
-
-    /* ── Report modal ── */
-    .modal-backdrop {
-      position: fixed; inset: 0; background: rgba(0,0,0,.35);
-      display: flex; align-items: center; justify-content: center;
-      z-index: 200; opacity: 0; pointer-events: none;
-      transition: opacity 0.2s;
-    }
-    .modal-backdrop.open { opacity: 1; pointer-events: all; }
-    .modal {
-      background: var(--card); border-radius: var(--radius-lg);
-      padding: 28px; width: 100%; max-width: 420px;
-      box-shadow: var(--shadow-lg);
-      transform: translateY(12px); transition: transform 0.2s;
-    }
-    .modal-backdrop.open .modal { transform: translateY(0); }
-    .modal-title {
-      font-family: 'DM Serif Display', serif;
-      font-size: 18px; margin-bottom: 6px;
-    }
-    .modal-sub  { font-size: 13px; color: var(--text-muted); margin-bottom: 18px; }
-    .modal-foot { display: flex; justify-content: flex-end; gap: 8px; margin-top: 18px; }
-
-    /* ── Skeleton ── */
-    .skel {
-      background: linear-gradient(90deg, var(--bg-alt) 25%, var(--border-light) 50%, var(--bg-alt) 75%);
-      background-size: 200% 100%;
-      animation: shimmer 1.4s infinite;
-      border-radius: 6px;
-    }
-    @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
-
-    /* ── Breadcrumb ── */
-    .breadcrumb {
-      display: flex; align-items: center; gap: 6px;
-      font-size: 13px; color: var(--text-muted);
-      margin-bottom: 20px;
-    }
-    .breadcrumb a         { color: var(--text-muted); text-decoration: none; }
-    .breadcrumb a:hover   { color: var(--primary); }
-    .breadcrumb i         { font-size: 14px; }
-
-    /* ── Toast ── */
-    .toast {
-      position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(80px);
-      background: var(--text); color: #fff;
-      padding: 10px 20px; border-radius: var(--radius-full);
-      font-size: 13px; font-weight: 500;
-      box-shadow: var(--shadow-md);
-      transition: transform 0.3s ease, opacity 0.3s;
-      opacity: 0; z-index: 300; white-space: nowrap;
-    }
-    .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
-
-    /* ── Guest prompt ── */
-    .guest-prompt {
-      background: var(--primary-light);
-      border: 1px solid var(--primary-mid);
-      border-radius: var(--radius-lg);
-      padding: 14px 18px;
-      font-size: 13px; color: var(--primary-dark);
-      display: flex; align-items: center; gap: 10px;
-      margin-bottom: 20px;
-    }
-    .guest-prompt i  { font-size: 18px; flex-shrink: 0; }
-    .guest-prompt a  { color: var(--primary-dark); font-weight: 600; }
+    .detail-layout{display:grid;grid-template-columns:1fr 300px;gap:28px;align-items:start;}
+    .post-hero{width:100%;height:280px;object-fit:cover;border-radius:var(--radius-lg);margin-bottom:24px;display:block;}
+    .post-meta-bar{display:flex;align-items:center;gap:16px;margin-bottom:16px;flex-wrap:wrap;}
+    .post-meta-bar .post-meta-item{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--text-muted);}
+    .post-meta-bar .post-meta-item i{font-size:15px;}
+    .author-row{display:flex;align-items:center;gap:12px;margin-bottom:20px;}
+    .author-info{flex:1;}
+    .author-name{font-size:14px;font-weight:600;}
+    .author-bio{font-size:12px;color:var(--text-muted);margin-top:2px;}
+    .post-body{font-size:14px;line-height:1.85;color:var(--text);}
+    .post-body h3{font-family:'DM Serif Display',serif;font-size:20px;margin:24px 0 10px;}
+    .post-body p{margin-bottom:14px;}
+    .post-body ul{margin:0 0 14px 20px;}
+    .post-body li{margin-bottom:6px;font-size:14px;line-height:1.7;}
+    .helpful-bar{display:flex;align-items:center;gap:12px;padding:20px 24px;background:var(--primary-light);border-radius:var(--radius-lg);margin:28px 0;}
+    .helpful-bar p{font-size:14px;color:var(--primary-dark);font-weight:500;flex:1;}
+    .helpful-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 22px;background:var(--primary);color:white;border:none;border-radius:var(--radius-full);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all 0.2s;}
+    .helpful-btn:hover{background:var(--primary-dark);}
+    .helpful-btn i{font-size:16px;}
+    .section-divider{margin:28px 0;border:none;border-top:1px solid var(--border-light);}
+    .comments-section h3{font-family:'DM Serif Display',serif;font-size:20px;margin-bottom:20px;}
+    .comment{display:flex;gap:12px;margin-bottom:20px;}
+    .comment-avatar{width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid var(--border);flex-shrink:0;}
+    .comment-bubble{flex:1;background:var(--bg);border-radius:0 var(--radius-md) var(--radius-md) var(--radius-md);padding:12px 16px;}
+    .comment-author{font-size:13px;font-weight:600;}
+    .comment-time{font-size:11px;color:var(--text-muted);margin-left:8px;}
+    .comment-text{font-size:13px;line-height:1.6;margin-top:6px;color:var(--text);}
+    .comment-actions{display:flex;gap:12px;margin-top:8px;}
+    .comment-action{font-size:12px;color:var(--text-muted);cursor:pointer;display:inline-flex;align-items:center;gap:4px;transition:color 0.2s;}
+    .comment-action:hover{color:var(--primary);}
+    .comment-action i{font-size:13px;}
+    .comment-input-area{display:flex;gap:12px;margin-top:20px;align-items:flex-start;}
+    .comment-input-box{flex:1;}
+    .comment-actions-row{display:flex;justify-content:flex-end;margin-top:8px;}
+    /* sidebar */
+    .sidebar-widget{background:var(--card);border-radius:var(--radius-lg);border:1px solid var(--border-light);padding:20px;}
+    .widget-title{font-family:'DM Serif Display',serif;font-size:16px;margin-bottom:14px;}
+    .related-post{display:flex;gap:10px;margin-bottom:14px;cursor:pointer;text-decoration:none;color:var(--text);}
+    .related-post:last-child{margin-bottom:0;}
+    .related-thumb{width:54px;height:54px;border-radius:var(--radius-sm);object-fit:cover;flex-shrink:0;background:var(--bg-alt);}
+    .related-title{font-size:13px;font-weight:600;line-height:1.4;margin-bottom:4px;}
+    .related-meta{font-size:11px;color:var(--text-muted);}
+    .tag-cloud{display:flex;flex-wrap:wrap;gap:6px;}
+    .tag{display:inline-flex;padding:5px 12px;border-radius:var(--radius-full);font-size:12px;font-weight:500;background:var(--bg-alt);color:var(--text-muted);cursor:pointer;transition:all 0.2s;border:1.5px solid var(--border);}
+    .tag:hover{border-color:var(--primary);color:var(--primary);}
+    /* report link */
+    .report-link{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--text-light);cursor:pointer;margin-top:4px;transition:color 0.2s;}
+    .report-link:hover{color:var(--accent);}
   </style>
 </head>
 <body>
-<div class="sc-app">
-
-  <!-- ── Sidebar ─────────────────────────────────────────────────────────── -->
-  <aside class="sc-sidebar">
-    <a href="../index.html" class="sc-logo">
-      <i class="ri-heart-pulse-fill"></i> ShareCare
-    </a>
-
-    <div class="sc-sidebar-section auth-required" style="display:none;">Medicine</div>
-    <ul class="sc-sidebar-menu auth-required" style="display:none;">
-      <li><a href="../patient/dashboard.html" class="sc-sidebar-item"><i class="ri-file-list-3-line"></i> My Requests</a></li>
-      <li><a href="../patient/new-request.html" class="sc-sidebar-item"><i class="ri-add-circle-line"></i> New Request</a></li>
-    </ul>
-
-    <div class="sc-sidebar-section">Community</div>
-    <ul class="sc-sidebar-menu">
-      <li><a href="feed.html" class="sc-sidebar-item"><i class="ri-home-smile-2-line"></i> Feed</a></li>
-      <li><a href="new-post.html" class="sc-sidebar-item auth-required" style="display:none;"><i class="ri-edit-line"></i> New Post</a></li>
-      <li><a href="saved.html"   class="sc-sidebar-item auth-required" style="display:none;"><i class="ri-bookmark-3-line"></i> Saved</a></li>
-    </ul>
-
-    <div class="sc-sidebar-footer auth-required" id="authFooter" style="display:none;">
-      <div class="sc-user-chip">
-        <img src="" alt="User" id="userAvatar">
-        <div>
-          <div class="sc-user-name" id="userName">Loading…</div>
-          <div class="sc-user-role">Patient</div>
+  <div class="sc-app">
+    <aside class="sc-sidebar">
+      <a href="../index.html" class="sc-logo"><i class="ri-heart-pulse-fill"></i> ShareCare</a>
+      <div class="sc-sidebar-section">Medicine</div>
+      <ul class="sc-sidebar-menu">
+        <li><a href="../patient/dashboard.html" class="sc-sidebar-item"><i class="ri-file-list-3-line"></i> My Requests</a></li>
+        <li><a href="../patient/new-request.html" class="sc-sidebar-item"><i class="ri-add-circle-line"></i> New Request</a></li>
+      </ul>
+      <div class="sc-sidebar-section">Community</div>
+      <ul class="sc-sidebar-menu">
+        <li><a href="feed.html" class="sc-sidebar-item active"><i class="ri-home-smile-2-line"></i> Feed</a></li>
+        <li><a href="new-post.html" class="sc-sidebar-item"><i class="ri-edit-line"></i> New Post</a></li>
+        <li><a href="feed.html" class="sc-sidebar-item"><i class="ri-bookmark-3-line"></i> Saved</a></li>
+      </ul>
+      <div class="sc-sidebar-footer">
+        <div class="sc-user-chip">
+          <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=80&q=80" alt="User">
+          <div><div class="sc-user-name">Rahul M.</div><div class="sc-user-role">Patient</div></div>
+          <i class="ri-logout-box-r-line sc-logout" title="Sign out"></i>
         </div>
-        <i class="ri-logout-box-r-line sc-logout" onclick="logOut()" title="Sign out"></i>
       </div>
-    </div>
-    <div class="sc-sidebar-footer" id="guestFooter">
-      <a href="../auth/login.html" class="btn btn-outline w-full" style="justify-content:center;font-size:13px;">
-        <i class="ri-login-box-line"></i> Sign In
-      </a>
-    </div>
-  </aside>
-
-  <!-- ── Main ─────────────────────────────────────────────────────────────── -->
-  <div class="sc-main">
-    <div class="sc-topbar">
-      <div>
-        <div class="sc-topbar-title">Community</div>
-        <div class="sc-topbar-sub" id="topbarCategory">Post detail</div>
-      </div>
-      <div class="sc-topbar-right">
-        <a href="feed.html" class="btn btn-outline btn-sm">
-          <i class="ri-arrow-left-line"></i> Back to Feed
-        </a>
-      </div>
-    </div>
-
-    <div class="sc-content">
-
-      <!-- Medical disclaimer — always visible -->
-      <div class="disclaimer mb-24">
-        <i class="ri-information-line"></i>
-        <span>This community shares personal experiences only — nothing here is medical advice. Always consult your doctor before making changes to your treatment.</span>
-      </div>
-
-      <!-- Breadcrumb -->
-      <div class="breadcrumb">
-        <a href="feed.html"><i class="ri-home-smile-2-line"></i> Feed</a>
-        <i class="ri-arrow-right-s-line"></i>
-        <span id="breadcrumbCategory">…</span>
-        <i class="ri-arrow-right-s-line"></i>
-        <span id="breadcrumbTitle" style="color:var(--text);font-weight:500;">Loading…</span>
-      </div>
-
-      <!-- Main grid -->
-      <div class="detail-layout">
-
-        <!-- ── Left: post + comments ── -->
-        <div>
-
-          <!-- Post skeleton (shown until data arrives) -->
-          <div id="postSkeleton" class="post-article" style="padding:28px 32px;">
-            <div style="display:flex;gap:12px;align-items:center;margin-bottom:20px;">
-              <div class="skel" style="width:44px;height:44px;border-radius:50%;flex-shrink:0;"></div>
-              <div style="flex:1;">
-                <div class="skel" style="height:14px;width:30%;margin-bottom:8px;"></div>
-                <div class="skel" style="height:11px;width:20%;"></div>
-              </div>
-            </div>
-            <div class="skel" style="height:28px;width:80%;margin-bottom:12px;"></div>
-            <div class="skel" style="height:28px;width:60%;margin-bottom:24px;"></div>
-            <div class="skel" style="height:14px;margin-bottom:10px;"></div>
-            <div class="skel" style="height:14px;margin-bottom:10px;width:90%;"></div>
-            <div class="skel" style="height:14px;width:75%;"></div>
+    </aside>
+    <div class="sc-main">
+      <div class="sc-topbar">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <a href="feed.html" class="btn btn-ghost btn-sm" style="padding:8px 10px;"><i class="ri-arrow-left-line" style="font-size:18px;"></i></a>
+          <div>
+            <div class="sc-topbar-title">Community Post</div>
+            <div class="sc-topbar-sub">Recipes &middot; Posted by Priya Sharma</div>
           </div>
+        </div>
+        <div class="sc-topbar-right">
+          <button class="notif-btn"><i class="ri-notification-3-line"></i><div class="notif-dot"></div></button>
+          <button class="btn btn-outline btn-sm"><i class="ri-bookmark-line"></i> Save</button>
+          <button class="btn btn-ghost btn-sm"><i class="ri-share-line"></i> Share</button>
+        </div>
+      </div>
+      <div class="sc-content">
+        <div class="detail-layout">
+          <!-- Post content -->
+          <div>
+            <div class="disclaimer mb-24">
+              <i class="ri-information-line"></i>
+              <span>Personal experience only — not medical advice. Talk to your doctor before changing your diet.</span>
+            </div>
 
-          <!-- Post article (hidden until data arrives) -->
-          <div id="postArticle" class="post-article" style="display:none;">
+            <img src="https://images.unsplash.com/photo-1547592180-85f173990554?w=1200&q=80" alt="Ragi Dosa" class="post-hero">
 
-            <div class="post-article-header">
-              <!-- Author row -->
-              <div class="post-meta-row">
-                <div class="post-avatar-lg" id="postAvatar"></div>
-                <div>
-                  <div class="post-author-name" id="postAuthorName"></div>
-                  <div class="post-author-meta" id="postAuthorMeta"></div>
-                </div>
-                <span class="badge" id="postCategoryBadge" style="margin-left:auto;"></span>
+            <span class="badge badge-primary mb-16"><i class="ri-restaurant-line"></i> Recipe</span>
+
+            <h2 style="font-family:'DM Serif Display',serif;font-size:28px;line-height:1.2;margin-bottom:12px;">Low-GI Ragi Dosa — My Sunday Morning Staple</h2>
+
+            <div class="author-row">
+              <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&q=80" alt="Priya" class="avatar avatar-md">
+              <div class="author-info">
+                <div class="author-name">Priya Sharma</div>
+                <div class="author-bio">Type 2 diabetic for 4 years &middot; Bangalore</div>
               </div>
-
-              <!-- Title -->
-              <div class="post-title-lg" id="postTitle"></div>
-
-              <!-- Tags -->
-              <div class="tag-list" id="tagList"></div>
+              <div class="post-meta-bar" style="margin:0;gap:16px;">
+                <div class="post-meta-item"><i class="ri-calendar-line"></i> 12 Mar 2026</div>
+                <div class="post-meta-item"><i class="ri-time-line"></i> 4 min read</div>
+              </div>
             </div>
 
-            <!-- Action bar -->
-            <div class="action-bar">
-              <button class="action-btn" id="helpfulBtn" onclick="handleHelpful()">
-                <i class="ri-thumb-up-line"></i>
-                <span id="helpfulLabel">Helpful</span>
-              </button>
-              <button class="action-btn" id="saveBtn" onclick="handleSave()">
-                <i class="ri-bookmark-line" id="saveIcon"></i>
-                <span id="saveLabel">Save</span>
-              </button>
-              <div class="spacer"></div>
-              <button class="action-btn-ghost" id="reportBtn" onclick="openReportModal()">
-                <i class="ri-flag-line"></i> Report
-              </button>
+            <div class="post-body">
+              <p>I've been Type 2 for four years now. For the first two, I basically gave up on South Indian breakfast because I assumed dosa was off the table. Then I started experimenting with the batter, and the results genuinely surprised me.</p>
+
+              <h3>Why Ragi?</h3>
+              <p>Ragi (finger millet) has a glycemic index of around 68 compared to regular white rice at 73+. More importantly, it's high in fibre, which slows glucose absorption. Combined with oats, I got a batter that holds together beautifully and keeps me full well past lunch.</p>
+
+              <h3>The Batter (makes 8–10 dosas)</h3>
+              <ul>
+                <li>1 cup ragi flour</li>
+                <li>½ cup rolled oats (blended to a coarse flour)</li>
+                <li>¼ cup urad dal (soaked 4 hours, ground smooth)</li>
+                <li>Salt to taste, water to consistency</li>
+                <li>Ferment overnight — the sourness actually helps further lower GI</li>
+              </ul>
+
+              <h3>My Numbers Before and After</h3>
+              <p>Before switching: my 2-hour post-breakfast reading was typically 178–195 mg/dL. After three weeks of this batter (same quantity, same meal time): 138–152 mg/dL. I'm not saying this will work the same for everyone, but it's been consistent enough for me to call it my staple.</p>
+
+              <h3>Tips That Make a Difference</h3>
+              <ul>
+                <li>Eat with a protein-first — I always have a small bowl of curd before the dosa</li>
+                <li>Don't skip the coconut chutney — the fat actually helps slow absorption</li>
+                <li>Walk for 10 minutes after, even just around the house</li>
+                <li>Check your reading 2 hours post-meal at least the first few times so you know how your body responds</li>
+              </ul>
+
+              <p>I hope this helps someone who's given up on breakfast the way I did. Happy to answer questions in the comments.</p>
             </div>
 
-            <!-- Body -->
-            <div class="post-article-body" id="postBody"></div>
+            <div class="helpful-bar">
+              <p>Did this post help you?</p>
+              <button class="helpful-btn"><i class="ri-thumb-up-line"></i> Mark as Helpful (48)</button>
+            </div>
 
-            <!-- Comments section -->
+            <hr class="section-divider">
+
+            <!-- Comments -->
             <div class="comments-section">
-              <div class="comments-title" id="commentsTitle">Comments</div>
+              <h3>14 Comments</h3>
 
-              <!-- Guest prompt — shown when not logged in -->
-              <div class="guest-prompt" id="guestCommentPrompt" style="display:none;">
-                <i class="ri-chat-3-line"></i>
-                <span><a href="../auth/login.html">Sign in</a> to join the conversation.</span>
-              </div>
-
-              <!-- Comment input — shown when logged in -->
-              <div class="comment-input-wrap" id="commentInputWrap" style="display:none;">
-                <div class="comment-avatar" id="commentAvatar"></div>
-                <div class="comment-input-inner">
-                  <textarea
-                    class="form-input"
-                    id="commentText"
-                    placeholder="Share your thoughts or experience…"
-                    rows="3"
-                  ></textarea>
+              <div class="comment">
+                <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&q=80" alt="" class="comment-avatar">
+                <div class="comment-bubble">
+                  <span class="comment-author">Suresh Iyer</span><span class="comment-time">2 hrs ago</span>
+                  <div class="comment-text">This is exactly what I needed. I tried a similar thing with bajra last month but it kept falling apart on the tawa. Will try your ratio — the oats as a binder is smart.</div>
                   <div class="comment-actions">
-                    <button class="btn btn-ghost btn-sm" onclick="clearComment()">Cancel</button>
-                    <button class="btn btn-primary btn-sm" id="submitCommentBtn" onclick="handleComment()">
-                      <i class="ri-send-plane-line"></i> Post Comment
-                    </button>
+                    <span class="comment-action"><i class="ri-thumb-up-line"></i> Helpful (6)</span>
+                    <span class="comment-action"><i class="ri-reply-line"></i> Reply</span>
                   </div>
                 </div>
               </div>
 
-              <!-- Comment list -->
-              <div class="comment-list" id="commentList">
-                <div style="text-align:center;padding:24px 0;color:var(--text-light);font-size:13px;">
-                  <i class="ri-loader-4-line"></i> Loading comments…
+              <div class="comment">
+                <img src="https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=80&q=80" alt="" class="comment-avatar">
+                <div class="comment-bubble">
+                  <span class="comment-author">Anita Verma</span><span class="comment-time">Yesterday</span>
+                  <div class="comment-text">The protein-first tip is a game changer. My dietitian told me the same thing — eating protein and fat before carbs flattens the glucose curve noticeably. Glad you mentioned it here too.</div>
+                  <div class="comment-actions">
+                    <span class="comment-action"><i class="ri-thumb-up-line"></i> Helpful (11)</span>
+                    <span class="comment-action"><i class="ri-reply-line"></i> Reply</span>
+                  </div>
                 </div>
               </div>
-            </div>
-          </div><!-- /postArticle -->
 
-          <!-- Post not found -->
-          <div id="postNotFound" class="empty-state" style="display:none;">
-            <i class="ri-file-damage-line"></i>
-            <h3>Post not found</h3>
-            <p>This post may have been removed or the link is invalid.</p>
-            <a href="feed.html" class="btn btn-primary" style="margin-top:8px;">Back to Feed</a>
-          </div>
-
-        </div><!-- /left col -->
-
-        <!-- ── Right sidebar ── -->
-        <div>
-
-          <!-- Post stats widget -->
-          <div class="sidebar-widget" id="statsWidget" style="display:none;">
-            <div class="widget-title">Post Stats</div>
-            <div style="display:flex;flex-direction:column;gap:10px;">
-              <div style="display:flex;justify-content:space-between;font-size:13px;">
-                <span style="color:var(--text-muted);">Helpful marks</span>
-                <span style="font-weight:600;" id="statHelpful">—</span>
+              <div class="comment">
+                <img src="https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=80&q=80" alt="" class="comment-avatar">
+                <div class="comment-bubble">
+                  <span class="comment-author">Kiran Patil</span><span class="comment-time">2 days ago</span>
+                  <div class="comment-text">Question — do you refrigerate the batter between uses or keep it at room temperature? I've heard fermented batter can over-ferment in Bangalore's heat.</div>
+                  <div class="comment-actions">
+                    <span class="comment-action"><i class="ri-thumb-up-line"></i> Helpful (3)</span>
+                    <span class="comment-action"><i class="ri-reply-line"></i> Reply</span>
+                  </div>
+                </div>
               </div>
-              <div style="display:flex;justify-content:space-between;font-size:13px;">
-                <span style="color:var(--text-muted);">Comments</span>
-                <span style="font-weight:600;" id="statComments">—</span>
+
+              <!-- Add comment -->
+              <div class="comment-input-area">
+                <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=80&q=80" alt="" class="comment-avatar">
+                <div class="comment-input-box">
+                  <textarea class="form-input" style="min-height:80px;" placeholder="Add a comment…"></textarea>
+                  <div class="comment-actions-row">
+                    <button class="btn btn-primary btn-sm">Post Comment</button>
+                  </div>
+                </div>
               </div>
-              <div style="display:flex;justify-content:space-between;font-size:13px;">
-                <span style="color:var(--text-muted);">Posted</span>
-                <span style="font-weight:600;" id="statPosted">—</span>
+
+              <div style="margin-top:20px;">
+                <span class="report-link"><i class="ri-flag-line"></i> Report this post</span>
               </div>
             </div>
           </div>
 
-          <!-- Related posts widget -->
-          <div class="sidebar-widget">
-            <div class="widget-title">More in <span id="relatedCategory">this category</span></div>
-            <div id="relatedList">
-              <div style="color:var(--text-light);font-size:13px;">Loading…</div>
+          <!-- Sidebar -->
+          <div style="display:flex;flex-direction:column;gap:16px;">
+            <div class="sidebar-widget">
+              <div class="widget-title">About the Author</div>
+              <div style="text-align:center;padding:8px 0 16px;">
+                <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&q=80" alt="Priya" style="width:64px;height:64px;border-radius:50%;object-fit:cover;border:2px solid var(--border);margin-bottom:10px;display:block;margin-left:auto;margin-right:auto;">
+                <div style="font-size:15px;font-weight:600;">Priya Sharma</div>
+                <div style="font-size:12px;color:var(--text-muted);margin-top:3px;">12 posts &middot; Bangalore</div>
+              </div>
+              <button class="btn btn-outline w-full btn-sm" style="justify-content:center;">Follow</button>
+            </div>
+
+            <div class="sidebar-widget">
+              <div class="widget-title">Related Posts</div>
+              <a href="post-detail.html" class="related-post">
+                <img src="https://images.unsplash.com/photo-1505253758473-96b7015fcd40?w=120&q=80" class="related-thumb" alt="">
+                <div><div class="related-title">5 Snacks You Can Find at Any Kirana Store</div><div class="related-meta">Deepa Nair &middot; Snacks</div></div>
+              </a>
+              <a href="post-detail.html" class="related-post">
+                <img src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=120&q=80" class="related-thumb" alt="">
+                <div><div class="related-title">The 15-Minute Walk That Changed My A1C</div><div class="related-meta">Anita Verma &middot; Exercise</div></div>
+              </a>
+              <a href="post-detail.html" class="related-post">
+                <div class="related-thumb" style="background:var(--accent-light);display:flex;align-items:center;justify-content:center;"><i class="ri-heart-3-line" style="font-size:22px;color:var(--accent);"></i></div>
+                <div><div class="related-title">Two Years with T2D — What I Wish I'd Known</div><div class="related-meta">Suresh Iyer &middot; Support</div></div>
+              </a>
+            </div>
+
+            <div class="sidebar-widget">
+              <div class="widget-title">Tags</div>
+              <div class="tag-cloud">
+                <span class="tag">ragi</span>
+                <span class="tag">low-GI</span>
+                <span class="tag">breakfast</span>
+                <span class="tag">dosa</span>
+                <span class="tag">South Indian</span>
+                <span class="tag">Type 2</span>
+                <span class="tag">blood sugar</span>
+              </div>
             </div>
           </div>
-
-        </div><!-- /right sidebar -->
-
-      </div><!-- /detail-layout -->
-    </div><!-- /sc-content -->
-  </div><!-- /sc-main -->
-</div><!-- /sc-app -->
-
-<!-- ── Report modal ───────────────────────────────────────────────────────── -->
-<div class="modal-backdrop" id="reportModal">
-  <div class="modal">
-    <div class="modal-title">Report this post</div>
-    <div class="modal-sub">Let us know what's wrong and we'll review it.</div>
-    <div class="form-group">
-      <label class="form-label">Reason</label>
-      <select class="form-select" id="reportReason">
-        <option value="">Select a reason…</option>
-        <option value="misinformation">Misinformation or inaccurate medical advice</option>
-        <option value="harmful">Harmful or dangerous content</option>
-        <option value="spam">Spam or promotional content</option>
-        <option value="offensive">Offensive or inappropriate language</option>
-        <option value="other">Other</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label class="form-label">Additional details <span style="color:var(--text-light);font-weight:400;">(optional)</span></label>
-      <textarea class="form-input" id="reportDetails" style="min-height:80px;" placeholder="Describe the issue…"></textarea>
-    </div>
-    <div class="modal-foot">
-      <button class="btn btn-ghost" onclick="closeReportModal()">Cancel</button>
-      <button class="btn btn-danger" id="submitReportBtn" onclick="handleReport()">
-        <i class="ri-flag-line"></i> Submit Report
-      </button>
+        </div>
+      </div>
     </div>
   </div>
-</div>
-
-<!-- ── Toast ─────────────────────────────────────────────────────────────── -->
-<div class="toast" id="toast"></div>
-
-<script src="../js/env.js"></script>
-<script type="module">
-  import { getAuth, onAuthStateChanged }                        from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getFirestore, collection, query, orderBy, onSnapshot, where, limit, getDocs }
-                                                                from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-  import { logOut }                                             from '../js/auth.js';
-  import { getPost, markHelpful, savePost, unsavePost, isSaved, addComment, reportPost, getPosts }
-                                                                from '../js/community.js';
-  import { app }                                                from '../js/env.js';
-
-  window.logOut = logOut;
-
-  // ── Bootstrap ─────────────────────────────────────────────────────────
-  const auth = getAuth(app);
-  const db   = getFirestore(app);
-
-  const postId = new URLSearchParams(location.search).get('id');
-
-  let currentUser = null;
-  let post        = null;       // current post object
-  let postSaved   = false;      // save toggle state
-  let postHelpful = false;      // helpful toggle state (already marked?)
-  let unsubComments = null;
-
-  // ── Auth state ─────────────────────────────────────────────────────────
-  onAuthStateChanged(auth, async (user) => {
-    currentUser = user;
-    applyAuthState(user);
-
-    if (user) {
-      const name = user.displayName || user.email || 'User';
-      document.getElementById('userName').textContent = name;
-      document.getElementById('userAvatar').src = user.photoURL ||
-        `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=C2DDD4&color=3A6E59`;
-
-      renderCommentAvatar(user);
-
-      if (postId && post) {
-        postSaved   = await isSaved(user.uid, postId);
-        postHelpful = (post.helpfulBy || []).includes(user.uid);
-        updateActionBar();
-      }
+  <script>
+    // Guest mode: redirect all sidebar links to login
+    const isGuest = true; // replace with Firebase auth check in Sprint 1
+    if (isGuest) {
+      document.querySelectorAll('.sc-sidebar a, .sc-sidebar-footer .sc-logout').forEach(el => {
+        el.addEventListener('click', function(e) {
+          e.preventDefault();
+          window.location.href = '../auth/login.html';
+        });
+      });
     }
-  });
-
-  function applyAuthState(user) {
-    const authed = !!user;
-    document.querySelectorAll('.auth-required').forEach(el => el.style.display = authed ? '' : 'none');
-    document.getElementById('authFooter').style.display       = authed ? ''     : 'none';
-    document.getElementById('guestFooter').style.display      = authed ? 'none' : '';
-    document.getElementById('commentInputWrap').style.display  = authed ? ''     : 'none';
-    document.getElementById('guestCommentPrompt').style.display= authed ? 'none' : '';
-  }
-
-  function renderCommentAvatar(user) {
-    const el = document.getElementById('commentAvatar');
-    if (user.photoURL) {
-      el.innerHTML = `<img src="${user.photoURL}" alt="">`;
-    } else {
-      el.textContent = initials(user.displayName || user.email || 'U');
-    }
-  }
-
-  // ── Load post ──────────────────────────────────────────────────────────
-  async function loadPost() {
-    if (!postId) { showNotFound(); return; }
-
-    try {
-      post = await getPost(postId);
-    } catch(e) {
-      console.error('getPost error:', e);
-      post = null;
-    }
-
-    if (!post) { showNotFound(); return; }
-
-    renderPost(post);
-
-    // Now that post is loaded, check auth-dependent states
-    if (currentUser) {
-      postSaved   = await isSaved(currentUser.uid, postId);
-      postHelpful = (post.helpfulBy || []).includes(currentUser.uid);
-      updateActionBar();
-    }
-
-    subscribeComments();
-    loadRelatedPosts(post.category);
-  }
-
-  function showNotFound() {
-    document.getElementById('postSkeleton').style.display  = 'none';
-    document.getElementById('postNotFound').style.display  = '';
-  }
-
-  // ── Render post ────────────────────────────────────────────────────────
-  const categoryMeta = {
-    'Recipes':       { icon: 'ri-restaurant-line',     badge: 'badge-success'  },
-    'Exercise':      { icon: 'ri-run-line',             badge: 'badge-primary'  },
-    'Snacks':        { icon: 'ri-snack-line',           badge: 'badge-warning'  },
-    'Support':       { icon: 'ri-heart-3-line',         badge: 'badge-accent'   },
-    'Tips & Tricks': { icon: 'ri-lightbulb-line',       badge: 'badge-gray'     },
-    'Ask Community': { icon: 'ri-question-answer-line', badge: 'badge-primary'  },
-  };
-
-  function renderPost(p) {
-    // Topbar + breadcrumb
-    document.getElementById('topbarCategory').textContent   = p.category || 'Post';
-    document.getElementById('breadcrumbCategory').textContent = p.category || '';
-    document.title = `ShareCare — ${p.title || 'Post'}`;
-
-    const titleEl = document.getElementById('breadcrumbTitle');
-    titleEl.textContent = p.title ? (p.title.length > 40 ? p.title.slice(0, 40) + '…' : p.title) : 'Post';
-
-    // Author
-    const avatarEl = document.getElementById('postAvatar');
-    if (p.authorPhoto) {
-      avatarEl.innerHTML = `<img src="${p.authorPhoto}" alt="${p.authorName || ''}">`;
-    } else {
-      avatarEl.textContent = initials(p.authorName);
-    }
-    document.getElementById('postAuthorName').textContent = p.authorName || 'Anonymous';
-    document.getElementById('postAuthorMeta').textContent =
-      `Patient · ${formatDate(p.createdAt)}`;
-
-    // Category badge
-    const meta = categoryMeta[p.category] || { icon: 'ri-tag-line', badge: 'badge-gray' };
-    const badgeEl = document.getElementById('postCategoryBadge');
-    badgeEl.className = `badge ${meta.badge}`;
-    badgeEl.innerHTML = `<i class="${meta.icon}"></i> ${p.category || ''}`;
-
-    // Title
-    document.getElementById('postTitle').textContent = p.title || '(Untitled)';
-
-    // Tags
-    const tagList = document.getElementById('tagList');
-    if (p.tags && p.tags.length > 0) {
-      tagList.innerHTML = p.tags.map(tag =>
-        `<a href="feed.html?tag=${encodeURIComponent(tag)}" class="tag">
-          <i class="ri-price-tag-3-line"></i>${tag}
-        </a>`
-      ).join('');
-    } else {
-      tagList.style.display = 'none';
-    }
-
-    // Body — preserve newlines, sanitise HTML
-    const bodyEl = document.getElementById('postBody');
-    bodyEl.innerHTML = (p.body || '')
-      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-      .split('\n\n').map(para => `<p>${para.replace(/\n/g,'<br>')}</p>`).join('');
-
-    // Stats widget
-    document.getElementById('statHelpful').textContent = p.helpfulCount || 0;
-    document.getElementById('statComments').textContent = p.commentCount || 0;
-    document.getElementById('statPosted').textContent   = formatDate(p.createdAt);
-    document.getElementById('statsWidget').style.display = '';
-
-    // Related label
-    document.getElementById('relatedCategory').textContent = p.category || 'this category';
-
-    // Show article
-    document.getElementById('postSkeleton').style.display = 'none';
-    document.getElementById('postArticle').style.display  = '';
-
-    updateActionBar();
-  }
-
-  function updateActionBar() {
-    // Helpful button
-    const helpfulBtn = document.getElementById('helpfulBtn');
-    const helpfulLbl = document.getElementById('helpfulLabel');
-    const count      = post ? (post.helpfulCount || 0) : 0;
-    helpfulLbl.textContent = `${count} Helpful`;
-    helpfulBtn.classList.toggle('active', postHelpful);
-    helpfulBtn.querySelector('i').className = postHelpful ? 'ri-thumb-up-fill' : 'ri-thumb-up-line';
-
-    // Save button
-    const saveBtn  = document.getElementById('saveBtn');
-    const saveIcon = document.getElementById('saveIcon');
-    const saveLbl  = document.getElementById('saveLabel');
-    saveLbl.textContent = postSaved ? 'Saved' : 'Save';
-    saveBtn.classList.toggle('saved-active', postSaved);
-    saveIcon.className = postSaved ? 'ri-bookmark-fill' : 'ri-bookmark-line';
-
-    // Comments title
-    const cc = post ? (post.commentCount || 0) : 0;
-    document.getElementById('commentsTitle').textContent =
-      `${cc} Comment${cc === 1 ? '' : 's'}`;
-
-    // Disable action buttons for guests
-    if (!currentUser) {
-      helpfulBtn.disabled = true;
-      helpfulBtn.title    = 'Sign in to mark as helpful';
-      saveBtn.disabled    = true;
-      saveBtn.title       = 'Sign in to save posts';
-    } else {
-      helpfulBtn.disabled = false;
-      saveBtn.disabled    = false;
-    }
-  }
-
-  // ── Helpful ────────────────────────────────────────────────────────────
-  window.handleHelpful = async function() {
-    if (!currentUser || !post || postHelpful) return;
-    const btn = document.getElementById('helpfulBtn');
-    btn.disabled = true;
-    try {
-      await markHelpful(postId, currentUser.uid);
-      postHelpful = true;
-      post.helpfulCount = (post.helpfulCount || 0) + 1;
-      updateActionBar();
-      showToast('Marked as helpful!');
-    } catch(e) {
-      console.error('markHelpful error:', e);
-      showToast('Could not mark — please try again.');
-    } finally {
-      btn.disabled = false;
-    }
-  };
-
-  // ── Save / Unsave ──────────────────────────────────────────────────────
-  window.handleSave = async function() {
-    if (!currentUser) return;
-    const btn = document.getElementById('saveBtn');
-    btn.disabled = true;
-    try {
-      if (postSaved) {
-        await unsavePost(currentUser.uid, postId);
-        postSaved = false;
-        showToast('Post removed from saved.');
-      } else {
-        await savePost(currentUser.uid, postId);
-        postSaved = true;
-        showToast('Post saved!');
-      }
-      updateActionBar();
-    } catch(e) {
-      console.error('save error:', e);
-      showToast('Something went wrong — try again.');
-    } finally {
-      btn.disabled = false;
-    }
-  };
-
-  // ── Comments (real-time) ───────────────────────────────────────────────
-  function subscribeComments() {
-    if (unsubComments) unsubComments();
-    const q = query(
-      collection(db, 'posts', postId, 'comments'),
-      orderBy('createdAt', 'asc')
-    );
-    unsubComments = onSnapshot(q, (snap) => {
-      const comments = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-      renderComments(comments);
-      // Keep commentCount in sync locally
-      if (post) {
-        post.commentCount = comments.length;
-        document.getElementById('statComments').textContent = comments.length;
-        document.getElementById('commentsTitle').textContent =
-          `${comments.length} Comment${comments.length === 1 ? '' : 's'}`;
-      }
-    });
-  }
-
-  function renderComments(comments) {
-    const list = document.getElementById('commentList');
-    if (comments.length === 0) {
-      list.innerHTML = `
-        <div style="text-align:center;padding:32px 0;color:var(--text-light);font-size:13px;">
-          <i class="ri-chat-3-line" style="font-size:28px;display:block;margin-bottom:8px;"></i>
-          No comments yet — be the first to share your thoughts.
-        </div>`;
-      return;
-    }
-    list.innerHTML = comments.map(c => `
-      <div class="comment-item">
-        <div class="comment-avatar">
-          ${c.authorPhoto
-            ? `<img src="${c.authorPhoto}" alt="">`
-            : `<span>${initials(c.authorName)}</span>`}
-        </div>
-        <div class="comment-body">
-          <div class="comment-header">
-            <span class="comment-author">${c.authorName || 'Anonymous'}</span>
-            <span class="comment-time">${timeAgo(c.createdAt)}</span>
-          </div>
-          <div class="comment-text">${escapeHtml(c.text || '').replace(/\n/g,'<br>')}</div>
-        </div>
-      </div>`).join('');
-  }
-
-  window.handleComment = async function() {
-    if (!currentUser) return;
-    const textarea = document.getElementById('commentText');
-    const text     = textarea.value.trim();
-    if (!text) return;
-
-    const btn = document.getElementById('submitCommentBtn');
-    btn.disabled = true;
-    btn.innerHTML = '<i class="ri-loader-4-line"></i> Posting…';
-
-    try {
-      await addComment(
-        postId,
-        currentUser.uid,
-        currentUser.displayName || currentUser.email || 'User',
-        text
-      );
-      textarea.value = '';
-      showToast('Comment posted!');
-    } catch(e) {
-      console.error('addComment error:', e);
-      showToast('Could not post comment — please try again.');
-    } finally {
-      btn.disabled = false;
-      btn.innerHTML = '<i class="ri-send-plane-line"></i> Post Comment';
-    }
-  };
-
-  window.clearComment = function() {
-    document.getElementById('commentText').value = '';
-  };
-
-  // Ctrl/Cmd + Enter to submit
-  document.getElementById('commentText').addEventListener('keydown', (e) => {
-    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') handleComment();
-  });
-
-  // ── Related posts ──────────────────────────────────────────────────────
-  async function loadRelatedPosts(category) {
-    if (!category) return;
-    try {
-      const posts = await getPosts(category, 'recent');
-      // Exclude current post, take up to 3
-      const related = posts.filter(p => p.id !== postId).slice(0, 3);
-      renderRelated(related);
-    } catch(e) {
-      console.error('related posts error:', e);
-    }
-  }
-
-  function renderRelated(posts) {
-    const el = document.getElementById('relatedList');
-    if (posts.length === 0) {
-      el.innerHTML = `<div style="font-size:13px;color:var(--text-light);">No other posts in this category yet.</div>`;
-      return;
-    }
-    el.innerHTML = posts.map(p => `
-      <a href="post-detail.html?id=${p.id}" class="related-card">
-        <div class="related-title">${p.title || '(Untitled)'}</div>
-        <div class="related-meta">
-          <span><i class="ri-thumb-up-line"></i> ${p.helpfulCount || 0}</span>
-          <span><i class="ri-chat-3-line"></i> ${p.commentCount || 0}</span>
-          <span>${timeAgo(p.createdAt)}</span>
-        </div>
-      </a>`).join('');
-  }
-
-  // ── Report modal ───────────────────────────────────────────────────────
-  window.openReportModal = function() {
-    if (!currentUser) { showToast('Sign in to report posts.'); return; }
-    document.getElementById('reportModal').classList.add('open');
-  };
-  window.closeReportModal = function() {
-    document.getElementById('reportModal').classList.remove('open');
-    document.getElementById('reportReason').value  = '';
-    document.getElementById('reportDetails').value = '';
-  };
-
-  window.handleReport = async function() {
-    const reason  = document.getElementById('reportReason').value;
-    const details = document.getElementById('reportDetails').value.trim();
-    if (!reason) { showToast('Please select a reason.'); return; }
-
-    const btn = document.getElementById('submitReportBtn');
-    btn.disabled = true;
-    btn.textContent = 'Submitting…';
-
-    try {
-      await reportPost(postId, currentUser.uid, details ? `${reason}: ${details}` : reason);
-      closeReportModal();
-      showToast('Report submitted — thank you.');
-    } catch(e) {
-      console.error('reportPost error:', e);
-      showToast('Could not submit report — please try again.');
-    } finally {
-      btn.disabled = false;
-      btn.innerHTML = '<i class="ri-flag-line"></i> Submit Report';
-    }
-  };
-
-  // Close modal on backdrop click
-  document.getElementById('reportModal').addEventListener('click', (e) => {
-    if (e.target === e.currentTarget) closeReportModal();
-  });
-
-  // ── Utilities ──────────────────────────────────────────────────────────
-  function initials(name) {
-    if (!name) return '?';
-    return name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
-  }
-
-  function timeAgo(ts) {
-    if (!ts) return '';
-    const date = ts.toDate ? ts.toDate() : new Date(ts);
-    const diff = (Date.now() - date.getTime()) / 1000;
-    if (diff < 60)     return 'just now';
-    if (diff < 3600)   return `${Math.floor(diff / 60)} min ago`;
-    if (diff < 86400)  return `${Math.floor(diff / 3600)} hrs ago`;
-    if (diff < 172800) return 'Yesterday';
-    return `${Math.floor(diff / 86400)} days ago`;
-  }
-
-  function formatDate(ts) {
-    if (!ts) return '—';
-    const date = ts.toDate ? ts.toDate() : new Date(ts);
-    return date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
-  }
-
-  function escapeHtml(str) {
-    return str
-      .replace(/&/g,'&amp;')
-      .replace(/</g,'&lt;')
-      .replace(/>/g,'&gt;')
-      .replace(/"/g,'&quot;');
-  }
-
-  let toastTimer;
-  function showToast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
-  }
-
-  // ── Boot ───────────────────────────────────────────────────────────────
-  loadPost();
-</script>
+  </script>
 </body>
 </html>

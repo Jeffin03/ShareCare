@@ -95,3 +95,5 @@ export function redirectIfLoggedIn() {
     redirectAfterLogin(profile.role);
   });
 }
+
+export { auth };
