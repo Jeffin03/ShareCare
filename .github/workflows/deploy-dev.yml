@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - contribution
 
 jobs:
   test:
