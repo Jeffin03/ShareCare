@@ -1,302 +1,797 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ShareCare — New Post</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
   <link rel="stylesheet" href="../assets/style.css">
   <style>
-    .new-post-layout{display:grid;grid-template-columns:1fr 300px;gap:28px;align-items:start;}
-    .category-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:4px;}
-    .category-card{border:1.5px solid var(--border);border-radius:var(--radius-md);padding:14px 12px;cursor:pointer;transition:all 0.2s;text-align:center;}
-    .category-card:hover{border-color:var(--primary);background:var(--primary-light);}
-    .category-card.selected{border-color:var(--primary);background:var(--primary-light);}
-    .category-card i{font-size:22px;color:var(--text-muted);display:block;margin-bottom:6px;}
-    .category-card.selected i{color:var(--primary-dark);}
-    .category-card span{font-size:12px;font-weight:600;color:var(--text-muted);}
-    .category-card.selected span{color:var(--primary-dark);}
-    .upload-zone{border:2px dashed var(--border);border-radius:var(--radius-md);padding:32px 20px;text-align:center;cursor:pointer;transition:all 0.2s;background:var(--bg);}
-    .upload-zone:hover{border-color:var(--primary);background:var(--primary-light);}
-    .upload-zone i{font-size:32px;color:var(--text-light);display:block;margin-bottom:8px;}
-    .upload-zone p{font-size:13px;color:var(--text-muted);}
-    .upload-zone .upload-label{font-size:13px;font-weight:600;color:var(--primary);margin-bottom:4px;}
-    .char-count{font-size:12px;color:var(--text-light);text-align:right;margin-top:5px;}
-    .tag-input-area{display:flex;flex-wrap:wrap;gap:6px;padding:10px 12px;border:1.5px solid var(--border);border-radius:var(--radius-md);background:var(--bg);cursor:text;min-height:44px;transition:all 0.2s;}
-    .tag-input-area:focus-within{border-color:var(--primary);background:white;}
-    .tag-chip{display:inline-flex;align-items:center;gap:4px;background:var(--primary-light);color:var(--primary-dark);font-size:12px;font-weight:600;padding:3px 10px;border-radius:var(--radius-full);}
-    .tag-chip i{font-size:12px;cursor:pointer;opacity:0.7;}
-    .tag-chip i:hover{opacity:1;}
-    .tag-input-area input{border:none;outline:none;font-family:'DM Sans',sans-serif;font-size:13px;background:transparent;color:var(--text);min-width:80px;flex:1;}
-    .guidelines-list{list-style:none;display:flex;flex-direction:column;gap:8px;}
-    .guidelines-list li{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text-muted);line-height:1.5;}
-    .guidelines-list li i{font-size:15px;margin-top:1px;flex-shrink:0;}
-    .guidelines-list li i.ok{color:var(--primary);}
-    .guidelines-list li i.no{color:var(--accent);}
-    .preview-card{background:var(--card);border-radius:var(--radius-lg);border:1px solid var(--border-light);padding:20px;}
-    .preview-empty{text-align:center;padding:24px 0;color:var(--text-muted);}
-    .preview-empty i{font-size:32px;color:var(--border);display:block;margin-bottom:8px;}
-    .preview-empty p{font-size:13px;}
-    .sidebar-widget{background:var(--card);border-radius:var(--radius-lg);border:1px solid var(--border-light);padding:20px;}
-    .widget-title{font-family:'DM Serif Display',serif;font-size:16px;margin-bottom:14px;}
-    .form-section{margin-bottom:28px;}
-    .form-section-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-light);margin-bottom:14px;}
-    .rich-toolbar{display:flex;gap:2px;padding:8px 10px;background:var(--bg-alt);border:1.5px solid var(--border);border-bottom:none;border-radius:var(--radius-md) var(--radius-md) 0 0;}
-    .rich-toolbar button{width:30px;height:30px;border:none;background:transparent;border-radius:var(--radius-sm);cursor:pointer;font-size:14px;color:var(--text-muted);transition:all 0.2s;display:flex;align-items:center;justify-content:center;}
-    .rich-toolbar button:hover{background:var(--card);color:var(--text);}
-    .rich-textarea{border-radius:0 0 var(--radius-md) var(--radius-md) !important;}
+    /* ── Page layout ── */
+    .new-post-layout {
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 28px;
+      align-items: start;
+      max-width: 1100px;
+    }
+
+    /* ── Form card ── */
+    .form-card {
+      background: var(--card);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-light);
+      overflow: hidden;
+    }
+    .form-card-header {
+      padding: 24px 28px 20px;
+      border-bottom: 1px solid var(--border-light);
+      background: var(--bg);
+    }
+    .form-card-header-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 20px;
+      margin-bottom: 4px;
+    }
+    .form-card-header-sub {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+    .form-card-body {
+      padding: 28px;
+    }
+
+    /* ── Category grid ── */
+    .category-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 8px;
+    }
+    .cat-option {
+      position: relative;
+    }
+    .cat-option input[type="radio"] {
+      position: absolute;
+      opacity: 0;
+      width: 0; height: 0;
+    }
+    .cat-label {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 7px;
+      padding: 14px 8px;
+      border-radius: var(--radius-lg);
+      border: 1.5px solid var(--border);
+      background: var(--bg);
+      cursor: pointer;
+      transition: all 0.18s;
+      text-align: center;
+      user-select: none;
+    }
+    .cat-label i {
+      font-size: 22px;
+      color: var(--text-muted);
+      transition: color 0.18s;
+    }
+    .cat-label span {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      line-height: 1.2;
+    }
+    .cat-label:hover {
+      border-color: var(--primary-mid);
+      background: var(--primary-light);
+    }
+    .cat-label:hover i,
+    .cat-label:hover span { color: var(--primary); }
+
+    .cat-option input:checked + .cat-label {
+      border-color: var(--primary);
+      background: var(--primary-light);
+    }
+    .cat-option input:checked + .cat-label i,
+    .cat-option input:checked + .cat-label span { color: var(--primary-dark); }
+    .cat-option input:checked + .cat-label::after {
+      content: '';
+      position: absolute;
+      top: 8px; right: 8px;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--primary);
+    }
+
+    /* ── Title counter ── */
+    .title-counter {
+      font-size: 12px;
+      color: var(--text-light);
+      text-align: right;
+      margin-top: 4px;
+      transition: color 0.2s;
+    }
+    .title-counter.warn  { color: #E8957A; }
+    .title-counter.limit { color: #d32f2f; }
+
+    /* ── Body textarea ── */
+    #postBody {
+      min-height: 220px;
+      resize: vertical;
+    }
+
+    /* ── Tags input ── */
+    .tags-input-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+      min-height: 44px;
+      padding: 6px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--card);
+      cursor: text;
+      transition: border-color 0.18s;
+    }
+    .tags-input-wrap:focus-within { border-color: var(--primary); }
+    .tag-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      background: var(--primary-light);
+      border: 1px solid var(--primary-mid);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--primary-dark);
+    }
+    .tag-chip-remove {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      color: var(--primary);
+      font-size: 14px;
+      line-height: 1;
+      transition: color 0.15s;
+    }
+    .tag-chip-remove:hover { color: #d32f2f; }
+    .tag-text-input {
+      flex: 1;
+      min-width: 80px;
+      border: none;
+      outline: none;
+      background: transparent;
+      font-size: 13px;
+      color: var(--text);
+      padding: 2px 0;
+    }
+    .tag-text-input::placeholder { color: var(--text-light); }
+    .tags-hint {
+      font-size: 12px;
+      color: var(--text-light);
+      margin-top: 5px;
+    }
+
+    /* ── Disclaimer checkbox row ── */
+    .disclaimer-check {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 16px 18px;
+      background: var(--accent-light);
+      border: 1px solid #f0ccc0;
+      border-radius: var(--radius-lg);
+      margin-bottom: 24px;
+    }
+    .disclaimer-check input[type="checkbox"] {
+      width: 18px; height: 18px;
+      flex-shrink: 0;
+      margin-top: 1px;
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
+    .disclaimer-check label {
+      font-size: 13px;
+      color: var(--text);
+      line-height: 1.55;
+      cursor: pointer;
+    }
+    .disclaimer-check label strong { color: var(--accent-dark); }
+
+    /* ── Submit row ── */
+    .submit-row {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    /* ── Error banner ── */
+    .error-banner {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+      background: #fdecea;
+      border: 1px solid #f5c6c2;
+      border-radius: var(--radius-lg);
+      font-size: 13px;
+      color: #b71c1c;
+      margin-bottom: 20px;
+    }
+    .error-banner i { font-size: 18px; flex-shrink: 0; }
+
+    /* ── Validation styles ── */
+    .form-input.invalid,
+    .tags-input-wrap.invalid,
+    .category-grid.invalid .cat-label { border-color: #d32f2f !important; }
+    .field-error {
+      font-size: 12px;
+      color: #d32f2f;
+      margin-top: 4px;
+      display: none;
+    }
+    .field-error.show { display: block; }
+
+    /* ── Sidebar tips ── */
+    .sidebar-widget {
+      background: var(--card);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-light);
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    .sidebar-widget:last-child { margin-bottom: 0; }
+    .widget-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 16px;
+      margin-bottom: 14px;
+    }
+    .tip-item {
+      display: flex;
+      gap: 10px;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border-light);
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+    .tip-item:last-child { border-bottom: none; padding-bottom: 0; }
+    .tip-item i {
+      font-size: 16px;
+      color: var(--primary);
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    /* ── Category pill preview (sidebar) ── */
+    .preview-category {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 14px;
+      border-radius: var(--radius-full);
+      font-size: 13px;
+      font-weight: 600;
+      border: 1.5px solid var(--border);
+      background: var(--bg);
+      color: var(--text-muted);
+      transition: all 0.2s;
+    }
+    .preview-category.selected {
+      background: var(--primary-light);
+      border-color: var(--primary-mid);
+      color: var(--primary-dark);
+    }
+
+    /* ── Submit loading state ── */
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spinning { animation: spin 0.7s linear infinite; display: inline-block; }
   </style>
 </head>
 <body>
-  <div class="sc-app">
-    <aside class="sc-sidebar">
-      <a href="../index.html" class="sc-logo"><i class="ri-heart-pulse-fill"></i> ShareCare</a>
-      <div class="sc-sidebar-section auth-required">Medicine</div>
-      <ul class="sc-sidebar-menu auth-required">
-        <li><a href="../patient/dashboard.html" class="sc-sidebar-item"><i class="ri-file-list-3-line"></i> My Requests</a></li>
-        <li><a href="../patient/new-request.html" class="sc-sidebar-item"><i class="ri-add-circle-line"></i> New Request</a></li>
-      </ul>
-      <div class="sc-sidebar-section">Community</div>
-      <ul class="sc-sidebar-menu">
-        <li><a href="feed.html" class="sc-sidebar-item"><i class="ri-home-smile-2-line"></i> Feed</a></li>
-        <li><a href="new-post.html" class="sc-sidebar-item active"><i class="ri-edit-line"></i> New Post</a></li>
-        <li><a href="feed.html" class="sc-sidebar-item"><i class="ri-bookmark-3-line"></i> Saved</a></li>
-      </ul>
-      <div class="sc-sidebar-footer">
-        <!-- Guest footer -->
-        <div id="guestFooter" style="display:none;">
-          <a href="../auth/login.html" class="btn btn-primary w-full btn-sm" style="justify-content:center;margin-bottom:8px;"><i class="ri-login-circle-line"></i> Sign In</a>
-          <a href="../auth/signup.html" class="btn btn-outline w-full btn-sm" style="justify-content:center;">Create Account</a>
+<div class="sc-app">
+
+  <!-- ── Sidebar ──────────────────────────────────────────────────────── -->
+  <aside class="sc-sidebar">
+    <a href="../index.html" class="sc-logo">
+      <i class="ri-heart-pulse-fill"></i> ShareCare
+    </a>
+
+    <div class="sc-sidebar-section">Medicine</div>
+    <ul class="sc-sidebar-menu">
+      <li><a href="../patient/dashboard.html" class="sc-sidebar-item"><i class="ri-file-list-3-line"></i> My Requests</a></li>
+      <li><a href="../patient/new-request.html" class="sc-sidebar-item"><i class="ri-add-circle-line"></i> New Request</a></li>
+    </ul>
+
+    <div class="sc-sidebar-section">Community</div>
+    <ul class="sc-sidebar-menu">
+      <li><a href="feed.html"     class="sc-sidebar-item"><i class="ri-home-smile-2-line"></i> Feed</a></li>
+      <li><a href="new-post.html" class="sc-sidebar-item active"><i class="ri-edit-line"></i> New Post</a></li>
+      <li><a href="saved.html"    class="sc-sidebar-item"><i class="ri-bookmark-3-line"></i> Saved</a></li>
+    </ul>
+
+    <div class="sc-sidebar-footer">
+      <div class="sc-user-chip">
+        <img src="" alt="User" id="userAvatar">
+        <div>
+          <div class="sc-user-name" id="userName">Loading…</div>
+          <div class="sc-user-role">Patient</div>
         </div>
-        <!-- Logged-in footer -->
-        <div id="userFooter" style="display:none;">
-          <div class="sc-user-chip">
-            <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=80&q=80" alt="User">
-            <div><div class="sc-user-name">Rahul M.</div><div class="sc-user-role">Patient</div></div>
-            <i class="ri-logout-box-r-line sc-logout" title="Sign out"></i>
-          </div>
-        </div>
-      </div>
-    </aside>
-    <div class="sc-main">
-      <div class="sc-topbar">
-        <div style="display:flex;align-items:center;gap:12px;">
-          <a href="feed.html" class="btn btn-ghost btn-sm" style="padding:8px 10px;"><i class="ri-arrow-left-line" style="font-size:18px;"></i></a>
-          <div>
-            <div class="sc-topbar-title">New Post</div>
-            <div class="sc-topbar-sub">Share something with the community</div>
-          </div>
-        </div>
-        <div class="sc-topbar-right">
-          <button class="btn btn-outline btn-sm">Save Draft</button>
-          <button class="btn btn-primary btn-sm"><i class="ri-send-plane-line"></i> Publish Post</button>
-        </div>
-      </div>
-      <div class="sc-content">
-        <div class="disclaimer mb-24">
-          <i class="ri-information-line"></i>
-          <span>Only share personal experiences. Do not post medical advice, diagnoses, or recommend specific treatments. Our community guidelines apply to all posts.</span>
-        </div>
-
-        <div class="new-post-layout">
-          <!-- Form -->
-          <div>
-            <!-- Category -->
-            <div class="form-section">
-              <div class="form-section-title">Category <span style="color:var(--accent);">*</span></div>
-              <div class="category-grid">
-                <div class="category-card selected">
-                  <i class="ri-restaurant-line"></i>
-                  <span>Recipe</span>
-                </div>
-                <div class="category-card">
-                  <i class="ri-run-line"></i>
-                  <span>Exercise</span>
-                </div>
-                <div class="category-card">
-                  <i class="ri-snack-line"></i>
-                  <span>Snacks</span>
-                </div>
-                <div class="category-card">
-                  <i class="ri-heart-3-line"></i>
-                  <span>Support</span>
-                </div>
-                <div class="category-card">
-                  <i class="ri-lightbulb-line"></i>
-                  <span>Tips &amp; Tricks</span>
-                </div>
-                <div class="category-card">
-                  <i class="ri-question-answer-line"></i>
-                  <span>Ask Community</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Title -->
-            <div class="form-group">
-              <label class="form-label">Post Title <span style="color:var(--accent);">*</span></label>
-              <input type="text" class="form-input" placeholder="Give your post a clear, descriptive title…" maxlength="120">
-              <div class="char-count">0 / 120</div>
-            </div>
-
-            <!-- Body -->
-            <div class="form-group">
-              <label class="form-label">Post Content <span style="color:var(--accent);">*</span></label>
-              <div class="rich-toolbar">
-                <button title="Bold"><i class="ri-bold"></i></button>
-                <button title="Italic"><i class="ri-italic"></i></button>
-                <button title="Heading"><i class="ri-heading"></i></button>
-                <button title="Bullet list"><i class="ri-list-unordered"></i></button>
-                <button title="Numbered list"><i class="ri-list-ordered"></i></button>
-                <div style="width:1px;background:var(--border);margin:4px 6px;"></div>
-                <button title="Link"><i class="ri-link"></i></button>
-              </div>
-              <textarea class="form-input rich-textarea" style="min-height:240px;" placeholder="Share your experience, recipe, tip, or question in detail. Be specific — the more context you give, the more helpful your post will be to others."></textarea>
-              <div class="form-hint">Minimum 100 characters. Write in English or any Indian language.</div>
-            </div>
-
-            <!-- Image upload -->
-            <div class="form-group">
-              <label class="form-label">Cover Image <span style="color:var(--text-light);font-weight:400;">(optional)</span></label>
-              <div class="upload-zone">
-                <i class="ri-image-add-line"></i>
-                <div class="upload-label">Click to upload a photo</div>
-                <p>PNG, JPG up to 5 MB · Landscape images work best</p>
-              </div>
-              <div class="form-hint">A good photo makes your post much more visible in the feed.</div>
-            </div>
-
-            <!-- Tags -->
-            <div class="form-group">
-              <label class="form-label">Tags <span style="color:var(--text-light);font-weight:400;">(optional)</span></label>
-              <div class="tag-input-area">
-                <span class="tag-chip">ragi <i class="ri-close-line"></i></span>
-                <span class="tag-chip">low-GI <i class="ri-close-line"></i></span>
-                <input type="text" placeholder="Add tag…">
-              </div>
-              <div class="form-hint">Press Enter or comma to add a tag. Up to 5 tags.</div>
-            </div>
-
-            <!-- Disclaimer checkbox -->
-            <div style="display:flex;align-items:flex-start;gap:10px;padding:16px;background:var(--bg-alt);border-radius:var(--radius-md);border:1.5px solid var(--border);">
-              <input type="checkbox" id="disclaimerCheck" style="margin-top:3px;accent-color:var(--primary);width:15px;height:15px;flex-shrink:0;">
-              <label for="disclaimerCheck" style="font-size:13px;color:var(--text-muted);line-height:1.55;cursor:pointer;">
-                I confirm this post shares my personal experience only and does not contain medical advice, specific treatment recommendations, or any misleading health information.
-              </label>
-            </div>
-
-            <div style="display:flex;gap:10px;margin-top:24px;">
-              <button class="btn btn-primary btn-lg"><i class="ri-send-plane-line"></i> Publish Post</button>
-              <button class="btn btn-outline">Save as Draft</button>
-              <a href="feed.html" class="btn btn-ghost">Cancel</a>
-            </div>
-          </div>
-
-          <!-- Sidebar -->
-          <div style="display:flex;flex-direction:column;gap:16px;">
-            <!-- Preview -->
-            <div class="sidebar-widget">
-              <div class="widget-title">Preview</div>
-              <div class="preview-card" style="padding:0;overflow:hidden;">
-                <div style="background:var(--bg-alt);height:100px;display:flex;align-items:center;justify-content:center;">
-                  <span style="font-size:13px;color:var(--text-light);">Cover image will appear here</span>
-                </div>
-                <div style="padding:14px;">
-                  <span class="badge badge-primary mb-8"><i class="ri-restaurant-line"></i> Recipe</span>
-                  <div style="font-family:'DM Serif Display',serif;font-size:15px;line-height:1.3;color:var(--text-muted);font-style:italic;">Your title will appear here</div>
-                  <div style="display:flex;align-items:center;gap:8px;margin-top:10px;">
-                    <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=80&q=80" alt="" class="avatar avatar-sm">
-                    <span style="font-size:12px;color:var(--text-muted);">Rahul M. &middot; Just now</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Guidelines -->
-            <div class="sidebar-widget">
-              <div class="widget-title">Community Guidelines</div>
-              <ul class="guidelines-list">
-                <li><i class="ri-check-line ok"></i> Share personal experiences and outcomes</li>
-                <li><i class="ri-check-line ok"></i> Be specific — include quantities, timing, context</li>
-                <li><i class="ri-check-line ok"></i> Mention that others should check with their doctor</li>
-                <li><i class="ri-check-line ok"></i> Be kind and supportive in comments</li>
-                <li><i class="ri-close-line no"></i> No medical diagnoses or prescriptions</li>
-                <li><i class="ri-close-line no"></i> No promotion of products or supplements</li>
-                <li><i class="ri-close-line no"></i> No misleading or unverified health claims</li>
-              </ul>
-            </div>
-
-            <!-- Tips -->
-            <div class="sidebar-widget">
-              <div class="widget-title">Tips for a Great Post</div>
-              <div style="display:flex;flex-direction:column;gap:10px;">
-                <div style="display:flex;gap:10px;font-size:13px;color:var(--text-muted);">
-                  <i class="ri-image-line" style="font-size:15px;margin-top:1px;color:var(--primary);flex-shrink:0;"></i>
-                  <span>Posts with images get 3x more views</span>
-                </div>
-                <div style="display:flex;gap:10px;font-size:13px;color:var(--text-muted);">
-                  <i class="ri-file-list-line" style="font-size:15px;margin-top:1px;color:var(--primary);flex-shrink:0;"></i>
-                  <span>Use headings and bullet points to break up long posts</span>
-                </div>
-                <div style="display:flex;gap:10px;font-size:13px;color:var(--text-muted);">
-                  <i class="ri-number-line" style="font-size:15px;margin-top:1px;color:var(--primary);flex-shrink:0;"></i>
-                  <span>Including actual numbers (glucose readings, time) builds trust</span>
-                </div>
-                <div style="display:flex;gap:10px;font-size:13px;color:var(--text-muted);">
-                  <i class="ri-question-line" style="font-size:15px;margin-top:1px;color:var(--primary);flex-shrink:0;"></i>
-                  <span>End with an invitation for comments to spark conversation</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <i class="ri-logout-box-r-line sc-logout" onclick="logOut()" title="Sign out"></i>
       </div>
     </div>
-  </div>
+  </aside>
 
-  <script>
-    // Category selection toggle
-    document.querySelectorAll('.category-card').forEach(card => {
-      card.addEventListener('click', () => {
-        document.querySelectorAll('.category-card').forEach(c => c.classList.remove('selected'));
-        card.classList.add('selected');
-      });
+  <!-- ── Main ─────────────────────────────────────────────────────────── -->
+  <div class="sc-main">
+    <div class="sc-topbar">
+      <div>
+        <div class="sc-topbar-title">New Post</div>
+        <div class="sc-topbar-sub">Share your experience with the community</div>
+      </div>
+      <div class="sc-topbar-right">
+        <a href="feed.html" class="btn btn-outline btn-sm">
+          <i class="ri-arrow-left-line"></i> Back to Feed
+        </a>
+      </div>
+    </div>
+
+    <div class="sc-content">
+
+      <!-- Medical disclaimer — always visible -->
+      <div class="disclaimer mb-24">
+        <i class="ri-information-line"></i>
+        <span>Posts on ShareCare are personal experiences only — not medical advice. Do not post content that could endanger others. Always consult your doctor.</span>
+      </div>
+
+      <div class="new-post-layout">
+
+        <!-- ── Left: form ── -->
+        <div>
+          <!-- Error banner (hidden by default) -->
+          <div class="error-banner" id="errorBanner" style="display:none;">
+            <i class="ri-error-warning-line"></i>
+            <span id="errorMessage">Something went wrong. Please try again.</span>
+          </div>
+
+          <div class="form-card">
+            <div class="form-card-header">
+              <div class="form-card-header-title">What would you like to share?</div>
+              <div class="form-card-header-sub">Your post will be visible to the whole ShareCare community.</div>
+            </div>
+
+            <div class="form-card-body">
+
+              <!-- Category -->
+              <div class="form-group">
+                <label class="form-label">Category <span style="color:#d32f2f;">*</span></label>
+                <div class="category-grid" id="categoryGrid">
+                  <label class="cat-option">
+                    <input type="radio" name="category" value="Recipes">
+                    <span class="cat-label"><i class="ri-restaurant-line"></i><span>Recipes</span></span>
+                  </label>
+                  <label class="cat-option">
+                    <input type="radio" name="category" value="Exercise">
+                    <span class="cat-label"><i class="ri-run-line"></i><span>Exercise</span></span>
+                  </label>
+                  <label class="cat-option">
+                    <input type="radio" name="category" value="Snacks">
+                    <span class="cat-label"><i class="ri-snack-line"></i><span>Snacks</span></span>
+                  </label>
+                  <label class="cat-option">
+                    <input type="radio" name="category" value="Support">
+                    <span class="cat-label"><i class="ri-heart-3-line"></i><span>Support</span></span>
+                  </label>
+                  <label class="cat-option">
+                    <input type="radio" name="category" value="Tips & Tricks">
+                    <span class="cat-label"><i class="ri-lightbulb-line"></i><span>Tips &amp; Tricks</span></span>
+                  </label>
+                  <label class="cat-option">
+                    <input type="radio" name="category" value="Ask Community">
+                    <span class="cat-label"><i class="ri-question-answer-line"></i><span>Ask Community</span></span>
+                  </label>
+                </div>
+                <div class="field-error" id="categoryError">Please select a category.</div>
+              </div>
+
+              <!-- Title -->
+              <div class="form-group" style="margin-top:20px;">
+                <label class="form-label" for="postTitle">Title <span style="color:#d32f2f;">*</span></label>
+                <div class="input-wrap">
+                  <i class="ri-text input-icon"></i>
+                  <input
+                    type="text"
+                    class="form-input has-icon"
+                    id="postTitle"
+                    placeholder="Give your post a clear, descriptive title…"
+                    maxlength="120"
+                    autocomplete="off"
+                  >
+                </div>
+                <div class="title-counter" id="titleCounter">0 / 120</div>
+                <div class="field-error" id="titleError">Title is required.</div>
+              </div>
+
+              <!-- Body -->
+              <div class="form-group">
+                <label class="form-label" for="postBody">
+                  Your post <span style="color:#d32f2f;">*</span>
+                </label>
+                <textarea
+                  class="form-input"
+                  id="postBody"
+                  placeholder="Share your experience, tips, or question in detail. The more context you give, the more helpful your post will be…"
+                ></textarea>
+                <div class="form-hint">Tip: Use line breaks to separate paragraphs. Plain text only.</div>
+                <div class="field-error" id="bodyError">Post content is required.</div>
+              </div>
+
+              <!-- Tags -->
+              <div class="form-group">
+                <label class="form-label">Tags <span style="color:var(--text-light);font-weight:400;">(optional, up to 5)</span></label>
+                <div class="tags-input-wrap" id="tagsWrap" onclick="focusTagInput()">
+                  <!-- tag chips injected here -->
+                  <input
+                    type="text"
+                    class="tag-text-input"
+                    id="tagInput"
+                    placeholder="Type a tag and press Enter or comma…"
+                    maxlength="30"
+                  >
+                </div>
+                <div class="tags-hint">e.g. low-GI, insulin, ragi, morning-routine</div>
+                <div class="field-error" id="tagsError">Maximum 5 tags allowed.</div>
+              </div>
+
+              <!-- Disclaimer checkbox -->
+              <div class="disclaimer-check" id="disclaimerCheck">
+                <input type="checkbox" id="disclaimerBox">
+                <label for="disclaimerBox">
+                  I confirm that this post shares my <strong>personal experience only</strong> and is not intended as medical advice. I will not post content that could endanger others or promote unverified treatments.
+                </label>
+              </div>
+              <div class="field-error" id="disclaimerError" style="margin-top:-16px;margin-bottom:18px;">
+                You must confirm the disclaimer before posting.
+              </div>
+
+              <!-- Submit -->
+              <div class="submit-row">
+                <a href="feed.html" class="btn btn-ghost">Discard</a>
+                <button class="btn btn-primary btn-lg" id="submitBtn" onclick="handleSubmit()">
+                  <i class="ri-send-plane-line"></i> Publish Post
+                </button>
+              </div>
+
+            </div><!-- /form-card-body -->
+          </div><!-- /form-card -->
+        </div><!-- /left col -->
+
+        <!-- ── Right sidebar ── -->
+        <div>
+
+          <!-- Live preview widget -->
+          <div class="sidebar-widget">
+            <div class="widget-title">Preview</div>
+            <div style="margin-bottom:10px;">
+              <div class="preview-category" id="previewCategory">
+                <i class="ri-apps-2-line"></i> Select a category
+              </div>
+            </div>
+            <div
+              id="previewTitle"
+              style="font-family:'DM Serif Display',serif;font-size:16px;line-height:1.3;color:var(--text-light);margin-bottom:6px;"
+            >Your title will appear here…</div>
+            <div
+              id="previewExcerpt"
+              style="font-size:12px;color:var(--text-light);line-height:1.6;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;"
+            >Your post excerpt will appear here…</div>
+            <div id="previewTags" style="display:flex;flex-wrap:wrap;gap:4px;margin-top:10px;"></div>
+          </div>
+
+          <!-- Tips widget -->
+          <div class="sidebar-widget">
+            <div class="widget-title">Writing Tips</div>
+            <div class="tip-item">
+              <i class="ri-lightbulb-flash-line"></i>
+              <span>Include specific details like quantities, timing, or frequency — they make your experience actionable.</span>
+            </div>
+            <div class="tip-item">
+              <i class="ri-shield-check-line"></i>
+              <span>Never claim a food, activity, or supplement cures or treats a condition.</span>
+            </div>
+            <div class="tip-item">
+              <i class="ri-price-tag-3-line"></i>
+              <span>Add relevant tags so people searching for your topic can find your post easily.</span>
+            </div>
+            <div class="tip-item">
+              <i class="ri-chat-smile-3-line"></i>
+              <span>End with a question to encourage comments and discussion.</span>
+            </div>
+          </div>
+
+          <!-- Category guide -->
+          <div class="sidebar-widget">
+            <div class="widget-title">Category Guide</div>
+            <div style="display:flex;flex-direction:column;gap:8px;font-size:12px;color:var(--text-muted);">
+              <div><strong style="color:var(--text);">Recipes</strong> — Meals, drinks, or preparation methods</div>
+              <div><strong style="color:var(--text);">Exercise</strong> — Workouts, walks, movement routines</div>
+              <div><strong style="color:var(--text);">Snacks</strong> — Between-meal ideas and options</div>
+              <div><strong style="color:var(--text);">Support</strong> — Emotional experiences and encouragement</div>
+              <div><strong style="color:var(--text);">Tips &amp; Tricks</strong> — Lifestyle hacks and daily habits</div>
+              <div><strong style="color:var(--text);">Ask Community</strong> — Questions for other members</div>
+            </div>
+          </div>
+
+        </div><!-- /right sidebar -->
+      </div><!-- /new-post-layout -->
+    </div><!-- /sc-content -->
+  </div><!-- /sc-main -->
+</div><!-- /sc-app -->
+
+<script src="../js/env.js"></script>
+<script type="module">
+  import { requireAuth, logOut } from '../js/auth.js';
+  import { createPost }          from '../js/community.js';
+
+  window.logOut = logOut;
+
+  // ── Auth gate ───────────────────────────────────────────────────────────
+  // requireAuth redirects to login if the user is not signed in.
+  let currentUser = null;
+
+  requireAuth((profile) => {
+    currentUser = profile;
+
+    const name = profile.displayName || profile.email || 'User';
+    document.getElementById('userName').textContent = name;
+    document.getElementById('userAvatar').src = profile.photoURL ||
+      `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=C2DDD4&color=3A6E59`;
+  });
+
+  // ── Tags state ──────────────────────────────────────────────────────────
+  const MAX_TAGS = 5;
+  let tags = [];
+
+  const tagInput = document.getElementById('tagInput');
+  const tagsWrap = document.getElementById('tagsWrap');
+
+  window.focusTagInput = () => tagInput.focus();
+
+  tagInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ',') {
+      e.preventDefault();
+      addTag(tagInput.value);
+    }
+    // Backspace on empty input removes last tag
+    if (e.key === 'Backspace' && tagInput.value === '' && tags.length > 0) {
+      removeTag(tags.length - 1);
+    }
+  });
+
+  tagInput.addEventListener('blur', () => {
+    if (tagInput.value.trim()) addTag(tagInput.value);
+  });
+
+  function addTag(raw) {
+    const val = raw.trim().toLowerCase().replace(/[^a-z0-9-]/g, '');
+    if (!val) { tagInput.value = ''; return; }
+    if (tags.length >= MAX_TAGS) {
+      showFieldError('tagsError', true);
+      tagInput.value = '';
+      return;
+    }
+    if (tags.includes(val)) { tagInput.value = ''; return; }
+    tags.push(val);
+    tagInput.value = '';
+    renderTags();
+    updatePreview();
+  }
+
+  window.removeTag = function(index) {
+    tags.splice(index, 1);
+    showFieldError('tagsError', false);
+    renderTags();
+    updatePreview();
+  };
+
+  function renderTags() {
+    // Remove all existing chips (but not the input)
+    tagsWrap.querySelectorAll('.tag-chip').forEach(el => el.remove());
+    tags.forEach((tag, i) => {
+      const chip = document.createElement('span');
+      chip.className = 'tag-chip';
+      chip.innerHTML = `
+        <i class="ri-price-tag-3-line" style="font-size:12px;"></i>
+        ${tag}
+        <span class="tag-chip-remove" onclick="removeTag(${i})"><i class="ri-close-line"></i></span>
+      `;
+      tagsWrap.insertBefore(chip, tagInput);
     });
-    // Char count
-    const titleInput = document.querySelector('input[maxlength="120"]');
-    const charCount = document.querySelector('.char-count');
-    titleInput.addEventListener('input', () => {
-      charCount.textContent = `${titleInput.value.length} / 120`;
+
+    // Dim input if max reached
+    tagInput.placeholder = tags.length >= MAX_TAGS ? 'Max 5 tags reached' : 'Type a tag and press Enter or comma…';
+    tagInput.disabled    = tags.length >= MAX_TAGS;
+  }
+
+  // ── Title character counter ─────────────────────────────────────────────
+  const titleInput   = document.getElementById('postTitle');
+  const titleCounter = document.getElementById('titleCounter');
+  const TITLE_MAX    = 120;
+
+  titleInput.addEventListener('input', () => {
+    const len = titleInput.value.length;
+    titleCounter.textContent = `${len} / ${TITLE_MAX}`;
+    titleCounter.className   = 'title-counter' +
+      (len > TITLE_MAX * 0.9  ? ' warn'  : '') +
+      (len >= TITLE_MAX       ? ' limit' : '');
+    if (titleInput.value.trim()) showFieldError('titleError', false);
+    updatePreview();
+  });
+
+  // ── Body preview ────────────────────────────────────────────────────────
+  document.getElementById('postBody').addEventListener('input', () => {
+    if (document.getElementById('postBody').value.trim()) {
+      showFieldError('bodyError', false);
+    }
+    updatePreview();
+  });
+
+  // ── Category preview ────────────────────────────────────────────────────
+  const categoryIcons = {
+    'Recipes':       { icon: 'ri-restaurant-line'     },
+    'Exercise':      { icon: 'ri-run-line'             },
+    'Snacks':        { icon: 'ri-snack-line'           },
+    'Support':       { icon: 'ri-heart-3-line'         },
+    'Tips & Tricks': { icon: 'ri-lightbulb-line'       },
+    'Ask Community': { icon: 'ri-question-answer-line' },
+  };
+
+  document.querySelectorAll('input[name="category"]').forEach(radio => {
+    radio.addEventListener('change', () => {
+      document.getElementById('categoryGrid').classList.remove('invalid');
+      showFieldError('categoryError', false);
+      updatePreview();
     });
-    // Tag removal
-    document.querySelectorAll('.tag-chip i').forEach(btn => {
-      btn.addEventListener('click', () => btn.closest('.tag-chip').remove());
-    });
-  </script>
+  });
 
-  <script>
-    // Auth state simulation — replace with Firebase onAuthStateChanged in Sprint 1
-    const currentUser = null; // null = guest, object = logged in
+  // ── Disclaimer ──────────────────────────────────────────────────────────
+  document.getElementById('disclaimerBox').addEventListener('change', () => {
+    showFieldError('disclaimerError', false);
+  });
 
-    function applyAuthState(user) {
-      const authItems = document.querySelectorAll('.auth-required');
-      const guestFooter = document.getElementById('guestFooter');
-      const userFooter = document.getElementById('userFooter');
-      const guestBanner = document.getElementById('guestBanner');
+  // ── Live preview updater ────────────────────────────────────────────────
+  function updatePreview() {
+    const title    = titleInput.value.trim();
+    const body     = document.getElementById('postBody').value.trim();
+    const selected = document.querySelector('input[name="category"]:checked');
+    const category = selected ? selected.value : null;
 
-      if (user) {
-        authItems.forEach(el => el.style.display = '');
-        if (guestFooter) guestFooter.style.display = 'none';
-        if (userFooter) userFooter.style.display = '';
-        if (guestBanner) guestBanner.style.display = 'none';
-      } else {
-        authItems.forEach(el => el.style.display = 'none');
-        if (guestFooter) guestFooter.style.display = '';
-        if (userFooter) userFooter.style.display = 'none';
-        if (guestBanner) guestBanner.style.display = '';
-      }
+    // Title
+    const previewTitle = document.getElementById('previewTitle');
+    previewTitle.textContent   = title || 'Your title will appear here…';
+    previewTitle.style.color   = title ? 'var(--text)' : 'var(--text-light)';
+
+    // Excerpt
+    const previewExcerpt = document.getElementById('previewExcerpt');
+    previewExcerpt.textContent  = body ? body.slice(0, 160) + (body.length > 160 ? '…' : '') : 'Your post excerpt will appear here…';
+    previewExcerpt.style.color  = body ? 'var(--text-muted)' : 'var(--text-light)';
+
+    // Category
+    const previewCat = document.getElementById('previewCategory');
+    if (category && categoryIcons[category]) {
+      previewCat.innerHTML   = `<i class="${categoryIcons[category].icon}"></i> ${category}`;
+      previewCat.classList.add('selected');
+    } else {
+      previewCat.innerHTML   = `<i class="ri-apps-2-line"></i> Select a category`;
+      previewCat.classList.remove('selected');
     }
 
-    applyAuthState(currentUser);
-  </script>
+    // Tags
+    const previewTags = document.getElementById('previewTags');
+    previewTags.innerHTML = tags.map(t =>
+      `<span style="
+        display:inline-flex;align-items:center;gap:4px;
+        padding:2px 9px;border-radius:var(--radius-full);
+        font-size:11px;font-weight:500;
+        background:var(--bg);border:1px solid var(--border);
+        color:var(--text-muted);">
+        <i class='ri-price-tag-3-line' style='font-size:11px'></i>${t}
+      </span>`
+    ).join('');
+  }
+
+  // ── Validation helpers ──────────────────────────────────────────────────
+  function showFieldError(id, show) {
+    const el = document.getElementById(id);
+    if (el) el.classList.toggle('show', show);
+  }
+
+  function validate() {
+    let valid = true;
+
+    const category = document.querySelector('input[name="category"]:checked');
+    if (!category) {
+      document.getElementById('categoryGrid').classList.add('invalid');
+      showFieldError('categoryError', true);
+      valid = false;
+    }
+
+    const title = titleInput.value.trim();
+    if (!title) {
+      titleInput.classList.add('invalid');
+      showFieldError('titleError', true);
+      valid = false;
+    } else {
+      titleInput.classList.remove('invalid');
+    }
+
+    const body = document.getElementById('postBody').value.trim();
+    if (!body) {
+      document.getElementById('postBody').classList.add('invalid');
+      showFieldError('bodyError', true);
+      valid = false;
+    } else {
+      document.getElementById('postBody').classList.remove('invalid');
+    }
+
+    if (!document.getElementById('disclaimerBox').checked) {
+      showFieldError('disclaimerError', true);
+      valid = false;
+    }
+
+    return valid;
+  }
+
+  // ── Submit ──────────────────────────────────────────────────────────────
+  window.handleSubmit = async function() {
+    // Hide previous error
+    document.getElementById('errorBanner').style.display = 'none';
+
+    if (!validate()) {
+      // Scroll to first error
+      const firstError = document.querySelector('.field-error.show, .invalid');
+      if (firstError) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="ri-loader-4-line spinning"></i> Publishing…';
+
+    const category = document.querySelector('input[name="category"]:checked').value;
+    const title    = titleInput.value.trim();
+    const body     = document.getElementById('postBody').value.trim();
+
+    try {
+      const postId = await createPost(
+        currentUser.uid,
+        currentUser.displayName || currentUser.email || 'User',
+        title,
+        body,
+        category,
+        tags
+      );
+
+      // Redirect to the new post's detail page
+      window.location.href = `post-detail.html?id=${postId}`;
+
+    } catch (err) {
+      console.error('createPost error:', err);
+
+      // Show error banner without clearing form data
+      const banner = document.getElementById('errorBanner');
+      document.getElementById('errorMessage').textContent =
+        err?.message || 'Something went wrong. Please try again.';
+      banner.style.display = 'flex';
+      banner.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = '<i class="ri-send-plane-line"></i> Publish Post';
+    }
+  };
+</script>
 </body>
 </html>
