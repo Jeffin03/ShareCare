@@ -149,7 +149,6 @@ import {
   /**
    * savePost(userId, postId)
    * Save a post to the user's savedPosts sub-collection.
-   *
    * @param {string} userId
    * @param {string} postId
    * @returns {Promise<void>}

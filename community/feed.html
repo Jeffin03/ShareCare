@@ -567,8 +567,6 @@
     document.getElementById('statPosts').textContent   = allPosts.length;
     document.getElementById('statHelpful').textContent = totalHelpful.toLocaleString('en-IN');
   }
-
-  // ── Save / unsave handler (called inline from card HTML) ────────────────
   window.handleSave = async function(event, postId) {
     event.preventDefault();
     event.stopPropagation();
