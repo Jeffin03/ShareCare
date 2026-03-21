@@ -301,8 +301,6 @@
        createdAt:    daysAgo(3),
        updatedAt:    daysAgo(3),
      },
- 
-     // Ask Community (1)
      {
        authorId:     patientIds[0],
        authorName:   patientNames[0],
