@@ -262,17 +262,174 @@
       </div>
     </div>
   </div>
-  <script>
-    // Guest mode: redirect all sidebar links to login
-    const isGuest = true; // replace with Firebase auth check in Sprint 1
-    if (isGuest) {
-      document.querySelectorAll('.sc-sidebar a, .sc-sidebar-footer .sc-logout').forEach(el => {
-        el.addEventListener('click', function(e) {
-          e.preventDefault();
-          window.location.href = '../auth/login.html';
-        });
-      });
+  <script src="../js/env.js"></script>
+  <script type="module">
+    import { requireAuth, logOut } from '../js/auth.js';
+    import {
+      getPost, markHelpful, addComment, listenToComments,
+      savePost, unsavePost, isSaved, reportPost,
+      getCategoryLabel, getCategoryIcon, formatHelpfulCount
+    } from '../js/community.js';
+
+    window.logOut = logOut;
+    document.querySelector('.sc-logout').addEventListener('click', () => logOut());
+
+    function timeAgo(ts) {
+      if (!ts) return '';
+      const date = ts.toDate ? ts.toDate() : new Date(ts);
+      const diff = Math.floor((Date.now() - date.getTime()) / 1000);
+      if (diff < 60) return 'Just now';
+      if (diff < 3600) return `${Math.floor(diff / 60)} min ago`;
+      if (diff < 86400) return `${Math.floor(diff / 3600)} hrs ago`;
+      if (diff < 172800) return 'Yesterday';
+      return date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
     }
+
+    requireAuth(async (profile) => {
+      // Update sidebar user chip
+      const nameEl = document.querySelector('.sc-user-name');
+      if (nameEl) nameEl.textContent = profile.name || 'User';
+      const roleEl = document.querySelector('.sc-user-role');
+      if (roleEl) roleEl.textContent = profile.role || 'Patient';
+
+      const params = new URLSearchParams(window.location.search);
+      const postId = params.get('id');
+
+      if (!postId) {
+        document.querySelector('.sc-content').innerHTML = '<div class="empty-state"><i class="ri-error-warning-line"></i><h3>Post not found</h3><p>This post does not exist or has been removed.</p><a href="feed.html" class="btn btn-primary">Back to Feed</a></div>';
+        return;
+      }
+
+      const post = await getPost(postId);
+
+      if (!post) {
+        document.querySelector('.sc-content').innerHTML = '<div class="empty-state"><i class="ri-error-warning-line"></i><h3>Post not found</h3><p>This post does not exist or has been removed.</p><a href="feed.html" class="btn btn-primary">Back to Feed</a></div>';
+        return;
+      }
+
+      // Render the post content
+      const catIcon = getCategoryIcon(post.category);
+      const catLabel = getCategoryLabel(post.category);
+      const savedAlready = await isSaved(profile.uid, postId);
+      const alreadyHelpful = post.helpfulBy?.includes(profile.uid);
+
+      // Update topbar
+      document.querySelector('.sc-topbar-sub').textContent = `${catLabel} · Posted by ${post.authorName || 'Anonymous'}`;
+      document.title = `ShareCare — ${post.title}`;
+
+      // Build post HTML
+      const postContent = document.querySelector('.detail-layout > div:first-child');
+      postContent.innerHTML = `
+        <div class="disclaimer mb-24">
+          <i class="ri-information-line"></i>
+          <span>Personal experience only — not medical advice. Talk to your doctor before making any changes.</span>
+        </div>
+        <span class="badge badge-primary mb-16"><i class="${catIcon}"></i> ${catLabel}</span>
+        <h2 style="font-family:'DM Serif Display',serif;font-size:28px;line-height:1.2;margin-bottom:12px;">${post.title}</h2>
+        <div class="author-row">
+          <div class="avatar avatar-md" style="width:42px;height:42px;border-radius:50%;background:var(--primary-light);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:var(--primary-dark);flex-shrink:0;">${(post.authorName||'?')[0].toUpperCase()}</div>
+          <div class="author-info">
+            <div class="author-name">${post.authorName || 'Anonymous'}</div>
+            <div class="author-bio">ShareCare member</div>
+          </div>
+          <div class="post-meta-bar" style="margin:0;gap:16px;">
+            <div class="post-meta-item"><i class="ri-calendar-line"></i> ${timeAgo(post.createdAt)}</div>
+          </div>
+        </div>
+        <div class="post-body" style="white-space:pre-wrap;">${post.body}</div>
+        ${post.tags && post.tags.length > 0 ? `<div class="tag-cloud" style="margin-top:16px;">${post.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>` : ''}
+        <div class="helpful-bar">
+          <p>Did this post help you?</p>
+          <button class="helpful-btn" id="helpfulBtn" ${alreadyHelpful ? 'disabled style="opacity:0.7;"' : ''}>
+            <i class="ri-thumb-up-${alreadyHelpful ? 'fill' : 'line'}"></i>
+            <span id="helpfulLabel">${alreadyHelpful ? 'Marked Helpful' : 'Mark as Helpful'} (${formatHelpfulCount(post.helpfulCount || 0)})</span>
+          </button>
+        </div>
+        <hr class="section-divider">
+        <div class="comments-section">
+          <h3 id="commentCount">${post.commentCount || 0} Comment${post.commentCount !== 1 ? 's' : ''}</h3>
+          <div id="commentsList"></div>
+          <div class="comment-input-area">
+            <div class="comment-avatar" style="width:36px;height:36px;border-radius:50%;background:var(--primary-light);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--primary-dark);flex-shrink:0;">${(profile.name||'?')[0].toUpperCase()}</div>
+            <div class="comment-input-box">
+              <textarea class="form-input" id="commentInput" style="min-height:80px;" placeholder="Add a comment…"></textarea>
+              <div class="comment-actions-row">
+                <button class="btn btn-primary btn-sm" id="postCommentBtn">Post Comment</button>
+              </div>
+            </div>
+          </div>
+          <div style="margin-top:20px;">
+            <span class="report-link" id="reportLink"><i class="ri-flag-line"></i> Report this post</span>
+          </div>
+        </div>`;
+
+      // Helpful button
+      document.getElementById('helpfulBtn')?.addEventListener('click', async () => {
+        try {
+          await markHelpful(postId, profile.uid);
+          const btn = document.getElementById('helpfulBtn');
+          btn.disabled = true;
+          btn.style.opacity = '0.7';
+          btn.querySelector('i').className = 'ri-thumb-up-fill';
+          document.getElementById('helpfulLabel').textContent = `Marked Helpful (${formatHelpfulCount((post.helpfulCount || 0) + 1)})`;
+        } catch (err) { console.error('Helpful error:', err); }
+      });
+
+      // Save button
+      let isSavedNow = savedAlready;
+      const saveBtn = document.querySelector('.sc-topbar-right .btn-outline');
+      if (saveBtn) {
+        saveBtn.innerHTML = `<i class="${isSavedNow ? 'ri-bookmark-fill' : 'ri-bookmark-line'}"></i> ${isSavedNow ? 'Saved' : 'Save'}`;
+        saveBtn.addEventListener('click', async () => {
+          try {
+            if (isSavedNow) { await unsavePost(profile.uid, postId); isSavedNow = false; saveBtn.innerHTML = '<i class="ri-bookmark-line"></i> Save'; }
+            else            { await savePost(profile.uid, postId);   isSavedNow = true;  saveBtn.innerHTML = '<i class="ri-bookmark-fill"></i> Saved'; }
+          } catch (err) { console.error('Save error:', err); }
+        });
+      }
+
+      // Report link
+      document.getElementById('reportLink')?.addEventListener('click', async () => {
+        const reason = prompt('Why are you reporting this post? (optional)') || 'No reason given';
+        try {
+          await reportPost(postId, profile.uid, reason);
+          alert('Thank you — this post has been reported for review.');
+        } catch (err) { console.error('Report error:', err); }
+      });
+
+      // Post comment
+      document.getElementById('postCommentBtn')?.addEventListener('click', async () => {
+        const input = document.getElementById('commentInput');
+        const text = input.value.trim();
+        if (!text) return;
+        const btn = document.getElementById('postCommentBtn');
+        btn.disabled = true;
+        btn.textContent = 'Posting…';
+        try {
+          await addComment(postId, profile.uid, profile.name || 'Anonymous', text);
+          input.value = '';
+        } catch (err) { console.error('Comment error:', err); }
+        btn.disabled = false;
+        btn.textContent = 'Post Comment';
+      });
+
+      // Live comments listener
+      listenToComments(postId, (comments) => {
+        const list = document.getElementById('commentsList');
+        const countEl = document.getElementById('commentCount');
+        if (!list) return;
+        if (countEl) countEl.textContent = `${comments.length} Comment${comments.length !== 1 ? 's' : ''}`;
+        list.innerHTML = comments.map(c => `
+          <div class="comment">
+            <div class="comment-avatar" style="width:36px;height:36px;border-radius:50%;background:var(--primary-light);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--primary-dark);flex-shrink:0;">${(c.authorName||'?')[0].toUpperCase()}</div>
+            <div class="comment-bubble">
+              <span class="comment-author">${c.authorName || 'Anonymous'}</span>
+              <span class="comment-time">${timeAgo(c.createdAt)}</span>
+              <div class="comment-text">${c.text}</div>
+            </div>
+          </div>`).join('');
+      });
+    });
   </script>
 </body>
 </html>
