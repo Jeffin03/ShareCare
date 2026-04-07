@@ -58,7 +58,7 @@ The project follows Agile methodology with four iterative sprints:
 | 1 | Firebase setup, authentication, CI/CD pipeline | ✅ Complete |
 | 2 | Medicine portal — patient side (request submission & tracking) | ✅ Complete |
 | 3 | Pharmacy dashboard — order management, delivery preference | ✅ Complete |
-| 4 | Community feed, seed script, final deployment | 🔲 In Progress |
+| 4 | Community feed, seed script, final deployment | ✅ Complete |
 
 ---
 
@@ -69,7 +69,7 @@ The project follows Agile methodology with four iterative sprints:
 | `master` | Vercel Preview | Development & testing |
 | `prod` | Vercel Production | Production demo |
 
-Both environments use the same `build-env.js` script to generate `js/env.js` from Vercel environment variables at build time. The `env.js` file is never committed to the repository.
+Firebase configuration is handled directly in client-side code with environment detection for dev/prod projects. Environment variables are used only for server-side operations (seeding, admin functions).
 
 ---
 
@@ -88,16 +88,7 @@ cd ShareCare
 npm install
 ```
 
-Create `js/env.js` with your Firebase dev config values (this file is gitignored):
-```javascript
-window.__env = {
-  FIREBASE_API_KEY:             "your-dev-api-key",
-  FIREBASE_AUTH_DOMAIN:         "sharecare-dev.firebaseapp.com",
-  FIREBASE_PROJECT_ID:          "sharecare-dev",
-  FIREBASE_MESSAGING_SENDER_ID: "your-sender-id",
-  FIREBASE_APP_ID:              "your-app-id"
-};
-```
+Firebase configuration is handled automatically based on the environment. For local development, update the Firebase config values in `js/firebase-config.js` with your development project credentials.
 
 Serve locally:
 ```bash
@@ -119,6 +110,8 @@ npm test
 - Pharmacy inventory management dashboard
 - Accessibility improvements (WCAG 2.1 compliance)
 - Progressive Web App (PWA) support for offline access
+- Enhanced security monitoring and audit logging
+- Mobile-responsive design optimization
 
 ---
 
