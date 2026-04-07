@@ -24,9 +24,7 @@
     "testMatch": [
       "**/tests/**/*.test.js"
     ],
-    "setupFilesAfterEnv": [
-      "<rootDir>/tests/setup.js"
-    ],
+    
     "collectCoverageFrom": [
       "js/**/*.js",
       "!js/firebase-config.js"
