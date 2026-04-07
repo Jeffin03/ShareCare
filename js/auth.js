@@ -64,6 +64,9 @@ export function redirectAfterLogin(role) {
 
   if (role === "pharmacy") {
     window.location.href = "/pharmacy/dashboard.html";
+  } else if (role === "caregiver") {
+    // Caregivers use the patient dashboard until a dedicated view is built
+    window.location.href = "/patient/dashboard.html";
   } else {
     window.location.href = "/patient/dashboard.html";
   }

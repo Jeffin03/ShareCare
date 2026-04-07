@@ -267,17 +267,128 @@
       btn.addEventListener('click', () => btn.closest('.tag-chip').remove());
     });
   </script>
-  <script>
-    // Guest mode: redirect all sidebar links to login
-    const isGuest = true; // replace with Firebase auth check in Sprint 1
-    if (isGuest) {
-      document.querySelectorAll('.sc-sidebar a, .sc-sidebar-footer .sc-logout').forEach(el => {
-        el.addEventListener('click', function(e) {
-          e.preventDefault();
-          window.location.href = '../auth/login.html';
+  <script src="../js/env.js"></script>
+  <script type="module">
+    import { requireAuth, logOut } from '../js/auth.js';
+    import { createPost } from '../js/community.js';
+
+    window.logOut = logOut;
+    document.querySelector('.sc-logout').addEventListener('click', () => logOut());
+
+    requireAuth((profile) => {
+      // Update sidebar user chip
+      const nameEl = document.querySelector('.sc-user-name');
+      if (nameEl) nameEl.textContent = profile.name || 'User';
+      const roleEl = document.querySelector('.sc-user-role');
+      if (roleEl) roleEl.textContent = profile.role || 'Patient';
+
+      // Update preview avatar initials
+      const previewAvatars = document.querySelectorAll('.preview-card img');
+      // Update preview author name
+      const previewAuthor = document.querySelector('.preview-card span');
+      if (previewAuthor) previewAuthor.textContent = `${profile.name || 'You'} · Just now`;
+
+      let selectedCategory = 'Recipes';
+      let tags = ['ragi', 'low-GI'];
+
+      // Category selection
+      const categoryMap = {
+        'Recipe': 'Recipes',
+        'Exercise': 'Exercise',
+        'Snacks': 'Snacks',
+        'Support': 'Support',
+        'Tips & Tricks': 'Tips & Tricks',
+        'Ask Community': 'Ask Community'
+      };
+
+      document.querySelectorAll('.category-card').forEach(card => {
+        card.addEventListener('click', () => {
+          document.querySelectorAll('.category-card').forEach(c => c.classList.remove('selected'));
+          card.classList.add('selected');
+          selectedCategory = categoryMap[card.querySelector('span').textContent.trim()] || 'General';
+          // Update preview badge
+          const previewBadge = document.querySelector('.preview-card .badge');
+          if (previewBadge) previewBadge.innerHTML = `<i class="${card.querySelector('i').className}"></i> ${card.querySelector('span').textContent}`;
         });
       });
-    }
+
+      // Char count
+      const titleInput = document.querySelector('input[maxlength="120"]');
+      const charCount = document.querySelector('.char-count');
+      if (titleInput) {
+        titleInput.addEventListener('input', () => {
+          charCount.textContent = `${titleInput.value.length} / 120`;
+          const previewTitle = document.querySelector('.preview-card [style*="DM Serif"]');
+          if (previewTitle) previewTitle.textContent = titleInput.value || 'Your title will appear here';
+        });
+      }
+
+      // Tag handling
+      const tagArea = document.querySelector('.tag-input-area');
+      const tagInput = tagArea.querySelector('input');
+
+      function renderTags() {
+        tagArea.querySelectorAll('.tag-chip').forEach(t => t.remove());
+        tags.forEach(tag => {
+          const chip = document.createElement('span');
+          chip.className = 'tag-chip';
+          chip.innerHTML = `${tag} <i class="ri-close-line"></i>`;
+          chip.querySelector('i').addEventListener('click', () => {
+            tags = tags.filter(t => t !== tag);
+            renderTags();
+          });
+          tagArea.insertBefore(chip, tagInput);
+        });
+      }
+
+      tagInput.addEventListener('keydown', (e) => {
+        if ((e.key === 'Enter' || e.key === ',') && tagInput.value.trim()) {
+          e.preventDefault();
+          const tag = tagInput.value.trim().replace(',', '');
+          if (tag && !tags.includes(tag) && tags.length < 5) {
+            tags.push(tag);
+            renderTags();
+          }
+          tagInput.value = '';
+        }
+      });
+
+      renderTags();
+
+      // Publish post
+      async function handlePublish() {
+        const title = titleInput?.value.trim();
+        const body = document.querySelector('textarea.rich-textarea')?.value.trim();
+        const disclaimer = document.getElementById('disclaimerCheck')?.checked;
+
+        const errorEl = document.querySelector('.disclaimer');
+
+        if (!title) { alert('Please enter a post title.'); return; }
+        if (!body || body.length < 100) { alert('Post content must be at least 100 characters.'); return; }
+        if (!disclaimer) { alert('Please confirm the disclaimer before publishing.'); return; }
+
+        const btns = document.querySelectorAll('button.btn-primary');
+        btns.forEach(b => { b.disabled = true; b.textContent = 'Publishing…'; });
+
+        try {
+          const postId = await createPost(profile.uid, profile.name || 'Anonymous', title, body, selectedCategory, tags);
+          window.location.href = `post-detail.html?id=${postId}`;
+        } catch (err) {
+          console.error('Create post error:', err);
+          alert('Failed to publish post. Please try again.');
+          btns.forEach(b => { b.disabled = false; });
+          document.querySelectorAll('button.btn-primary')[0].innerHTML = '<i class="ri-send-plane-line"></i> Publish Post';
+          document.querySelectorAll('button.btn-primary')[1].innerHTML = '<i class="ri-send-plane-line"></i> Publish Post';
+        }
+      }
+
+      // Wire both Publish buttons
+      document.querySelectorAll('button.btn-primary').forEach(btn => {
+        if (btn.textContent.trim().includes('Publish')) {
+          btn.addEventListener('click', handlePublish);
+        }
+      });
+    });
   </script>
 </body>
 </html>

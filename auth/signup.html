@@ -99,6 +99,33 @@
             <input type="hidden" id="role" value="patient">
           </div>
 
+          <!-- Pharmacy fields (shown only when Pharmacy is selected) -->
+          <div id="pharmacyFields" style="display:none;">
+            <div class="form-group">
+              <label class="form-label">Pharmacy Name <span style="color:var(--accent);">*</span></label>
+              <input type="text" class="form-input" id="pharmacyName" placeholder="e.g. Sharma Medical Store">
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Area / Locality <span style="color:var(--accent);">*</span></label>
+                <input type="text" class="form-input" id="pharmacyArea" placeholder="e.g. Koramangala">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Phone Number <span style="color:var(--accent);">*</span></label>
+                <input type="tel" class="form-input" id="pharmacyPhone" placeholder="e.g. 9876543210">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Full Address <span style="color:var(--accent);">*</span></label>
+              <input type="text" class="form-input" id="pharmacyAddress" placeholder="Street, Area, City">
+            </div>
+          </div>
+
+          <!-- Caregiver note (shown only when Caregiver is selected) -->
+          <div id="caregiverNote" style="display:none;padding:12px 14px;background:var(--primary-light);border:1px solid var(--primary-mid);border-radius:var(--radius-md);font-size:13px;color:var(--primary-dark);">
+            <i class="ri-information-line"></i> You'll use the patient dashboard to submit medicine requests on behalf of the person you care for.
+          </div>
+
           <button type="submit" class="btn-submit" id="submitBtn">Create account</button>
           <p class="terms">By signing up you agree to our <a href="#">Terms</a> and <a href="#">Privacy Policy</a>.</p>
         </form>
@@ -113,6 +140,8 @@
       document.querySelectorAll('.role-opt').forEach(o => o.classList.remove('selected'));
       el.classList.add('selected');
       document.getElementById('role').value = role;
+      document.getElementById('pharmacyFields').style.display = role === 'pharmacy' ? 'block' : 'none';
+      document.getElementById('caregiverNote').style.display = role === 'caregiver' ? 'block' : 'none';
     }
     function togglePw(){const pw=document.getElementById('password');const icon=document.getElementById('pwIcon');if(pw.type==='password'){pw.type='text';icon.className='ri-eye-line';}else{pw.type='password';icon.className='ri-eye-off-line';}}
   </script>
@@ -165,15 +194,35 @@
         const pArea  = document.getElementById('pharmacyArea')?.value.trim();
         const pAddr  = document.getElementById('pharmacyAddress')?.value.trim();
         const pPhone = document.getElementById('pharmacyPhone')?.value.trim();
-        if (pName && pName.length < 2)         { showErr('Pharmacy name must be at least 2 characters.'); return; }
-        if (pPhone && !phoneRegex.test(pPhone)) { showErr('Please enter a valid phone number.'); return; }
+        if (!pName || pName.length < 2)        { showErr('Please enter your pharmacy name (at least 2 characters).'); return; }
+        if (!pArea)                             { showErr('Please enter the area or locality of your pharmacy.'); return; }
+        if (!pAddr)                             { showErr('Please enter the full address of your pharmacy.'); return; }
+        if (!pPhone || !phoneRegex.test(pPhone)){ showErr('Please enter a valid phone number for your pharmacy.'); return; }
       }
 
       submitBtn.textContent = 'Creating account…';
       submitBtn.disabled    = true;
 
       try {
-        await signUp(name, email, password, role);
+        const user = await signUp(name, email, password, role);
+
+        // For pharmacy signups: store pharmacy details in Firestore immediately
+        if (role === 'pharmacy') {
+          const { doc, updateDoc, serverTimestamp } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
+          const { db } = await import('../js/firebase-config.js');
+          const pharmacyData = {
+            name:      document.getElementById('pharmacyName').value.trim(),
+            area:      document.getElementById('pharmacyArea').value.trim(),
+            address:   document.getElementById('pharmacyAddress').value.trim(),
+            phone:     document.getElementById('pharmacyPhone').value.trim(),
+            ownerId:   user.uid,
+            createdAt: serverTimestamp()
+          };
+          const { addDoc, collection } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
+          const pharmacyRef = await addDoc(collection(db, 'pharmacies'), pharmacyData);
+          await updateDoc(doc(db, 'users', user.uid), { pharmacyId: pharmacyRef.id });
+        }
+
         redirectAfterLogin(role);
       } catch (err) {
         console.error('Signup error:', err);

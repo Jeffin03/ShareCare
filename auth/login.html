@@ -64,7 +64,7 @@
             <div class="input-wrap"><i class="ri-lock-2-line input-icon"></i>
               <input type="password" class="form-input has-icon" id="password" placeholder="••••••••" required>
             </div>
-            <div class="forgot"><a href="#">Forgot password?</a></div>
+            <div class="forgot"><a href="#" id="forgotLink">Forgot password?</a></div>
           </div>
           <button type="submit" class="btn-submit">Log in</button>
         </form>
@@ -78,10 +78,33 @@
   </div>
   <script src="../js/env.js"></script>
   <script type="module">
-    import { logIn, getUserProfile, redirectAfterLogin, redirectIfLoggedIn } from '../js/auth.js';
+    import { logIn, getUserProfile, redirectAfterLogin, redirectIfLoggedIn, auth } from '../js/auth.js';
+    import { sendPasswordResetEmail } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 
     // Redirect away if already logged in
     redirectIfLoggedIn();
+
+    // Forgot password
+    document.getElementById('forgotLink').addEventListener('click', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('email').value.trim();
+      if (!email) {
+        errorEl.style.display = 'flex';
+        errorTx.textContent = 'Please enter your email address above first.';
+        return;
+      }
+      try {
+        await sendPasswordResetEmail(auth, email);
+        errorEl.style.background = '#F0FDF4';
+        errorEl.style.borderColor = '#BBF7D0';
+        errorEl.style.color = '#14532D';
+        errorEl.style.display = 'flex';
+        errorTx.textContent = 'Password reset email sent! Check your inbox.';
+      } catch (err) {
+        errorEl.style.display = 'flex';
+        errorTx.textContent = 'Could not send reset email. Please check the address and try again.';
+      }
+    });
 
     const form    = document.getElementById('loginForm');
     const errorEl = document.getElementById('errorMsg');

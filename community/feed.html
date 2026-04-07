@@ -292,17 +292,167 @@
       </div>
     </div>
   </div>
-  <script>
-    // Guest mode: redirect all sidebar links to login
-    const isGuest = true; // replace with Firebase auth check in Sprint 1
-    if (isGuest) {
-      document.querySelectorAll('.sc-sidebar a, .sc-sidebar-footer .sc-logout').forEach(el => {
-        el.addEventListener('click', function(e) {
-          e.preventDefault();
-          window.location.href = '../auth/login.html';
+  <script src="../js/env.js"></script>
+  <script type="module">
+    import { requireAuth, logOut } from '../js/auth.js';
+    import {
+      listenToPosts, markHelpful, savePost, unsavePost, isSaved, getSavedPosts,
+      getCategoryLabel, getCategoryIcon, formatHelpfulCount
+    } from '../js/community.js';
+
+    window.logOut = logOut;
+
+    // Set up logout button
+    document.querySelector('.sc-logout').addEventListener('click', () => logOut());
+
+    requireAuth(async (profile) => {
+      // Update sidebar user chip
+      document.getElementById('userName').textContent = profile.name || 'User';
+      document.querySelector('.sc-user-role') && (document.querySelector('.sc-user-role').textContent = profile.role || 'Patient');
+
+      // Hide guest banner since user is authenticated
+      document.getElementById('guestBanner').style.display = 'none';
+
+      let currentCategory = null;
+      let currentSort = 'recent';
+      let unsubscribe = null;
+      let savedPostIds = new Set(await getSavedPosts(profile.uid));
+
+      function timeAgo(ts) {
+        if (!ts) return '';
+        const date = ts.toDate ? ts.toDate() : new Date(ts);
+        const diff = Math.floor((Date.now() - date.getTime()) / 1000);
+        if (diff < 60) return 'Just now';
+        if (diff < 3600) return `${Math.floor(diff / 60)} min ago`;
+        if (diff < 86400) return `${Math.floor(diff / 3600)} hrs ago`;
+        if (diff < 172800) return 'Yesterday';
+        return `${Math.floor(diff / 86400)} days ago`;
+      }
+
+      function renderPosts(posts) {
+        const list = document.querySelector('.posts-list');
+        const countEl = document.querySelector('.sort-label');
+        countEl.textContent = `${posts.length} post${posts.length !== 1 ? 's' : ''}`;
+
+        if (posts.length === 0) {
+          list.innerHTML = `<div style="text-align:center;padding:48px 24px;color:var(--text-muted);">
+            <i class="ri-chat-3-line" style="font-size:40px;display:block;margin-bottom:12px;color:var(--border);"></i>
+            <div style="font-size:15px;font-weight:600;">No posts yet</div>
+            <div style="font-size:13px;margin-top:6px;">Be the first to share something!</div>
+          </div>`;
+          return;
+        }
+
+        // Sort client-side
+        const sorted = [...posts].sort((a, b) => {
+          if (currentSort === 'helpful') return (b.helpfulCount || 0) - (a.helpfulCount || 0);
+          if (currentSort === 'comments') return (b.commentCount || 0) - (a.commentCount || 0);
+          const at = a.createdAt?.toDate ? a.createdAt.toDate() : new Date(0);
+          const bt = b.createdAt?.toDate ? b.createdAt.toDate() : new Date(0);
+          return bt - at;
+        });
+
+        list.innerHTML = sorted.map(post => {
+          const catIcon = getCategoryIcon(post.category);
+          const catLabel = getCategoryLabel(post.category);
+          const isSavedPost = savedPostIds.has(post.id);
+          const alreadyHelpful = post.helpfulBy?.includes(profile.uid);
+          return `
+            <div class="post-card" data-id="${post.id}" style="cursor:pointer;">
+              <div class="post-card-body">
+                <div class="post-header">
+                  <div class="post-avatar" style="width:34px;height:34px;border-radius:50%;background:var(--primary-light);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;font-weight:700;color:var(--primary-dark);">${(post.authorName||'?')[0].toUpperCase()}</div>
+                  <div><div class="post-author-name">${post.authorName || 'Anonymous'}</div><div class="post-author-role">${timeAgo(post.createdAt)}</div></div>
+                  <span class="badge badge-primary" style="margin-left:auto;"><i class="${catIcon}"></i> ${catLabel}</span>
+                </div>
+                <div class="post-title">${post.title}</div>
+                <div class="post-excerpt">${post.body}</div>
+                <div class="post-footer">
+                  <div class="post-meta">
+                    <div class="post-meta-item"><i class="ri-thumb-up-line"></i> ${formatHelpfulCount(post.helpfulCount || 0)} helpful</div>
+                    <div class="post-meta-item"><i class="ri-chat-3-line"></i> ${post.commentCount || 0} comments</div>
+                  </div>
+                  <div class="post-actions">
+                    <button class="post-action-btn ${isSavedPost ? 'saved' : ''}" data-action="save" data-post-id="${post.id}" title="${isSavedPost ? 'Unsave' : 'Save'}">
+                      <i class="${isSavedPost ? 'ri-bookmark-fill' : 'ri-bookmark-line'}"></i>
+                    </button>
+                    <button class="post-action-btn ${alreadyHelpful ? 'saved' : ''}" data-action="helpful" data-post-id="${post.id}" title="Mark helpful">
+                      <i class="ri-thumb-up-line"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>`;
+        }).join('');
+
+        // Post card click → detail
+        list.querySelectorAll('.post-card').forEach(card => {
+          card.addEventListener('click', (e) => {
+            if (e.target.closest('[data-action]')) return;
+            window.location.href = `post-detail.html?id=${card.dataset.id}`;
+          });
+        });
+
+        // Save/unsave buttons
+        list.querySelectorAll('[data-action="save"]').forEach(btn => {
+          btn.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            const postId = btn.dataset.postId;
+            const saving = !savedPostIds.has(postId);
+            try {
+              if (saving) { await savePost(profile.uid, postId); savedPostIds.add(postId); }
+              else        { await unsavePost(profile.uid, postId); savedPostIds.delete(postId); }
+              btn.classList.toggle('saved', saving);
+              btn.querySelector('i').className = saving ? 'ri-bookmark-fill' : 'ri-bookmark-line';
+            } catch (err) { console.error('Save error:', err); }
+          });
+        });
+
+        // Helpful buttons
+        list.querySelectorAll('[data-action="helpful"]').forEach(btn => {
+          btn.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            const postId = btn.dataset.postId;
+            try {
+              await markHelpful(postId, profile.uid);
+              btn.classList.add('saved');
+            } catch (err) { console.error('Helpful error:', err); }
+          });
+        });
+      }
+
+      function subscribe(category) {
+        if (unsubscribe) unsubscribe();
+        unsubscribe = listenToPosts(category, renderPosts);
+      }
+
+      // Category pill clicks
+      document.querySelectorAll('.pill').forEach(pill => {
+        pill.addEventListener('click', () => {
+          document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+          pill.classList.add('active');
+          const text = pill.textContent.trim();
+          currentCategory = text === 'All' ? null : text;
+          subscribe(currentCategory);
         });
       });
-    }
+
+      // Sort options
+      document.querySelectorAll('.sort-opt').forEach(opt => {
+        opt.addEventListener('click', () => {
+          document.querySelectorAll('.sort-opt').forEach(o => o.classList.remove('active'));
+          opt.classList.add('active');
+          const txt = opt.textContent.trim().toLowerCase();
+          currentSort = txt.includes('helpful') ? 'helpful' : txt.includes('trend') ? 'comments' : 'recent';
+          // Re-render with current data by re-subscribing
+          subscribe(currentCategory);
+        });
+      });
+
+      // Initial load
+      subscribe(null);
+    });
   </script>
+
 </body>
 </html>

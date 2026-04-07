@@ -122,8 +122,8 @@
   </script>
   <script src="../js/env.js"></script>
   <script type="module">
-    import { requireAuth, logOut }                    from '../js/auth.js';
-    import { getPatientRequests, getStatusLabel, getStatusClass } from '../js/patient.js';
+    import { requireAuth, logOut }   from '../js/auth.js';
+    import { getStatusLabel, getStatusClass } from '../js/patient.js';
     import { onSnapshot, collection, query, where, orderBy } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
     import { db } from '../js/firebase-config.js';
 
