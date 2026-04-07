@@ -76,8 +76,8 @@
       </ul>
       <div class="sc-sidebar-footer">
         <div class="sc-user-chip">
-          <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=80&q=80" alt="User">
-          <div><div class="sc-user-name" id="userName">Rahul M.</div><div class="sc-user-role">Patient</div></div>
+          <img src="" alt="User" id="userAvatar">
+          <div><div class="sc-user-name" id="userName">Loading...</div><div class="sc-user-role" id="userRole">Loading...</div></div>
           <i class="ri-logout-box-r-line sc-logout" title="Sign out"></i>
         </div>
       </div>
@@ -124,164 +124,34 @@
         <div class="feed-layout">
           <div>
             <div class="sort-bar">
-              <span class="sort-label">42 posts</span>
+              <span class="sort-label" id="postCount">Loading posts...</span>
               <div class="sort-options">
                 <div class="sort-opt active">Latest</div>
                 <div class="sort-opt">Most Helpful</div>
                 <div class="sort-opt">Trending</div>
               </div>
             </div>
-            <div class="posts-list">
-              <a href="post-detail.html" class="post-card">
-                <img src="https://images.unsplash.com/photo-1547592180-85f173990554?w=800&q=80" alt="Dosa" class="post-card-img">
-                <div class="post-card-body">
-                  <div class="post-header">
-                    <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&q=80" alt="Priya" class="post-avatar">
-                    <div><div class="post-author-name">Priya Sharma</div><div class="post-author-role">Patient &middot; 3 hrs ago</div></div>
-                    <span class="badge badge-primary" style="margin-left:auto;"><i class="ri-restaurant-line"></i> Recipe</span>
-                  </div>
-                  <div class="post-title">Low-GI Ragi Dosa — My Sunday Morning Staple</div>
-                  <div class="post-excerpt">Swapped regular rice dosa with a ragi-oats blend and it changed my post-breakfast glucose numbers completely. Here's exactly what I do, with timing and quantity tips.</div>
-                  <div class="post-footer">
-                    <div class="post-meta">
-                      <div class="post-meta-item"><i class="ri-thumb-up-line"></i> 48 helpful</div>
-                      <div class="post-meta-item"><i class="ri-chat-3-line"></i> 14 comments</div>
-                      <div class="post-meta-item"><i class="ri-time-line"></i> 4 min read</div>
-                    </div>
-                    <div class="post-actions">
-                      <button class="post-action-btn saved" onclick="event.preventDefault()"><i class="ri-bookmark-fill"></i></button>
-                      <button class="post-action-btn" onclick="event.preventDefault()"><i class="ri-share-line"></i></button>
-                    </div>
-                  </div>
-                </div>
-              </a>
-              <a href="post-detail.html" class="post-card">
-                <div class="post-card-body">
-                  <div class="post-header">
-                    <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&q=80" alt="Suresh" class="post-avatar">
-                    <div><div class="post-author-name">Suresh Iyer</div><div class="post-author-role">Patient &middot; Yesterday</div></div>
-                    <span class="badge badge-accent" style="margin-left:auto;"><i class="ri-heart-3-line"></i> Support</span>
-                  </div>
-                  <div class="post-title">Two Years with T2D — What I Wish Someone Had Told Me</div>
-                  <div class="post-excerpt">Nobody warns you about the emotional side. Managing blood sugar is one thing — managing the anxiety around it every single meal is another. If you're newly diagnosed, I want you to know it gets easier.</div>
-                  <div class="post-footer">
-                    <div class="post-meta">
-                      <div class="post-meta-item"><i class="ri-thumb-up-line"></i> 91 helpful</div>
-                      <div class="post-meta-item"><i class="ri-chat-3-line"></i> 38 comments</div>
-                      <div class="post-meta-item"><i class="ri-time-line"></i> 6 min read</div>
-                    </div>
-                    <div class="post-actions">
-                      <button class="post-action-btn" onclick="event.preventDefault()"><i class="ri-bookmark-line"></i></button>
-                      <button class="post-action-btn" onclick="event.preventDefault()"><i class="ri-share-line"></i></button>
-                    </div>
-                  </div>
-                </div>
-              </a>
-              <a href="post-detail.html" class="post-card">
-                <img src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=800&q=80" alt="Exercise" class="post-card-img">
-                <div class="post-card-body">
-                  <div class="post-header">
-                    <img src="https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=80&q=80" alt="Anita" class="post-avatar">
-                    <div><div class="post-author-name">Anita Verma</div><div class="post-author-role">Patient &middot; 2 days ago</div></div>
-                    <span class="badge badge-success" style="margin-left:auto;"><i class="ri-run-line"></i> Exercise</span>
-                  </div>
-                  <div class="post-title">The 15-Minute Walk After Dinner That Changed My A1C</div>
-                  <div class="post-excerpt">My doctor mentioned it in passing. I didn't believe a 15-minute walk could make a dent. Three months later, my A1C went from 8.1 to 6.9. Here's my exact routine.</div>
-                  <div class="post-footer">
-                    <div class="post-meta">
-                      <div class="post-meta-item"><i class="ri-thumb-up-line"></i> 73 helpful</div>
-                      <div class="post-meta-item"><i class="ri-chat-3-line"></i> 22 comments</div>
-                      <div class="post-meta-item"><i class="ri-time-line"></i> 3 min read</div>
-                    </div>
-                    <div class="post-actions">
-                      <button class="post-action-btn" onclick="event.preventDefault()"><i class="ri-bookmark-line"></i></button>
-                      <button class="post-action-btn" onclick="event.preventDefault()"><i class="ri-share-line"></i></button>
-                    </div>
-                  </div>
-                </div>
-              </a>
-              <a href="post-detail.html" class="post-card">
-                <div class="post-card-body">
-                  <div class="post-header">
-                    <img src="https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=80&q=80" alt="Kiran" class="post-avatar">
-                    <div><div class="post-author-name">Kiran Patil</div><div class="post-author-role">Patient &middot; 3 days ago</div></div>
-                    <span class="badge badge-info" style="margin-left:auto;"><i class="ri-question-answer-line"></i> Ask</span>
-                  </div>
-                  <div class="post-title">Good Snack Options for Long Travel Days?</div>
-                  <div class="post-excerpt">Flying to Delhi next week — 3 hour flight, then 2 hours in transit. What do you all carry? Everything at airports seems to be either sugar bombs or plain unappetising.</div>
-                  <div class="post-footer">
-                    <div class="post-meta">
-                      <div class="post-meta-item"><i class="ri-thumb-up-line"></i> 12 helpful</div>
-                      <div class="post-meta-item"><i class="ri-chat-3-line"></i> 29 comments</div>
-                      <div class="post-meta-item"><i class="ri-time-line"></i> 1 min read</div>
-                    </div>
-                    <div class="post-actions">
-                      <button class="post-action-btn" onclick="event.preventDefault()"><i class="ri-bookmark-line"></i></button>
-                      <button class="post-action-btn" onclick="event.preventDefault()"><i class="ri-share-line"></i></button>
-                    </div>
-                  </div>
-                </div>
-              </a>
-              <a href="post-detail.html" class="post-card">
-                <img src="https://images.unsplash.com/photo-1505253758473-96b7015fcd40?w=800&q=80" alt="Snacks" class="post-card-img">
-                <div class="post-card-body">
-                  <div class="post-header">
-                    <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=80&q=80" alt="Deepa" class="post-avatar">
-                    <div><div class="post-author-name">Deepa Nair</div><div class="post-author-role">Patient &middot; 4 days ago</div></div>
-                    <span class="badge badge-warning" style="margin-left:auto;"><i class="ri-snack-line"></i> Snacks</span>
-                  </div>
-                  <div class="post-title">5 Diabetes-Friendly Snacks You Can Find at Any Kirana Store</div>
-                  <div class="post-excerpt">You don't need a speciality health store. Roasted chana, fox nuts, peanuts, cucumber — all under ₹30 each and genuinely filling without the glucose spike.</div>
-                  <div class="post-footer">
-                    <div class="post-meta">
-                      <div class="post-meta-item"><i class="ri-thumb-up-line"></i> 64 helpful</div>
-                      <div class="post-meta-item"><i class="ri-chat-3-line"></i> 11 comments</div>
-                      <div class="post-meta-item"><i class="ri-time-line"></i> 3 min read</div>
-                    </div>
-                    <div class="post-actions">
-                      <button class="post-action-btn" onclick="event.preventDefault()"><i class="ri-bookmark-line"></i></button>
-                      <button class="post-action-btn" onclick="event.preventDefault()"><i class="ri-share-line"></i></button>
-                    </div>
-                  </div>
-                </div>
-              </a>
-              <div style="text-align:center;padding:8px;">
-                <button class="btn btn-outline">Load more posts <i class="ri-arrow-down-line"></i></button>
-              </div>
+            <div class="posts-list" id="postsList">
+              <!-- Posts will be loaded dynamically -->
             </div>
           </div>
           <div style="display:flex;flex-direction:column;gap:16px;">
             <div class="sidebar-widget">
               <div class="widget-title">Trending This Week</div>
-              <div class="trend-item"><div class="trend-num">1</div><div><div class="trend-text">Ragi Dosa Recipe</div><div class="trend-count">48 helpful marks</div></div></div>
-              <div class="trend-item"><div class="trend-num">2</div><div><div class="trend-text">Post-dinner walk routine</div><div class="trend-count">73 helpful marks</div></div></div>
-              <div class="trend-item"><div class="trend-num">3</div><div><div class="trend-text">Kirana store snacks</div><div class="trend-count">64 helpful marks</div></div></div>
-              <div class="trend-item"><div class="trend-num">4</div><div><div class="trend-text">Two years with T2D</div><div class="trend-count">91 helpful marks</div></div></div>
+              <div id="trendingPosts">
+                <!-- Trending posts will be loaded dynamically -->
+              </div>
             </div>
             <div class="sidebar-widget">
               <div class="widget-title">Active Members</div>
-              <div class="member-row">
-                <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&q=80" alt="" class="avatar avatar-sm">
-                <div class="member-info"><div class="member-name">Priya Sharma</div><div class="member-tag">12 posts &middot; Recipes</div></div>
-                <button class="follow-btn">Follow</button>
-              </div>
-              <div class="member-row">
-                <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&q=80" alt="" class="avatar avatar-sm">
-                <div class="member-info"><div class="member-name">Suresh Iyer</div><div class="member-tag">8 posts &middot; Support</div></div>
-                <button class="follow-btn">Follow</button>
-              </div>
-              <div class="member-row">
-                <img src="https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=80&q=80" alt="" class="avatar avatar-sm">
-                <div class="member-info"><div class="member-name">Anita Verma</div><div class="member-tag">6 posts &middot; Exercise</div></div>
-                <button class="follow-btn">Follow</button>
+              <div id="activeMembers">
+                <!-- Active members will be loaded dynamically -->
               </div>
             </div>
             <div class="sidebar-widget">
               <div class="widget-title">Community</div>
-              <div style="display:flex;flex-direction:column;gap:10px;">
-                <div style="display:flex;justify-content:space-between;font-size:13px;"><span class="text-muted">Members</span><span style="font-weight:600;">1,248</span></div>
-                <div style="display:flex;justify-content:space-between;font-size:13px;"><span class="text-muted">Posts this month</span><span style="font-weight:600;">87</span></div>
-                <div style="display:flex;justify-content:space-between;font-size:13px;"><span class="text-muted">Helpful marks given</span><span style="font-weight:600;">2,341</span></div>
+              <div id="communityStats" style="display:flex;flex-direction:column;gap:10px;">
+                <!-- Community stats will be loaded dynamically -->
               </div>
               <div style="margin-top:14px;">
                 <a href="new-post.html" class="btn btn-primary w-full" style="justify-content:center;"><i class="ri-edit-line"></i> Share Something</a>

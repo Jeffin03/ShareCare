@@ -76,8 +76,8 @@
       </ul>
       <div class="sc-sidebar-footer">
         <div class="sc-user-chip">
-          <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=80&q=80" alt="User">
-          <div><div class="sc-user-name">Rahul M.</div><div class="sc-user-role">Patient</div></div>
+          <img src="" alt="User" id="userAvatar">
+          <div><div class="sc-user-name" id="userName">Loading...</div><div class="sc-user-role" id="userRole">Loading...</div></div>
           <i class="ri-logout-box-r-line sc-logout" title="Sign out"></i>
         </div>
       </div>
@@ -88,7 +88,7 @@
           <a href="feed.html" class="btn btn-ghost btn-sm" style="padding:8px 10px;"><i class="ri-arrow-left-line" style="font-size:18px;"></i></a>
           <div>
             <div class="sc-topbar-title">Community Post</div>
-            <div class="sc-topbar-sub">Recipes &middot; Posted by Priya Sharma</div>
+            <div class="sc-topbar-sub" id="postSubtitle">Loading...</div>
           </div>
         </div>
         <div class="sc-topbar-right">
@@ -106,107 +106,50 @@
               <span>Personal experience only — not medical advice. Talk to your doctor before changing your diet.</span>
             </div>
 
-            <img src="https://images.unsplash.com/photo-1547592180-85f173990554?w=1200&q=80" alt="Ragi Dosa" class="post-hero">
+            <img src="" alt="" class="post-hero" id="postHeroImage">
 
-            <span class="badge badge-primary mb-16"><i class="ri-restaurant-line"></i> Recipe</span>
+            <span class="badge mb-16" id="postCategoryBadge"><i class="ri-loader-4-line"></i> Loading...</span>
 
-            <h2 style="font-family:'DM Serif Display',serif;font-size:28px;line-height:1.2;margin-bottom:12px;">Low-GI Ragi Dosa — My Sunday Morning Staple</h2>
+            <h2 style="font-family:'DM Serif Display',serif;font-size:28px;line-height:1.2;margin-bottom:12px;" id="postTitle">Loading post...</h2>
 
             <div class="author-row">
-              <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&q=80" alt="Priya" class="avatar avatar-md">
+              <img src="" alt="" class="avatar avatar-md" id="authorAvatar">
               <div class="author-info">
-                <div class="author-name">Priya Sharma</div>
-                <div class="author-bio">Type 2 diabetic for 4 years &middot; Bangalore</div>
+                <div class="author-name" id="authorName">Loading...</div>
+                <div class="author-bio" id="authorBio">Loading...</div>
               </div>
               <div class="post-meta-bar" style="margin:0;gap:16px;">
-                <div class="post-meta-item"><i class="ri-calendar-line"></i> 12 Mar 2026</div>
-                <div class="post-meta-item"><i class="ri-time-line"></i> 4 min read</div>
+                <div class="post-meta-item" id="postDate"><i class="ri-calendar-line"></i> Loading...</div>
+                <div class="post-meta-item" id="readTime"><i class="ri-time-line"></i> Loading...</div>
               </div>
             </div>
 
-            <div class="post-body">
-              <p>I've been Type 2 for four years now. For the first two, I basically gave up on South Indian breakfast because I assumed dosa was off the table. Then I started experimenting with the batter, and the results genuinely surprised me.</p>
-
-              <h3>Why Ragi?</h3>
-              <p>Ragi (finger millet) has a glycemic index of around 68 compared to regular white rice at 73+. More importantly, it's high in fibre, which slows glucose absorption. Combined with oats, I got a batter that holds together beautifully and keeps me full well past lunch.</p>
-
-              <h3>The Batter (makes 8–10 dosas)</h3>
-              <ul>
-                <li>1 cup ragi flour</li>
-                <li>½ cup rolled oats (blended to a coarse flour)</li>
-                <li>¼ cup urad dal (soaked 4 hours, ground smooth)</li>
-                <li>Salt to taste, water to consistency</li>
-                <li>Ferment overnight — the sourness actually helps further lower GI</li>
-              </ul>
-
-              <h3>My Numbers Before and After</h3>
-              <p>Before switching: my 2-hour post-breakfast reading was typically 178–195 mg/dL. After three weeks of this batter (same quantity, same meal time): 138–152 mg/dL. I'm not saying this will work the same for everyone, but it's been consistent enough for me to call it my staple.</p>
-
-              <h3>Tips That Make a Difference</h3>
-              <ul>
-                <li>Eat with a protein-first — I always have a small bowl of curd before the dosa</li>
-                <li>Don't skip the coconut chutney — the fat actually helps slow absorption</li>
-                <li>Walk for 10 minutes after, even just around the house</li>
-                <li>Check your reading 2 hours post-meal at least the first few times so you know how your body responds</li>
-              </ul>
-
-              <p>I hope this helps someone who's given up on breakfast the way I did. Happy to answer questions in the comments.</p>
+            <div class="post-body" id="postBody">
+              <!-- Post content will be loaded dynamically -->
             </div>
 
             <div class="helpful-bar">
               <p>Did this post help you?</p>
-              <button class="helpful-btn"><i class="ri-thumb-up-line"></i> Mark as Helpful (48)</button>
+              <button class="helpful-btn" id="helpfulBtn"><i class="ri-thumb-up-line"></i> Mark as Helpful (<span id="helpfulCount">0</span>)</button>
             </div>
 
             <hr class="section-divider">
 
             <!-- Comments -->
             <div class="comments-section">
-              <h3>14 Comments</h3>
+              <h3 id="commentCount">0 Comments</h3>
 
-              <div class="comment">
-                <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&q=80" alt="" class="comment-avatar">
-                <div class="comment-bubble">
-                  <span class="comment-author">Suresh Iyer</span><span class="comment-time">2 hrs ago</span>
-                  <div class="comment-text">This is exactly what I needed. I tried a similar thing with bajra last month but it kept falling apart on the tawa. Will try your ratio — the oats as a binder is smart.</div>
-                  <div class="comment-actions">
-                    <span class="comment-action"><i class="ri-thumb-up-line"></i> Helpful (6)</span>
-                    <span class="comment-action"><i class="ri-reply-line"></i> Reply</span>
-                  </div>
-                </div>
-              </div>
-
-              <div class="comment">
-                <img src="https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=80&q=80" alt="" class="comment-avatar">
-                <div class="comment-bubble">
-                  <span class="comment-author">Anita Verma</span><span class="comment-time">Yesterday</span>
-                  <div class="comment-text">The protein-first tip is a game changer. My dietitian told me the same thing — eating protein and fat before carbs flattens the glucose curve noticeably. Glad you mentioned it here too.</div>
-                  <div class="comment-actions">
-                    <span class="comment-action"><i class="ri-thumb-up-line"></i> Helpful (11)</span>
-                    <span class="comment-action"><i class="ri-reply-line"></i> Reply</span>
-                  </div>
-                </div>
-              </div>
-
-              <div class="comment">
-                <img src="https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=80&q=80" alt="" class="comment-avatar">
-                <div class="comment-bubble">
-                  <span class="comment-author">Kiran Patil</span><span class="comment-time">2 days ago</span>
-                  <div class="comment-text">Question — do you refrigerate the batter between uses or keep it at room temperature? I've heard fermented batter can over-ferment in Bangalore's heat.</div>
-                  <div class="comment-actions">
-                    <span class="comment-action"><i class="ri-thumb-up-line"></i> Helpful (3)</span>
-                    <span class="comment-action"><i class="ri-reply-line"></i> Reply</span>
-                  </div>
-                </div>
+              <div id="commentsList">
+                <!-- Comments will be loaded dynamically -->
               </div>
 
               <!-- Add comment -->
               <div class="comment-input-area">
-                <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=80&q=80" alt="" class="comment-avatar">
+                <img src="" alt="" class="comment-avatar" id="currentUserAvatar">
                 <div class="comment-input-box">
-                  <textarea class="form-input" style="min-height:80px;" placeholder="Add a comment…"></textarea>
+                  <textarea class="form-input" style="min-height:80px;" placeholder="Add a comment…" id="commentInput"></textarea>
                   <div class="comment-actions-row">
-                    <button class="btn btn-primary btn-sm">Post Comment</button>
+                    <button class="btn btn-primary btn-sm" id="postCommentBtn">Post Comment</button>
                   </div>
                 </div>
               </div>
@@ -222,39 +165,24 @@
             <div class="sidebar-widget">
               <div class="widget-title">About the Author</div>
               <div style="text-align:center;padding:8px 0 16px;">
-                <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&q=80" alt="Priya" style="width:64px;height:64px;border-radius:50%;object-fit:cover;border:2px solid var(--border);margin-bottom:10px;display:block;margin-left:auto;margin-right:auto;">
-                <div style="font-size:15px;font-weight:600;">Priya Sharma</div>
-                <div style="font-size:12px;color:var(--text-muted);margin-top:3px;">12 posts &middot; Bangalore</div>
+                <img src="" alt="" style="width:64px;height:64px;border-radius:50%;object-fit:cover;border:2px solid var(--border);margin-bottom:10px;display:block;margin-left:auto;margin-right:auto;" id="authorSidebarAvatar">
+                <div style="font-size:15px;font-weight:600;" id="authorSidebarName">Loading...</div>
+                <div style="font-size:12px;color:var(--text-muted);margin-top:3px;" id="authorSidebarBio">Loading...</div>
               </div>
-              <button class="btn btn-outline w-full btn-sm" style="justify-content:center;">Follow</button>
+              <button class="btn btn-outline w-full btn-sm" style="justify-content:center;" id="followBtn">Follow</button>
             </div>
 
             <div class="sidebar-widget">
               <div class="widget-title">Related Posts</div>
-              <a href="post-detail.html" class="related-post">
-                <img src="https://images.unsplash.com/photo-1505253758473-96b7015fcd40?w=120&q=80" class="related-thumb" alt="">
-                <div><div class="related-title">5 Snacks You Can Find at Any Kirana Store</div><div class="related-meta">Deepa Nair &middot; Snacks</div></div>
-              </a>
-              <a href="post-detail.html" class="related-post">
-                <img src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=120&q=80" class="related-thumb" alt="">
-                <div><div class="related-title">The 15-Minute Walk That Changed My A1C</div><div class="related-meta">Anita Verma &middot; Exercise</div></div>
-              </a>
-              <a href="post-detail.html" class="related-post">
-                <div class="related-thumb" style="background:var(--accent-light);display:flex;align-items:center;justify-content:center;"><i class="ri-heart-3-line" style="font-size:22px;color:var(--accent);"></i></div>
-                <div><div class="related-title">Two Years with T2D — What I Wish I'd Known</div><div class="related-meta">Suresh Iyer &middot; Support</div></div>
-              </a>
+              <div id="relatedPosts">
+                <!-- Related posts will be loaded dynamically -->
+              </div>
             </div>
 
             <div class="sidebar-widget">
               <div class="widget-title">Tags</div>
-              <div class="tag-cloud">
-                <span class="tag">ragi</span>
-                <span class="tag">low-GI</span>
-                <span class="tag">breakfast</span>
-                <span class="tag">dosa</span>
-                <span class="tag">South Indian</span>
-                <span class="tag">Type 2</span>
-                <span class="tag">blood sugar</span>
+              <div class="tag-cloud" id="tagCloud">
+                <!-- Tags will be loaded dynamically -->
               </div>
             </div>
           </div>
