@@ -1,5 +1,5 @@
 {
-  "buildCommand": "npm run build",
+  "buildCommand": "node scripts/build-env.js && npm run build",
   "outputDirectory": ".",
   "installCommand": "npm install",
   "framework": null
