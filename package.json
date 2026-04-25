@@ -6,16 +6,28 @@
     "build": "node scripts/build-env.js",
     "test": "jest",
     "test:watch": "jest --watch",
+    "test:unit": "jest tests/auth.test.js tests/patient.test.js tests/pharmacy.test.js tests/community.test.js",
+    "test:integration": "jest tests/integration.test.js",
+    "test:uat": "jest tests/uat.test.js",
+    "test:e2e": "jest tests/e2e.test.js",
+    "test:coverage": "jest --coverage",
+    "test:all": "jest --verbose",
     "seed": "node scripts/seed.js"
   },
   "devDependencies": {
     "jest": "^29.7.0",
-    "firebase-admin": "^12.0.0"
+    "firebase-admin": "^12.0.0",
+    "jest-mock-extended": "^3.0.5"
   },
   "jest": {
     "testEnvironment": "node",
     "testMatch": [
       "**/tests/**/*.test.js"
+    ],
+    
+    "collectCoverageFrom": [
+      "js/**/*.js",
+      "!js/firebase-config.js"
     ]
   }
 }

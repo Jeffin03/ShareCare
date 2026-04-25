@@ -154,7 +154,7 @@ p {
     cursor: pointer;
     border: none;
     text-decoration: none;
-    transition: all 0.2s ease;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     white-space: nowrap;
 }
 
@@ -441,6 +441,17 @@ select.input {
     flex-direction: column;
     overflow-y: auto;
 }
+
+.sidebar-widget {
+    background: var(--card);
+    border-radius: var(--r-lg);
+    border: 1px solid var(--border-light);
+    padding: 24px;
+    box-shadow: var(--shadow);
+    margin-bottom: 24px;
+}
+
+
 
 .sidebar-logo {
     display: flex;
@@ -769,4 +780,98 @@ select.input {
 
 .fade-up-4 {
     animation: fadeUp 0.35s ease 0.24s both;
+}
+
+/* === GUIDANCE BANNER === */
+.guidance-banner {
+    background: linear-gradient(135deg, var(--primary-light), var(--accent-light));
+    border: 1.5px solid var(--primary-mid);
+    border-radius: var(--r-lg);
+    padding: 24px 28px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 28px;
+    position: relative;
+    box-shadow: var(--shadow);
+}
+
+.guidance-icon {
+    width: 52px;
+    height: 52px;
+    background: white;
+    border-radius: var(--r);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: var(--primary);
+    flex-shrink: 0;
+    box-shadow: var(--shadow-sm);
+}
+
+.guidance-body {
+    flex: 1;
+}
+
+.guidance-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.15rem;
+    color: var(--text);
+    margin-bottom: 4px;
+}
+
+.guidance-msg {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+}
+
+.guidance-close {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    background: transparent;
+    border: none;
+    color: var(--text-light);
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: color 0.2s;
+}
+
+.guidance-close:hover {
+    color: var(--accent-dark);
+}
+
+/* === APP SHELL REFINEMENTS === */
+.sc-user-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 14px;
+    flex-shrink: 0;
+}
+
+.sc-user-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.sc-user-name {
+    font-weight: 600;
+    font-size: 0.85rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.sc-user-role {
+    font-size: 0.72rem;
+    color: var(--text-muted);
 }

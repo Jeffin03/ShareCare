@@ -64,21 +64,19 @@
             <div class="input-wrap"><i class="ri-lock-2-line input-icon"></i>
               <input type="password" class="form-input has-icon" id="password" placeholder="••••••••" required>
             </div>
-            <div class="forgot"><a href="#">Forgot password?</a></div>
+            <div class="forgot"><a href="#" id="forgotBtn">Forgot password?</a></div>
           </div>
           <button type="submit" class="btn-submit">Log in</button>
         </form>
-        <div class="divider"><span>or</span></div>
         <div class="auth-footer">
           <p>Don't have an account? <a href="signup.html">Sign up free</a></p>
-          <a href="../community/feed.html" class="guest-link"><i class="ri-compass-3-line"></i> Continue as guest</a>
         </div>
       </div>
     </div>
   </div>
   <script src="../js/env.js"></script>
   <script type="module">
-    import { logIn, getUserProfile, redirectAfterLogin, redirectIfLoggedIn } from '../js/auth.js';
+    import { logIn, getUserProfile, redirectAfterLogin, redirectIfLoggedIn, resetPassword } from '../js/auth.js';
 
     // Redirect away if already logged in
     redirectIfLoggedIn();
@@ -121,6 +119,26 @@
         errorTx.textContent   = 'Invalid email or password. Please try again.';
         submitBtn.textContent  = 'Log in';
         submitBtn.disabled     = false;
+      }
+    });
+
+    // Forgot password logic
+    const forgotBtn = document.getElementById('forgotBtn');
+    forgotBtn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('email').value.trim();
+      if (!email || !emailRegex.test(email)) {
+        errorEl.style.display = 'flex';
+        errorTx.textContent   = 'Please enter your email address first.';
+        return;
+      }
+
+      try {
+        await resetPassword(email);
+        alert('Password reset email sent! Please check your inbox.');
+      } catch (err) {
+        errorEl.style.display = 'flex';
+        errorTx.textContent   = 'Failed to send reset email. ' + err.message;
       }
     });
   </script>
