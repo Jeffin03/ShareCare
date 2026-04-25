@@ -62,40 +62,11 @@
 <body>
   <div class="sc-app">
     <aside class="sc-sidebar">
-      <a href="../index.html" class="sc-logo"><i class="ri-heart-pulse-fill"></i> ShareCare</a>
-      <div class="sc-sidebar-section">Medicine</div>
-      <ul class="sc-sidebar-menu">
-        <li><a href="../patient/dashboard.html" class="sc-sidebar-item"><i class="ri-file-list-3-line"></i> My Requests</a></li>
-        <li><a href="../patient/new-request.html" class="sc-sidebar-item"><i class="ri-add-circle-line"></i> New Request</a></li>
-      </ul>
-      <div class="sc-sidebar-section">Community</div>
-      <ul class="sc-sidebar-menu">
-        <li><a href="feed.html" class="sc-sidebar-item active"><i class="ri-home-smile-2-line"></i> Feed</a></li>
-        <li><a href="new-post.html" class="sc-sidebar-item"><i class="ri-edit-line"></i> New Post</a></li>
-        <li><a href="feed.html" class="sc-sidebar-item"><i class="ri-bookmark-3-line"></i> Saved</a></li>
-      </ul>
-      <div class="sc-sidebar-footer">
-        <div class="sc-user-chip">
-          <img src="" alt="User" id="userAvatar">
-          <div><div class="sc-user-name" id="userName">Loading...</div><div class="sc-user-role" id="userRole">Loading...</div></div>
-          <i class="ri-logout-box-r-line sc-logout" title="Sign out"></i>
-        </div>
-      </div>
+      <!-- Injected by ui.js -->
     </aside>
     <div class="sc-main">
       <div class="sc-topbar">
-        <div>
-          <div class="sc-topbar-title">Community Feed</div>
-          <div class="sc-topbar-sub">Recipes, tips &amp; support from people like you</div>
-        </div>
-        <div class="sc-topbar-right">
-          <div class="search-bar" style="width:240px;">
-            <i class="ri-search-line"></i>
-            <input type="text" placeholder="Search posts…">
-          </div>
-          <div class="notif-btn"><i class="ri-notification-3-line"></i><div class="notif-dot"></div></div>
-          <a href="new-post.html" class="btn btn-primary btn-sm"><i class="ri-add-line"></i> New Post</a>
-        </div>
+        <!-- Injected by ui.js -->
       </div>
       <div class="sc-content">
         <div class="guest-banner" id="guestBanner">
@@ -165,6 +136,7 @@
   <script src="../js/env.js"></script>
   <script type="module">
     import { requireAuth, logOut } from '../js/auth.js';
+    import { initAppShell } from '../js/ui.js';
     import {
       listenToPosts, markHelpful, savePost, unsavePost, isSaved, getSavedPosts,
       getCategoryLabel, getCategoryIcon, formatHelpfulCount
@@ -172,13 +144,8 @@
 
     window.logOut = logOut;
 
-    // Set up logout button
-    document.querySelector('.sc-logout').addEventListener('click', () => logOut());
-
     requireAuth(async (profile) => {
-      // Update sidebar user chip
-      document.getElementById('userName').textContent = profile.name || 'User';
-      document.querySelector('.sc-user-role') && (document.querySelector('.sc-user-role').textContent = profile.role || 'Patient');
+      initAppShell(profile);
 
       // Hide guest banner since user is authenticated
       document.getElementById('guestBanner').style.display = 'none';

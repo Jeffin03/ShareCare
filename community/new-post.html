@@ -52,39 +52,11 @@
 <body>
   <div class="sc-app">
     <aside class="sc-sidebar">
-      <a href="../index.html" class="sc-logo"><i class="ri-heart-pulse-fill"></i> ShareCare</a>
-      <div class="sc-sidebar-section">Medicine</div>
-      <ul class="sc-sidebar-menu">
-        <li><a href="../patient/dashboard.html" class="sc-sidebar-item"><i class="ri-file-list-3-line"></i> My Requests</a></li>
-        <li><a href="../patient/new-request.html" class="sc-sidebar-item"><i class="ri-add-circle-line"></i> New Request</a></li>
-      </ul>
-      <div class="sc-sidebar-section">Community</div>
-      <ul class="sc-sidebar-menu">
-        <li><a href="feed.html" class="sc-sidebar-item"><i class="ri-home-smile-2-line"></i> Feed</a></li>
-        <li><a href="new-post.html" class="sc-sidebar-item active"><i class="ri-edit-line"></i> New Post</a></li>
-        <li><a href="feed.html" class="sc-sidebar-item"><i class="ri-bookmark-3-line"></i> Saved</a></li>
-      </ul>
-      <div class="sc-sidebar-footer">
-        <div class="sc-user-chip">
-          <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=80&q=80" alt="User">
-          <div><div class="sc-user-name">Rahul M.</div><div class="sc-user-role">Patient</div></div>
-          <i class="ri-logout-box-r-line sc-logout" title="Sign out"></i>
-        </div>
-      </div>
+      <!-- Injected by ui.js -->
     </aside>
     <div class="sc-main">
       <div class="sc-topbar">
-        <div style="display:flex;align-items:center;gap:12px;">
-          <a href="feed.html" class="btn btn-ghost btn-sm" style="padding:8px 10px;"><i class="ri-arrow-left-line" style="font-size:18px;"></i></a>
-          <div>
-            <div class="sc-topbar-title">New Post</div>
-            <div class="sc-topbar-sub">Share something with the community</div>
-          </div>
-        </div>
-        <div class="sc-topbar-right">
-          <button class="btn btn-outline btn-sm">Save Draft</button>
-          <button class="btn btn-primary btn-sm"><i class="ri-send-plane-line"></i> Publish Post</button>
-        </div>
+        <!-- Injected by ui.js -->
       </div>
       <div class="sc-content">
         <div class="disclaimer mb-24">
@@ -270,17 +242,13 @@
   <script src="../js/env.js"></script>
   <script type="module">
     import { requireAuth, logOut } from '../js/auth.js';
+    import { initAppShell } from '../js/ui.js';
     import { createPost } from '../js/community.js';
 
     window.logOut = logOut;
-    document.querySelector('.sc-logout').addEventListener('click', () => logOut());
 
     requireAuth((profile) => {
-      // Update sidebar user chip
-      const nameEl = document.querySelector('.sc-user-name');
-      if (nameEl) nameEl.textContent = profile.name || 'User';
-      const roleEl = document.querySelector('.sc-user-role');
-      if (roleEl) roleEl.textContent = profile.role || 'Patient';
+      initAppShell(profile);
 
       // Update preview avatar initials
       const previewAvatars = document.querySelectorAll('.preview-card img');

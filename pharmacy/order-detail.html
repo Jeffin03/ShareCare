@@ -40,25 +40,11 @@
 <body>
   <div class="sc-app">
     <aside class="sc-sidebar">
-      <a href="../index.html" class="sc-logo"><i class="ri-heart-pulse-fill"></i> ShareCare</a>
-      <div class="sc-sidebar-section">Pharmacy</div>
-      <ul class="sc-sidebar-menu">
-        <li><a href="dashboard.html" class="sc-sidebar-item active"><i class="ri-dashboard-line"></i> All Orders</a></li>
-      </ul>
-      <div class="sc-sidebar-footer">
-        <div class="sc-user-chip">
-          <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=80&q=80" alt="Pharmacy">
-          <div><div class="sc-user-name" id="pharmacyName">Pharmacy</div><div class="sc-user-role">Pharmacy</div></div>
-          <i class="ri-logout-box-r-line sc-logout" onclick="logOut()"></i>
-        </div>
-      </div>
+      <!-- Injected by ui.js -->
     </aside>
     <div class="sc-main">
       <div class="sc-topbar">
-        <div><div class="sc-topbar-title" id="pageTitle">Order Detail</div><div class="sc-topbar-sub" id="pageSub">Manage this medicine request</div></div>
-        <div class="sc-topbar-right">
-          <a href="dashboard.html" class="btn btn-outline btn-sm"><i class="ri-arrow-left-line"></i> All Orders</a>
-        </div>
+        <!-- Injected by ui.js -->
       </div>
       <div class="sc-content">
         <div class="detail-grid" id="detailContent" style="display:none;">
@@ -121,6 +107,7 @@
   <script src="../js/env.js"></script>
   <script type="module">
     import { requireAuth, logOut }                                        from '../js/auth.js';
+    import { initAppShell }                                               from '../js/ui.js';
     import { getPharmacyProfile, listenToOrder,
              updateOrderStatus, getStatusLabel, getStatusClass,
              getNextStatus, getNextStatusLabel }                          from '../js/pharmacy.js';
@@ -140,11 +127,11 @@
     };
 
     requireAuth(async (profile) => {
+      initAppShell(profile);
       if (profile.role !== 'pharmacy') {
         window.location.href = '../patient/dashboard.html';
         return;
       }
-
       let pharmacy;
       try {
         pharmacy = await getPharmacyProfile(profile.uid);
