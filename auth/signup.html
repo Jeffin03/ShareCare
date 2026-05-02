@@ -5,7 +5,6 @@
   <title>ShareCare — Sign Up</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
   <link rel="stylesheet" href="../assets/style.css">
-  <script src="../js/theme.js"></script>
   <style>
     body{display:flex;min-height:100vh;flex-direction:column;}
     .auth-wrap{flex:1;display:flex;}
@@ -175,7 +174,6 @@
 
       try {
         await signUp(name, email, password, role);
-        localStorage.setItem('sharecare-user-name', name);
         redirectAfterLogin(role);
       } catch (err) {
         console.error('Signup error:', err);

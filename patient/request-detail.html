@@ -5,7 +5,6 @@
   <title>ShareCare — Request Detail</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
   <link rel="stylesheet" href="../assets/style.css">
-  <script src="../js/theme.js"></script>
   <style>
     /* === CRITICAL LAYOUT === */
     html,body{margin:0;padding:0;}
@@ -69,7 +68,7 @@
       </ul>
       <div class="sc-sidebar-footer">
         <div class="sc-user-chip">
-          <div class="user-avatar-container"></div>
+          <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=80&q=80" alt="User">
           <div><div class="sc-user-name" id="userName">Loading...</div><div class="sc-user-role">Patient</div></div>
           <i class="ri-logout-box-r-line sc-logout" onclick="logOut()"></i>
         </div>
@@ -79,7 +78,6 @@
       <div class="sc-topbar">
         <div><div class="sc-topbar-title" id="pageTitle">Request Detail</div><div class="sc-topbar-sub" id="pageSubtitle">Tracking your medicine request</div></div>
         <div class="sc-topbar-right">
-          <div class="theme-toggle"><i class="ri-moon-line"></i><i class="ri-sun-line"></i></div>
           <a href="dashboard.html" class="btn btn-outline btn-sm"><i class="ri-arrow-left-line"></i> All Requests</a>
         </div>
       </div>
@@ -113,22 +111,6 @@
               <div class="info-row" id="rPharmacyNotesRow" style="display:none;">
                 <div class="info-icon" style="background:var(--accent-light);color:var(--accent-dark);"><i class="ri-store-2-line"></i></div>
                 <div><div class="info-label">Pharmacy Notes</div><div class="info-val" id="rPharmacyNotes">—</div></div>
-              </div>
-
-              <!-- Billing Section -->
-              <div class="detail-card" id="fulfillmentCard" style="display:none;margin-top:24px;border:1.5px solid var(--primary-light);">
-                <div style="font-size:13px;font-weight:600;color:var(--text-muted);margin-bottom:12px;display:flex;align-items:center;gap:6px;">
-                  <i class="ri-bill-line" style="color:var(--primary);font-size:16px;"></i> ORDER BILLING
-                </div>
-                <table style="width:100%;border-collapse:collapse;font-size:14px;">
-                  <tbody id="fulfillmentList"></tbody>
-                  <tfoot>
-                    <tr style="border-top:1.5px dashed var(--border);font-weight:700;">
-                      <td style="padding:12px 0;color:var(--text);">Total Amount</td>
-                      <td style="padding:12px 0;text-align:right;color:var(--primary-dark);font-size:16px;" id="rTotalAmount">₹0.00</td>
-                    </tr>
-                  </tfoot>
-                </table>
               </div>
 
               <!-- Delivery preference — shown only when status is ready -->
@@ -192,14 +174,13 @@
     const id = new URLSearchParams(location.search).get('id');
 
     const statusMap = {
-      pending:    { label: 'Pending',          cls: 'status-pending',   icon: 'ri-time-line' },
-      confirmed:  { label: 'Confirmed',         cls: 'status-confirmed', icon: 'ri-check-line' },
-      ready:      { label: 'Ready for Pickup',  cls: 'status-ready',     icon: 'ri-checkbox-circle-line' },
-      dispatched: { label: 'Out for Delivery',  cls: 'status-ready',     icon: 'ri-truck-line' },
-      collected:  { label: 'Collected',         cls: 'status-collected', icon: 'ri-archive-line' },
-      cancelled:  { label: 'Cancelled',         cls: 'badge-danger',     icon: 'ri-close-circle-line' }
+      pending:   { label: 'Pending',          cls: 'status-pending',   icon: 'ri-time-line' },
+      confirmed: { label: 'Confirmed',         cls: 'status-confirmed', icon: 'ri-check-line' },
+      ready:     { label: 'Ready for Pickup',  cls: 'status-ready',     icon: 'ri-checkbox-circle-line' },
+      collected: { label: 'Collected',         cls: 'status-collected', icon: 'ri-archive-line' },
+      cancelled: { label: 'Cancelled',         cls: 'badge-danger',     icon: 'ri-close-circle-line' }
     };
-    const statusOrder = ['pending', 'confirmed', 'ready', 'dispatched', 'collected'];
+    const statusOrder = ['pending', 'confirmed', 'ready', 'collected'];
 
     requireAuth(async (profile) => {
       document.getElementById('userName').textContent = profile.name || 'User';
@@ -227,50 +208,13 @@
         });
 
         if (r.notes)         { document.getElementById('rNotesRow').style.display = 'flex'; document.getElementById('rNotes').textContent = r.notes; }
-        if (r.pharmacyNotes) {
-          document.getElementById('rPharmacyNotesRow').style.display = 'flex';
-          document.getElementById('rPharmacyNotes').textContent = r.pharmacyNotes;
-        }
-
-        // Fulfillment / Billing
-        if (r.fulfillment && r.fulfillment.length > 0) {
-          document.getElementById('fulfillmentCard').style.display = 'block';
-          const fList = document.getElementById('fulfillmentList');
-          fList.innerHTML = r.fulfillment.map(item => `
-            <tr>
-              <td style="padding:8px 0;">
-                <div style="font-weight:500;color:var(--text);">${item.name}</div>
-                <div style="font-size:11px;color:var(--text-light);">${item.unit || 'Unit'}</div>
-              </td>
-              <td style="padding:8px 0;text-align:right;color:var(--text-muted);">₹${item.price.toFixed(2)}</td>
-            </tr>
-          `).join('');
-
-          let grandTotal = r.totalAmount || 0;
-          if (r.deliveryPreference === 'delivery') {
-            fList.innerHTML += `
-              <tr style="border-top:1px solid var(--border-light);">
-                <td style="padding:8px 0;color:var(--text-muted);">Delivery Charge</td>
-                <td style="padding:8px 0;text-align:right;color:var(--text-muted);">₹30.00</td>
-              </tr>`;
-            grandTotal += 30;
-          }
-          document.getElementById('rTotalAmount').textContent = `₹${grandTotal.toFixed(2)}`;
-        } else {
-          document.getElementById('fulfillmentCard').style.display = 'none';
-        }
+        if (r.pharmacyNotes) { document.getElementById('rPharmacyNotesRow').style.display = 'flex'; document.getElementById('rPharmacyNotes').textContent = r.pharmacyNotes; }
 
         // Timeline
         const tl      = document.getElementById('timeline');
         tl.innerHTML  = '';
-        
-        const filteredStatusOrder = statusOrder.filter(st => {
-          if (st === 'dispatched' && r.deliveryPreference !== 'delivery') return false;
-          return true;
-        });
-
-        const currIdx = filteredStatusOrder.indexOf(r.status);
-        filteredStatusOrder.forEach((st, i) => {
+        const currIdx = statusOrder.indexOf(r.status);
+        statusOrder.forEach((st, i) => {
           const done = i < currIdx;
           const curr = i === currIdx;
           const s2   = statusMap[st];

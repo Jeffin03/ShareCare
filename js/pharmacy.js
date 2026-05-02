@@ -99,8 +99,7 @@ export async function updateOrderStatus(orderId, newStatus, pharmacyNotes = "") 
   const validTransitions = {
     pending:   ["confirmed", "cancelled"],
     confirmed: ["ready",     "cancelled"],
-    ready:     ["collected", "dispatched"],
-    dispatched: ["collected"],
+    ready:     ["collected"],
     collected: [],
     cancelled: []
   };
@@ -128,7 +127,6 @@ export function getStatusLabel(status) {
     pending:   "Pending",
     confirmed: "Confirmed",
     ready:     "Ready for Pickup",
-    dispatched: "Out for Delivery",
     collected: "Collected",
     cancelled: "Cancelled"
   };
@@ -140,7 +138,6 @@ export function getStatusClass(status) {
     pending:   "status-pending",
     confirmed: "status-confirmed",
     ready:     "status-ready",
-    dispatched: "status-ready",
     collected: "status-collected",
     cancelled: "badge-danger"
   };
@@ -151,8 +148,7 @@ export function getNextStatus(currentStatus) {
   const next = {
     pending:   "confirmed",
     confirmed: "ready",
-    ready:     "collected",
-    dispatched: "collected"
+    ready:     "collected"
   };
   return next[currentStatus] || null;
 }
@@ -161,8 +157,7 @@ export function getNextStatusLabel(currentStatus) {
   const labels = {
     pending:   "Confirm Order",
     confirmed: "Mark as Ready",
-    ready:     "Mark as Collected",
-    dispatched: "Mark as Collected"
+    ready:     "Mark as Collected"
   };
   return labels[currentStatus] || null;
 }

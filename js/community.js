@@ -202,24 +202,18 @@ export async function getSavedPosts(userId) {
  * @returns {Promise<string>} — the new comment's document ID
  */
 export async function addComment(postId, authorId, authorName, text) {
-  const commentRef = await addDoc(collection(db, "comments"), {
-    postId,
-    authorId,
-    authorName,
-    text,
-    createdAt: serverTimestamp(),
-  });
-
-  // Try to update count, but don't fail the whole thing if it hits a rule snag
-  try {
-    await updateDoc(doc(db, "posts", postId), {
+  const [commentRef] = await Promise.all([
+    addDoc(collection(db, "comments"), {
+      postId,
+      authorId,
+      authorName,
+      text,
+      createdAt: serverTimestamp(),
+    }),
+    updateDoc(doc(db, "posts", postId), {
       commentCount: increment(1),
-      updatedAt:    serverTimestamp(),
-    });
-  } catch (err) {
-    console.warn("Count update failed, but comment was saved:", err);
-  }
-
+    }),
+  ]);
   return commentRef.id;
 }
 
