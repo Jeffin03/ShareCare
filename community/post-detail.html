@@ -5,7 +5,6 @@
   <title>ShareCare — Post</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
   <link rel="stylesheet" href="../assets/style.css">
-  <script src="../js/theme.js"></script>
   <style>
     /* === CRITICAL LAYOUT === */
     html,body{margin:0;padding:0;}
@@ -71,13 +70,13 @@
       </ul>
       <div class="sc-sidebar-section">Community</div>
       <ul class="sc-sidebar-menu">
-        <li><a href="feed.html" class="sc-sidebar-item"><i class="ri-home-smile-2-line"></i> Feed</a></li>
+        <li><a href="feed.html" class="sc-sidebar-item active"><i class="ri-home-smile-2-line"></i> Feed</a></li>
         <li><a href="new-post.html" class="sc-sidebar-item"><i class="ri-edit-line"></i> New Post</a></li>
-        <li><a href="feed.html?view=saved" class="sc-sidebar-item"><i class="ri-bookmark-3-line"></i> Saved</a></li>
+        <li><a href="feed.html" class="sc-sidebar-item"><i class="ri-bookmark-3-line"></i> Saved</a></li>
       </ul>
       <div class="sc-sidebar-footer">
         <div class="sc-user-chip">
-          <div class="user-avatar-container" id="userAvatar"></div>
+          <img src="" alt="User" id="userAvatar">
           <div><div class="sc-user-name" id="userName">Loading...</div><div class="sc-user-role" id="userRole">Loading...</div></div>
           <i class="ri-logout-box-r-line sc-logout" title="Sign out"></i>
         </div>
@@ -93,7 +92,7 @@
           </div>
         </div>
         <div class="sc-topbar-right">
-          <button class="theme-toggle"><i class="ri-moon-line"></i><i class="ri-sun-line"></i></button>
+          <button class="notif-btn"><i class="ri-notification-3-line"></i><div class="notif-dot"></div></button>
           <button class="btn btn-outline btn-sm"><i class="ri-bookmark-line"></i> Save</button>
           <button class="btn btn-ghost btn-sm"><i class="ri-share-line"></i> Share</button>
         </div>
@@ -166,7 +165,7 @@
             <div class="sidebar-widget">
               <div class="widget-title">About the Author</div>
               <div style="text-align:center;padding:8px 0 16px;">
-                <div id="authorSidebarAvatar" style="width:64px;height:64px;border-radius:50%;background:var(--primary);color:white;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;margin:0 auto 10px;text-transform:uppercase;">?</div>
+                <img src="" alt="" style="width:64px;height:64px;border-radius:50%;object-fit:cover;border:2px solid var(--border);margin-bottom:10px;display:block;margin-left:auto;margin-right:auto;" id="authorSidebarAvatar">
                 <div style="font-size:15px;font-weight:600;" id="authorSidebarName">Loading...</div>
                 <div style="font-size:12px;color:var(--text-muted);margin-top:3px;" id="authorSidebarBio">Loading...</div>
               </div>
@@ -246,14 +245,6 @@
       document.querySelector('.sc-topbar-sub').textContent = `${catLabel} · Posted by ${post.authorName || 'Anonymous'}`;
       document.title = `ShareCare — ${post.title}`;
 
-      // Update author sidebar
-      const sidebarName = document.getElementById('authorSidebarName');
-      if (sidebarName) sidebarName.textContent = post.authorName || 'Anonymous';
-      const sidebarAvatar = document.getElementById('authorSidebarAvatar');
-      if (sidebarAvatar) sidebarAvatar.textContent = (post.authorName || '?')[0].toUpperCase();
-      const sidebarBio = document.getElementById('authorSidebarBio');
-      if (sidebarBio) sidebarBio.textContent = 'ShareCare Community Member';
-
       // Build post HTML
       const postContent = document.querySelector('.detail-layout > div:first-child');
       postContent.innerHTML = `
@@ -302,29 +293,14 @@
 
       // Helpful button
       document.getElementById('helpfulBtn')?.addEventListener('click', async () => {
-        const btn = document.getElementById('helpfulBtn');
-        const label = document.getElementById('helpfulLabel');
-        if (btn.disabled) return;
-
-        // Immediate UI feedback
-        btn.disabled = true;
-        btn.style.opacity = '0.7';
-        const oldIcon = btn.querySelector('i').className;
-        btn.querySelector('i').className = 'ri-thumb-up-fill';
-        const currentCount = parseInt(label.textContent.match(/\d+/)[0]);
-        label.textContent = `Marked Helpful (${formatHelpfulCount(currentCount + 1)})`;
-
         try {
           await markHelpful(postId, profile.uid);
-        } catch (err) { 
-          console.error('Helpful error:', err);
-          // Revert UI on error
-          btn.disabled = false;
-          btn.style.opacity = '1';
-          btn.querySelector('i').className = oldIcon;
-          label.textContent = `Mark as Helpful (${formatHelpfulCount(currentCount)})`;
-          alert('Could not mark as helpful. Please try again.');
-        }
+          const btn = document.getElementById('helpfulBtn');
+          btn.disabled = true;
+          btn.style.opacity = '0.7';
+          btn.querySelector('i').className = 'ri-thumb-up-fill';
+          document.getElementById('helpfulLabel').textContent = `Marked Helpful (${formatHelpfulCount((post.helpfulCount || 0) + 1)})`;
+        } catch (err) { console.error('Helpful error:', err); }
       });
 
       // Save button
@@ -333,18 +309,10 @@
       if (saveBtn) {
         saveBtn.innerHTML = `<i class="${isSavedNow ? 'ri-bookmark-fill' : 'ri-bookmark-line'}"></i> ${isSavedNow ? 'Saved' : 'Save'}`;
         saveBtn.addEventListener('click', async () => {
-          const wasSaved = isSavedNow;
-          isSavedNow = !isSavedNow; // Immediate toggle
-          saveBtn.innerHTML = `<i class="${isSavedNow ? 'ri-bookmark-fill' : 'ri-bookmark-line'}"></i> ${isSavedNow ? 'Saved' : 'Save'}`;
-          
           try {
-            if (wasSaved) { await unsavePost(profile.uid, postId); }
-            else          { await savePost(profile.uid, postId); }
-          } catch (err) { 
-            console.error('Save error:', err);
-            isSavedNow = wasSaved; // Revert on error
-            saveBtn.innerHTML = `<i class="${isSavedNow ? 'ri-bookmark-fill' : 'ri-bookmark-line'}"></i> ${isSavedNow ? 'Saved' : 'Save'}`;
-          }
+            if (isSavedNow) { await unsavePost(profile.uid, postId); isSavedNow = false; saveBtn.innerHTML = '<i class="ri-bookmark-line"></i> Save'; }
+            else            { await savePost(profile.uid, postId);   isSavedNow = true;  saveBtn.innerHTML = '<i class="ri-bookmark-fill"></i> Saved'; }
+          } catch (err) { console.error('Save error:', err); }
         });
       }
 
@@ -358,36 +326,19 @@
       });
 
       // Post comment
-      const handleCommentSubmit = async () => {
+      document.getElementById('postCommentBtn')?.addEventListener('click', async () => {
         const input = document.getElementById('commentInput');
-        const text = input?.value.trim();
+        const text = input.value.trim();
         if (!text) return;
-        
         const btn = document.getElementById('postCommentBtn');
         btn.disabled = true;
         btn.textContent = 'Posting…';
-
         try {
           await addComment(postId, profile.uid, profile.name || 'Anonymous', text);
-          // Success! Clear the field
           input.value = '';
-          input.style.height = 'auto';
-        } catch (err) { 
-          console.error('Comment error:', err);
-          alert('Could not post comment. Please check your connection.');
-        } finally {
-          btn.disabled = false;
-          btn.textContent = 'Post Comment';
-        }
-      };
-
-      document.getElementById('postCommentBtn')?.addEventListener('click', handleCommentSubmit);
-      
-      // Also allow Ctrl+Enter
-      document.getElementById('commentInput')?.addEventListener('keydown', (e) => {
-        if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
-          handleCommentSubmit();
-        }
+        } catch (err) { console.error('Comment error:', err); }
+        btn.disabled = false;
+        btn.textContent = 'Post Comment';
       });
 
       // Live comments listener

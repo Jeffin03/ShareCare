@@ -3,8 +3,7 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
-  onAuthStateChanged,
-  sendPasswordResetEmail
+  onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import {
   doc,
@@ -17,8 +16,7 @@ import {
 // ── Sign Up ───────────────────────────────────────────────────────────────────
 export async function signUp(name, email, password, role) {
   const credential = await createUserWithEmailAndPassword(auth, email, password);
-  const user = credential.user;
-  const uid = user.uid;
+  const uid = credential.user.uid;
 
   const userData = {
     name,
@@ -27,14 +25,8 @@ export async function signUp(name, email, password, role) {
     createdAt: serverTimestamp()
   };
 
-  try {
-    await setDoc(doc(db, "users", uid), userData);
-    return user;
-  } catch (error) {
-    // If Firestore write fails, clean up the auth user to prevent orphaned accounts
-    await user.delete().catch(console.error);
-    throw error;
-  }
+  await setDoc(doc(db, "users", uid), userData);
+  return credential.user;
 }
 
 
@@ -42,12 +34,6 @@ export async function signUp(name, email, password, role) {
 export async function logIn(email, password) {
   const credential = await signInWithEmailAndPassword(auth, email, password);
   return credential.user;
-}
-
-
-// ── Reset Password ────────────────────────────────────────────────────────────
-export async function resetPassword(email) {
-  await sendPasswordResetEmail(auth, email);
 }
 
 
@@ -68,22 +54,10 @@ export async function getUserProfile(uid) {
 
 // ── Redirect after login based on role + stored intent ───────────────────────
 export function redirectAfterLogin(role) {
-  // Guard against concurrent calls from the form handler and the auth listener
-  if (window.__isRedirecting) return;
-  window.__isRedirecting = true;
-
   const intended = sessionStorage.getItem("redirectAfterLogin");
   sessionStorage.removeItem("redirectAfterLogin");
 
-  // Only honour the stored intent if it is not a role-restricted page that
-  // conflicts with the user's role. A pharmacy user should never be sent to
-  // a /patient/ page, and a patient should never be sent to /pharmacy/.
-  const isPatientOnlyPath  = intended && intended.startsWith("/patient/");
-  const isPharmacyOnlyPath = intended && intended.startsWith("/pharmacy/");
-  const intentConflicts    = (role === "pharmacy" && isPatientOnlyPath)
-                          || (role !== "pharmacy"  && isPharmacyOnlyPath);
-
-  if (intended && !intentConflicts) {
+  if (intended) {
     window.location.href = intended;
     return;
   }

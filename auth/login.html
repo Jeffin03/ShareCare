@@ -5,7 +5,6 @@
   <title>ShareCare — Log In</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
   <link rel="stylesheet" href="../assets/style.css">
-  <script src="../js/theme.js"></script>
   <style>
     body{display:flex;min-height:100vh;flex-direction:column;}
     .auth-wrap{flex:1;display:flex;}
@@ -65,19 +64,21 @@
             <div class="input-wrap"><i class="ri-lock-2-line input-icon"></i>
               <input type="password" class="form-input has-icon" id="password" placeholder="••••••••" required>
             </div>
-            <div class="forgot"><a href="#" id="forgotLink">Forgot password?</a></div>
+            <div class="forgot"><a href="#">Forgot password?</a></div>
           </div>
           <button type="submit" class="btn-submit">Log in</button>
         </form>
+        <div class="divider"><span>or</span></div>
         <div class="auth-footer">
           <p>Don't have an account? <a href="signup.html">Sign up free</a></p>
+          <a href="../community/feed.html" class="guest-link"><i class="ri-compass-3-line"></i> Continue as guest</a>
         </div>
       </div>
     </div>
   </div>
   <script src="../js/env.js"></script>
   <script type="module">
-    import { logIn, getUserProfile, redirectAfterLogin, redirectIfLoggedIn, resetPassword } from '../js/auth.js';
+    import { logIn, getUserProfile, redirectAfterLogin, redirectIfLoggedIn } from '../js/auth.js';
 
     // Redirect away if already logged in
     redirectIfLoggedIn();
@@ -88,28 +89,6 @@
     const submitBtn = form.querySelector('button[type="submit"]');
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    // Forgot password handler
-    document.getElementById('forgotLink').addEventListener('click', async (e) => {
-      e.preventDefault();
-      const email = document.getElementById('email').value.trim();
-      if (!emailRegex.test(email)) {
-        errorEl.style.display = 'flex';
-        errorTx.textContent   = 'Enter your email address above first, then click Forgot password.';
-        return;
-      }
-      try {
-        await resetPassword(email);
-        errorEl.style.display = 'flex';
-        errorEl.style.background = '#F0FDF4';
-        errorEl.style.borderColor = '#86EFAC';
-        errorEl.style.color = '#166534';
-        errorTx.textContent = 'Password reset email sent. Check your inbox.';
-      } catch (err) {
-        errorEl.style.display = 'flex';
-        errorTx.textContent   = 'Could not send reset email. Please try again.';
-      }
-    });
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -136,7 +115,6 @@
       try {
         const user    = await logIn(email, password);
         const profile = await getUserProfile(user.uid);
-        localStorage.setItem('sharecare-user-name', profile.name || 'User');
         redirectAfterLogin(profile.role);
       } catch (err) {
         errorEl.style.display = 'flex';

@@ -2,9 +2,8 @@
 .firebase/
 .firebaserc
 
-# Environment — NEVER commit these
+# Environment — NEVER commit this
 js/env.js
-scripts/serviceAccount.dev.json
 
 # Dependencies
 node_modules/

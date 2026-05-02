@@ -33,34 +33,6 @@
     --r-full: 100px;
 }
 
-[data-theme="dark"] {
-    --bg:            #121A17;
-    --bg-alt:        #1A2521;
-    --card:          #1F2D28;
-    --text:          #E8F2EE;
-    --text-muted:    #9FB0A9;
-    --text-light:    #6B7F78;
-    --border:        #2E3D37;
-    --border-light:  #25342E;
-    --primary-light: #2A3C35;
-    --accent-light:  #3D2D28;
-    --shadow-sm:     0 2px 8px rgba(0,0,0,0.2);
-    --shadow:        0 4px 20px rgba(0,0,0,0.3);
-    --shadow-md:     0 8px 32px rgba(0,0,0,0.4);
-}
-
-[data-theme="dark"] .nav {
-    background: rgba(31, 45, 40, 0.85);
-    backdrop-filter: blur(12px);
-    border-bottom-color: rgba(255, 255, 255, 0.05);
-}
-
-[data-theme="dark"] .btn-outline {
-    background: transparent !important;
-    color: var(--text) !important;
-    border-color: var(--border) !important;
-}
-
 *,
 *::before,
 *::after {
@@ -110,7 +82,7 @@ p {
 .nav {
     width: 100%;
     height: 68px;
-    background: var(--card);
+    background: rgba(255, 255, 255, 0.94);
     backdrop-filter: blur(16px);
     border-bottom: 1px solid var(--border-light);
     display: flex;
@@ -296,14 +268,14 @@ p {
     font-family: 'DM Sans', sans-serif;
     font-size: 0.95rem;
     color: var(--text);
-    background: var(--bg);
+    background: #FAFAF8;
     outline: none;
     transition: all 0.2s;
 }
 
 .input:focus {
     border-color: var(--primary);
-    background: var(--card);
+    background: white;
     box-shadow: 0 0 0 3px rgba(92, 141, 122, 0.12);
 }
 
@@ -554,25 +526,12 @@ select.input {
     background: var(--bg);
 }
 
-.user-chip img, .user-initials {
+.user-chip img {
     width: 32px;
     height: 32px;
     border-radius: 50%;
     object-fit: cover;
     border: 2px solid var(--border);
-}
-
-.user-initials {
-    background: var(--primary);
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 13px;
-    font-weight: 700;
-    text-transform: uppercase;
-    border: none;
-    flex-shrink: 0;
 }
 
 .user-chip-name {
