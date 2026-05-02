@@ -5,6 +5,7 @@
   <title>ShareCare — Community Feed</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
   <link rel="stylesheet" href="../assets/style.css">
+  <script src="../js/theme.js"></script>
   <style>
     /* === CRITICAL LAYOUT === */
     html,body{margin:0;padding:0;}
@@ -16,7 +17,7 @@
     .pill.active{background:var(--primary);border-color:var(--primary);color:white;}
     .pill i{font-size:15px;}
     .posts-list{display:flex;flex-direction:column;gap:14px;}
-    .post-card{background:var(--card);border-radius:var(--radius-lg);border:1px solid var(--border-light);overflow:hidden;transition:box-shadow 0.2s;cursor:pointer;text-decoration:none;color:var(--text);display:block;}
+    .post-card{background:var(--card);border-radius:var(--radius-lg);border:1px solid var(--border-light);box-shadow:var(--shadow-sm);overflow:hidden;transition:all 0.2s;cursor:pointer;text-decoration:none;color:var(--text);display:block;}
     .post-card:hover{box-shadow:var(--shadow-md);}
     .post-card-img{width:100%;height:180px;object-fit:cover;display:block;}
     .post-card-body{padding:18px 20px;}
@@ -34,7 +35,7 @@
     .post-action-btn{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--text-muted);cursor:pointer;transition:all 0.2s;background:transparent;border:none;}
     .post-action-btn:hover{background:var(--bg);color:var(--primary);}
     .post-action-btn.saved{color:var(--accent);}
-    .sidebar-widget{background:var(--card);border-radius:var(--radius-lg);border:1px solid var(--border-light);padding:20px;}
+    .sidebar-widget{background:var(--card);border-radius:var(--radius-lg);border:1px solid var(--border-light);box-shadow:var(--shadow-sm);padding:20px;margin-bottom:20px;}
     .widget-title{font-family:'DM Serif Display',serif;font-size:16px;margin-bottom:14px;}
     .trend-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border-light);cursor:pointer;}
     .trend-item:last-child{border-bottom:none;padding-bottom:0;}
@@ -70,13 +71,13 @@
       </ul>
       <div class="sc-sidebar-section">Community</div>
       <ul class="sc-sidebar-menu">
-        <li><a href="feed.html" class="sc-sidebar-item active"><i class="ri-home-smile-2-line"></i> Feed</a></li>
+        <li><a href="feed.html" class="sc-sidebar-item" id="navFeed"><i class="ri-home-smile-2-line"></i> Feed</a></li>
         <li><a href="new-post.html" class="sc-sidebar-item"><i class="ri-edit-line"></i> New Post</a></li>
-        <li><a href="feed.html" class="sc-sidebar-item"><i class="ri-bookmark-3-line"></i> Saved</a></li>
+        <li><a href="feed.html?view=saved" class="sc-sidebar-item" id="navSaved"><i class="ri-bookmark-3-line"></i> Saved</a></li>
       </ul>
       <div class="sc-sidebar-footer">
         <div class="sc-user-chip">
-          <img src="" alt="User" id="userAvatar">
+          <div class="user-avatar-container" id="userAvatar"></div>
           <div><div class="sc-user-name" id="userName">Loading...</div><div class="sc-user-role" id="userRole">Loading...</div></div>
           <i class="ri-logout-box-r-line sc-logout" title="Sign out"></i>
         </div>
@@ -93,7 +94,7 @@
             <i class="ri-search-line"></i>
             <input type="text" placeholder="Search posts…">
           </div>
-          <div class="notif-btn"><i class="ri-notification-3-line"></i><div class="notif-dot"></div></div>
+          <div class="theme-toggle"><i class="ri-moon-line"></i><i class="ri-sun-line"></i></div>
           <a href="new-post.html" class="btn btn-primary btn-sm"><i class="ri-add-line"></i> New Post</a>
         </div>
       </div>
@@ -183,6 +184,18 @@
       // Hide guest banner since user is authenticated
       document.getElementById('guestBanner').style.display = 'none';
 
+      const params = new URLSearchParams(window.location.search);
+      const isSavedView = params.get('view') === 'saved';
+
+      if (isSavedView) {
+        document.querySelector('.sc-topbar-title').textContent = 'Saved Posts';
+        document.querySelector('.sc-topbar-sub').textContent = 'Your private collection of helpful posts';
+        document.getElementById('navSaved').classList.add('active');
+        document.getElementById('navFeed').classList.remove('active');
+      } else {
+        document.getElementById('navFeed').classList.add('active');
+      }
+
       let currentCategory = null;
       let currentSort = 'recent';
       let unsubscribe = null;
@@ -202,19 +215,28 @@
       function renderPosts(posts) {
         const list = document.querySelector('.posts-list');
         const countEl = document.querySelector('.sort-label');
-        countEl.textContent = `${posts.length} post${posts.length !== 1 ? 's' : ''}`;
 
-        if (posts.length === 0) {
+        // Filter for saved posts if in saved view
+        const filtered = isSavedView ? posts.filter(p => savedPostIds.has(p.id)) : posts;
+        const count = filtered.length;
+
+        countEl.textContent = isSavedView 
+          ? `${count} saved post${count !== 1 ? 's' : ''}` 
+          : `${count} post${count !== 1 ? 's' : ''}`;
+
+        if (posts.length === 0 || (isSavedView && count === 0)) {
+          const emptyTitle = isSavedView ? 'No saved posts' : 'No posts yet';
+          const emptySub   = isSavedView ? 'Posts you bookmark will appear here for quick access.' : 'Be the first to share something!';
           list.innerHTML = `<div style="text-align:center;padding:48px 24px;color:var(--text-muted);">
-            <i class="ri-chat-3-line" style="font-size:40px;display:block;margin-bottom:12px;color:var(--border);"></i>
-            <div style="font-size:15px;font-weight:600;">No posts yet</div>
-            <div style="font-size:13px;margin-top:6px;">Be the first to share something!</div>
+            <i class="ri-${isSavedView ? 'bookmark-3' : 'chat-3'}-line" style="font-size:40px;display:block;margin-bottom:12px;color:var(--border);"></i>
+            <div style="font-size:15px;font-weight:600;">${emptyTitle}</div>
+            <div style="font-size:13px;margin-top:6px;">${emptySub}</div>
           </div>`;
           return;
         }
 
         // Sort client-side
-        const sorted = [...posts].sort((a, b) => {
+        const sorted = [...filtered].sort((a, b) => {
           if (currentSort === 'helpful') return (b.helpfulCount || 0) - (a.helpfulCount || 0);
           if (currentSort === 'comments') return (b.commentCount || 0) - (a.commentCount || 0);
           const at = a.createdAt?.toDate ? a.createdAt.toDate() : new Date(0);
@@ -246,8 +268,8 @@
                     <button class="post-action-btn ${isSavedPost ? 'saved' : ''}" data-action="save" data-post-id="${post.id}" title="${isSavedPost ? 'Unsave' : 'Save'}">
                       <i class="${isSavedPost ? 'ri-bookmark-fill' : 'ri-bookmark-line'}"></i>
                     </button>
-                    <button class="post-action-btn ${alreadyHelpful ? 'saved' : ''}" data-action="helpful" data-post-id="${post.id}" title="Mark helpful">
-                      <i class="ri-thumb-up-line"></i>
+                    <button class="post-action-btn ${alreadyHelpful ? 'saved' : ''}" data-action="helpful" data-post-id="${post.id}" title="${alreadyHelpful ? 'Already marked helpful' : 'Mark helpful'}">
+                      <i class="ri-thumb-up-${alreadyHelpful ? 'fill' : 'line'}"></i>
                     </button>
                   </div>
                 </div>
@@ -269,12 +291,27 @@
             e.stopPropagation();
             const postId = btn.dataset.postId;
             const saving = !savedPostIds.has(postId);
+            
+            // Immediate UI update
+            if (saving) savedPostIds.add(postId);
+            else        savedPostIds.delete(postId);
+            
+            btn.classList.toggle('saved', saving);
+            btn.querySelector('i').className = saving ? 'ri-bookmark-fill' : 'ri-bookmark-line';
+            btn.title = saving ? 'Unsave' : 'Save';
+
             try {
-              if (saving) { await savePost(profile.uid, postId); savedPostIds.add(postId); }
-              else        { await unsavePost(profile.uid, postId); savedPostIds.delete(postId); }
-              btn.classList.toggle('saved', saving);
-              btn.querySelector('i').className = saving ? 'ri-bookmark-fill' : 'ri-bookmark-line';
-            } catch (err) { console.error('Save error:', err); }
+              if (saving) await savePost(profile.uid, postId);
+              else        await unsavePost(profile.uid, postId);
+            } catch (err) { 
+              console.error('Save error:', err);
+              // Revert UI on error
+              if (saving) savedPostIds.delete(postId);
+              else        savedPostIds.add(postId);
+              const stillSaved = savedPostIds.has(postId);
+              btn.classList.toggle('saved', stillSaved);
+              btn.querySelector('i').className = stillSaved ? 'ri-bookmark-fill' : 'ri-bookmark-line';
+            }
           });
         });
 
@@ -282,11 +319,21 @@
         list.querySelectorAll('[data-action="helpful"]').forEach(btn => {
           btn.addEventListener('click', async (e) => {
             e.stopPropagation();
+            if (btn.classList.contains('saved')) return; // Already marked
+
             const postId = btn.dataset.postId;
+            // Immediate feedback
+            btn.classList.add('saved');
+            btn.querySelector('i').className = 'ri-thumb-up-fill';
+            
             try {
               await markHelpful(postId, profile.uid);
-              btn.classList.add('saved');
-            } catch (err) { console.error('Helpful error:', err); }
+              // The real-time listener will eventually update the count text
+            } catch (err) { 
+              console.error('Helpful error:', err);
+              btn.classList.remove('saved');
+              btn.querySelector('i').className = 'ri-thumb-up-line';
+            }
           });
         });
       }
