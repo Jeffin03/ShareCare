@@ -6,7 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ShareCare</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="assets/styles.css">
+  <link rel="stylesheet" href="assets/styles.css?v=2">
+  <script src="js/theme.js"></script>
   <style>
     body {
       display: flex;
@@ -232,6 +233,7 @@
   <nav class="nav">
     <a href="index.html" class="nav-logo"><i class="ri-heart-pulse-fill"></i> ShareCare</a>
     <div class="nav-right">
+      <div class="theme-toggle" style="margin-right:8px;"><i class="ri-moon-line"></i><i class="ri-sun-line"></i></div>
       <a href="auth/login.html" class="btn btn-outline btn-sm">Log in</a>
       <a href="auth/signup.html" class="btn btn-primary btn-sm">Sign up free</a>
     </div>
@@ -255,7 +257,8 @@
 
       <div class="or-divider">or</div>
 
-      <a href="community/feed.html" class="path-card com fade-up fade-up-2">
+      <a href="auth/login.html" class="path-card com fade-up fade-up-2"
+        onclick="sessionStorage.setItem('redirectAfterLogin', '/community/feed.html')">
         <div class="path-icon com"><i class="ri-group-line"></i></div>
         <h2>Looking for tips from others?</h2>
         <p>Browse recipes, exercises, snacks and daily strategies shared by real people who understand exactly what
