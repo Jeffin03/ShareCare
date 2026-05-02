@@ -5,6 +5,7 @@
   <title>ShareCare — Order Detail</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
   <link rel="stylesheet" href="../assets/style.css">
+  <script src="../js/theme.js"></script>
   <style>
     /* === CRITICAL LAYOUT === */
     html,body{margin:0;padding:0;}
@@ -47,7 +48,7 @@
       </ul>
       <div class="sc-sidebar-footer">
         <div class="sc-user-chip">
-          <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=80&q=80" alt="Pharmacy">
+          <div class="user-avatar-container"></div>
           <div><div class="sc-user-name" id="pharmacyName">Pharmacy</div><div class="sc-user-role">Pharmacy</div></div>
           <i class="ri-logout-box-r-line sc-logout" onclick="logOut()"></i>
         </div>
@@ -57,6 +58,7 @@
       <div class="sc-topbar">
         <div><div class="sc-topbar-title" id="pageTitle">Order Detail</div><div class="sc-topbar-sub" id="pageSub">Manage this medicine request</div></div>
         <div class="sc-topbar-right">
+          <div class="theme-toggle"><i class="ri-moon-line"></i><i class="ri-sun-line"></i></div>
           <a href="dashboard.html" class="btn btn-outline btn-sm"><i class="ri-arrow-left-line"></i> All Orders</a>
         </div>
       </div>
@@ -71,15 +73,63 @@
                 </div>
                 <div>
                   <div id="statusBadge"></div>
-              </div>
-              <div id="deliveryBadge" style="display:none;">
-                <span class="delivery-badge"><i class="ri-e-bike-line"></i> Delivery Requested</span>
-                  <div id="deliveryBadge" style="display:none;" class="delivery-badge"><i class="ri-e-bike-line"></i> Delivery Requested</div>
+                  <div id="deliveryBadge" style="display:none;margin-top:6px;">
+                    <span class="delivery-badge"><i class="ri-e-bike-line"></i> Delivery Requested</span>
+                  </div>
                 </div>
               </div>
               <div style="margin-bottom:20px;">
                 <div style="font-size:13px;font-weight:600;color:var(--text-muted);margin-bottom:10px;">MEDICINES REQUESTED</div>
                 <table class="med-table"><thead><tr><th>Medicine</th><th>Quantity</th></tr></thead><tbody id="medTableBody"></tbody></table>
+              </div>
+
+              <!-- Fulfillment Section (Hidden by default) -->
+              <div class="fulfillment-section" id="fulfillmentSection">
+                <div style="font-size:13px;font-weight:600;color:var(--text-muted);">FULFILLMENT DETAILS</div>
+                <div style="font-size:12px;color:var(--text-light);margin-top:2px;">Enter pricing and specify units for the patient</div>
+                <table class="fulfillment-table">
+                  <thead>
+                    <tr>
+                      <th>Medicine</th>
+                      <th style="width:100px;">Price (₹)</th>
+                      <th style="width:120px;">Unit</th>
+                    </tr>
+                  </thead>
+                  <tbody id="fulfillmentTableBody"></tbody>
+                </table>
+                <div style="margin-top:16px;padding-top:16px;border-top:1.5px dashed var(--border);display:flex;flex-direction:column;gap:8px;">
+                  <div id="deliveryChargeRow" style="display:none;justify-content:space-between;font-size:14px;color:var(--text-muted);">
+                    <span>Delivery Charge</span>
+                    <span>₹30.00</span>
+                  </div>
+                  <div style="display:flex;justify-content:space-between;font-size:16px;font-weight:700;color:var(--text);">
+                    <span>Total Amount</span>
+                    <span id="fulfillmentTotal">₹0.00</span>
+                  </div>
+                </div>
+                <button class="btn btn-primary w-full" style="margin-top:20px;justify-content:center;" onclick="confirmFulfillment()">
+                  <i class="ri-checkbox-circle-line"></i> Confirm Pricing & Mark Ready
+                </button>
+              </div>
+
+              <!-- Summary Section (Shown when order is ready/collected/dispatched) -->
+              <div class="fulfillment-section" id="summarySection" style="display:none;border:1.5px solid var(--primary-light);">
+                <div style="font-size:13px;font-weight:600;color:var(--text-muted);margin-bottom:12px;display:flex;align-items:center;gap:6px;">
+                   <i class="ri-bill-line" style="color:var(--primary);font-size:16px;"></i> FINAL BILLING
+                </div>
+                <table style="width:100%;border-collapse:collapse;font-size:14px;">
+                  <tbody id="summaryList"></tbody>
+                  <tfoot>
+                    <tr id="summaryDeliveryRow" style="display:none;border-top:1px solid var(--border-light);">
+                      <td style="padding:12px 0;color:var(--text-muted);">Delivery Charge</td>
+                      <td style="padding:12px 0;text-align:right;color:var(--text-muted);">₹30.00</td>
+                    </tr>
+                    <tr style="border-top:1.5px dashed var(--border);font-weight:700;">
+                      <td style="padding:12px 0;">Total Amount</td>
+                      <td style="padding:12px 0;text-align:right;color:var(--primary-dark);font-size:16px;" id="summaryTotal">₹0.00</td>
+                    </tr>
+                  </tfoot>
+                </table>
               </div>
               <div class="info-row">
                 <div class="info-icon"><i class="ri-time-line"></i></div>
@@ -130,6 +180,25 @@
     window.logOut = logOut;
 
     const id = new URLSearchParams(location.search).get('id');
+    let currentOrder = null;
+
+    const updateFulfillmentTotal = () => {
+      const rows = document.querySelectorAll('#fulfillmentTableBody tr');
+      let total = 0;
+      rows.forEach(row => {
+        const price = parseFloat(row.querySelector('input[data-field="price"]').value) || 0;
+        total += price;
+      });
+      
+      if (currentOrder?.deliveryPreference === 'delivery') {
+        total += 30;
+        document.getElementById('deliveryChargeRow').style.display = 'flex';
+      } else {
+        document.getElementById('deliveryChargeRow').style.display = 'none';
+      }
+      
+      document.getElementById('fulfillmentTotal').textContent = `₹${total.toFixed(2)}`;
+    };
 
     const statusIconMap = {
       pending:   'ri-time-line',
@@ -156,6 +225,7 @@
       if (!id) return;
 
       listenToOrder(id, (r) => {
+        currentOrder = r;
         document.getElementById('loadingState').style.display  = 'none';
         document.getElementById('detailContent').style.display = 'grid';
 
@@ -198,13 +268,18 @@
 
         if (actionBtn) {
           if (nextStatus) {
-            // If status is ready and patient chose delivery, change label to Dispatched
-            const displayLabel = (r.status === 'ready' && r.deliveryPreference === 'delivery')
-              ? 'Mark as Dispatched'
-              : nextLabel;
+            let displayLabel = nextLabel;
+            let targetStatus = nextStatus;
+
+            // Specialized logic for delivery flow
+            if (r.status === 'ready' && r.deliveryPreference === 'delivery') {
+              displayLabel = 'Mark as Dispatched';
+              targetStatus = 'dispatched';
+            }
+
             actionBtn.style.display  = 'inline-flex';
             actionBtn.innerHTML      = `<i class="${iconMap2[displayLabel] || 'ri-arrow-right-line'}"></i> ${displayLabel}`;
-            actionBtn.onclick        = () => handleStatusUpdate(nextStatus);
+            actionBtn.onclick        = () => handleStatusUpdate(targetStatus);
           } else {
             actionBtn.style.display = 'none';
           }
@@ -214,11 +289,68 @@
           cancelBtn.style.display = ['pending', 'confirmed'].includes(r.status) ? 'inline-flex' : 'none';
           cancelBtn.onclick = () => handleStatusUpdate('cancelled');
         }
+
+        // Pre-fill fulfillment form if showing
+        const fTable = document.getElementById('fulfillmentTableBody');
+        fTable.innerHTML = '';
+        r.medicines?.forEach((m, idx) => {
+          fTable.innerHTML += `
+            <tr>
+              <td><div style="font-weight:500;">${m.name}</div><div style="font-size:11px;color:var(--text-light);">Req: ${m.quantity}</div></td>
+              <td><input type="number" class="fulfillment-input" placeholder="0.00" data-index="${idx}" data-field="price" oninput="updateFulfillmentTotal()"></td>
+              <td>
+                <select class="fulfillment-input" data-index="${idx}" data-field="unit">
+                  <option value="Tablets">Tablets</option>
+                  <option value="Strips">Strips</option>
+                  <option value="Bottle">Bottle</option>
+                  <option value="Injection">Injection</option>
+                </select>
+              </td>
+            </tr>`;
+        });
+        updateFulfillmentTotal();
+
+        // Update Summary Section if order is ready or later
+        if (['ready', 'collected', 'dispatched'].includes(r.status) && r.fulfillment) {
+          document.getElementById('summarySection').style.display = 'block';
+          const sList = document.getElementById('summaryList');
+          sList.innerHTML = r.fulfillment.map(item => `
+            <tr>
+              <td style="padding:8px 0;">
+                <div style="font-weight:500;">${item.name}</div>
+                <div style="font-size:11px;color:var(--text-light);">${item.unit}</div>
+              </td>
+              <td style="padding:8px 0;text-align:right;color:var(--text-muted);">₹${item.price.toFixed(2)}</td>
+            </tr>
+          `).join('');
+          
+          let grandTotal = r.totalAmount || 0;
+          if (r.deliveryPreference === 'delivery') {
+            document.getElementById('summaryDeliveryRow').style.display = 'table-row';
+            grandTotal += 30;
+          } else {
+            document.getElementById('summaryDeliveryRow').style.display = 'none';
+          }
+          document.getElementById('summaryTotal').textContent = `₹${grandTotal.toFixed(2)}`;
+        } else {
+          document.getElementById('summarySection').style.display = 'none';
+        }
       });
     });
 
     async function handleStatusUpdate(newStatus) {
       if (!id) return;
+
+      // If moving to 'ready', show the fulfillment form instead of immediate update
+      if (newStatus === 'ready') {
+        const fSection = document.getElementById('fulfillmentSection');
+        fSection.style.display = 'block';
+        fSection.scrollIntoView({ behavior: 'smooth' });
+        // Disable main buttons to focus on fulfillment
+        document.getElementById('actionBtn').disabled = true;
+        return;
+      }
+
       const notes = document.getElementById('pharmacyNotes')?.value || '';
       try {
         await updateOrderStatus(id, newStatus, notes);
@@ -226,6 +358,52 @@
         alert(err.message);
       }
     }
+
+    window.confirmFulfillment = async () => {
+      const rows = document.querySelectorAll('#fulfillmentTableBody tr');
+      const fulfillmentData = [];
+      let totalAmount = 0;
+
+      rows.forEach(row => {
+        const price = parseFloat(row.querySelector('input[data-field="price"]').value) || 0;
+        const unit  = row.querySelector('select[data-field="unit"]').value;
+        const name  = row.querySelector('td:first-child div:first-child').textContent;
+        
+        fulfillmentData.push({ name, price, unit });
+        totalAmount += price;
+      });
+
+      let deliveryCharge = 0;
+      if (currentOrder?.deliveryPreference === 'delivery') {
+        deliveryCharge = 30;
+        totalAmount += deliveryCharge;
+      }
+
+      if (totalAmount === 0 && !confirm('Total amount is 0. Continue?')) return;
+
+      const confirmBtn = document.querySelector('#fulfillmentSection .btn-primary');
+      confirmBtn.disabled = true;
+      confirmBtn.textContent = 'Updating...';
+
+      const notes = document.getElementById('pharmacyNotes')?.value || '';
+      
+      try {
+        await updateDoc(doc(db, 'requests', id), {
+          status: 'ready',
+          fulfillment: fulfillmentData,
+          deliveryCharge: deliveryCharge,
+          totalAmount: totalAmount,
+          pharmacyNotes: notes,
+          updatedAt: serverTimestamp()
+        });
+        document.getElementById('fulfillmentSection').style.display = 'none';
+        document.getElementById('actionBtn').disabled = false;
+      } catch (err) {
+        alert('Failed to update: ' + err.message);
+        confirmBtn.disabled = false;
+        confirmBtn.textContent = 'Confirm Pricing & Mark Ready';
+      }
+    };
 
     window.saveNotes = async () => {
       if (!id) return;

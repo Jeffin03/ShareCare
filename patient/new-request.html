@@ -5,6 +5,7 @@
   <title>ShareCare — New Request</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
   <link rel="stylesheet" href="../assets/style.css">
+  <script src="../js/theme.js"></script>
   <style>
     /* === CRITICAL LAYOUT === */
     html,body{margin:0;padding:0;}
@@ -60,7 +61,7 @@
       </ul>
       <div class="sc-sidebar-footer">
         <div class="sc-user-chip">
-          <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=80&q=80" alt="User">
+          <div class="user-avatar-container"></div>
           <div><div class="sc-user-name" id="userName">Loading...</div><div class="sc-user-role">Patient</div></div>
           <i class="ri-logout-box-r-line sc-logout" onclick="logOut()"></i>
         </div>
@@ -70,6 +71,7 @@
       <div class="sc-topbar">
         <div><div class="sc-topbar-title">New Medicine Request</div><div class="sc-topbar-sub">Submit a restock request to your pharmacy</div></div>
         <div class="sc-topbar-right">
+          <div class="theme-toggle"><i class="ri-moon-line"></i><i class="ri-sun-line"></i></div>
           <a href="dashboard.html" class="btn btn-outline btn-sm"><i class="ri-arrow-left-line"></i> Back</a>
         </div>
       </div>
