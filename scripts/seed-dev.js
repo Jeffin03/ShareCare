@@ -97,12 +97,23 @@ const PHARMACIES = [
       active: true, createdAt: daysAgo(45),
     },
   },
+  {
+    email: 'healthfirst.demo@sharecare.app',
+    displayName: 'HealthFirst Pharmacy — HSR Layout',
+    pharmacy: {
+      name: 'HealthFirst Pharmacy', area: 'HSR Layout',
+      address: '27th Main, Sector 2, HSR Layout, Bangalore', phone: '080-41234569',
+      active: true, createdAt: daysAgo(30),
+    },
+  },
 ];
 
 const PATIENTS = [
   { email: 'priya.demo@sharecare.app',   displayName: 'Priya Sharma', createdAt: daysAgo(30) },
   { email: 'suresh.demo@sharecare.app',  displayName: 'Suresh Iyer',  createdAt: daysAgo(25) },
   { email: 'anita.demo@sharecare.app',   displayName: 'Anita Verma',  createdAt: daysAgo(20) },
+  { email: 'mohan.demo@sharecare.app',   displayName: 'Mohan Kumar',  createdAt: daysAgo(15) },
+  { email: 'sid.demo@sharecare.app',     displayName: 'Siddharth Reddy', createdAt: daysAgo(10) },
 ];
 
 function buildRequests(patientIds, pharmacyIds) {
@@ -123,6 +134,14 @@ function buildRequests(patientIds, pharmacyIds) {
       medicines: [{ name: 'Insulin Glargine', quantity: 2 }],
       notes: 'Keep refrigerated during delivery.', preferredPickupTime: 'Morning',
       status: 'pending', deliveryPreference: 'delivery', createdAt: hoursAgo(5), updatedAt: hoursAgo(5) },
+    { patientId: patientIds[3], patientName: 'Mohan Kumar',   pharmacyId: pharmacyIds[2], pharmacyName: 'HealthFirst Pharmacy',
+      medicines: [{ name: 'Telmisartan 40mg', quantity: 30 }, { name: 'Amlodipine 5mg', quantity: 30 }],
+      notes: 'Regular monthly restock.', preferredPickupTime: 'Evening',
+      status: 'pending', deliveryPreference: 'pickup', createdAt: hoursAgo(3), updatedAt: hoursAgo(3) },
+    { patientId: patientIds[4], patientName: 'Siddharth Reddy', pharmacyId: pharmacyIds[1], pharmacyName: 'MedPlus Health',
+      medicines: [{ name: 'Thyronorm 50mcg', quantity: 100 }],
+      notes: 'Please check the expiry date carefully.', preferredPickupTime: 'Morning',
+      status: 'ready', deliveryPreference: 'pickup', createdAt: daysAgo(1), updatedAt: hoursAgo(2) },
     { patientId: patientIds[1], patientName: 'Suresh Iyer',   pharmacyId: pharmacyIds[1], pharmacyName: 'MedPlus Health',
       medicines: [{ name: 'Sitagliptin 50mg', quantity: 30 }, { name: 'Atorvastatin 10mg', quantity: 30 }],
       notes: '', preferredPickupTime: 'Any',
@@ -136,8 +155,14 @@ function buildPosts(patientIds, patientNames) {
       title: 'Low-GI Ragi Dosa — My Sunday Morning Staple',
       body: 'Swapped regular rice dosa with a ragi-oats blend and it changed my post-breakfast glucose numbers completely.\n\nMix 1 cup ragi flour, half cup oats (ground), 2 tbsp urad dal (soaked overnight). Ferment for 6-8 hours.\n\nMy readings show a peak of 148 mg/dL instead of the usual 190+ with regular dosa.',
       tags: ['ragi', 'low-gi', 'breakfast', 'recipe'],
-      helpfulCount: 48, commentCount: 2, helpfulBy: [patientIds[1], patientIds[2]],
+      helpfulCount: 48, commentCount: 3, helpfulBy: [patientIds[1], patientIds[2], patientIds[3]],
       createdAt: daysAgo(7), updatedAt: daysAgo(7) },
+    { authorId: patientIds[3], authorName: patientNames[3], category: 'Recipes',
+      title: 'Low-Carb Cauliflower "Upma" for Quick Dinner',
+      body: 'Grate cauliflower into rice-sized grains. Sauté with mustard seeds, curry leaves, green chillies, and lots of peanuts. \n\nTakes 10 mins and has practically zero impact on blood sugar. Added some turmeric for that classic yellow look.',
+      tags: ['cauliflower', 'upma', 'dinner', 'low-carb'],
+      helpfulCount: 32, commentCount: 2, helpfulBy: [patientIds[0], patientIds[4]],
+      createdAt: daysAgo(1), updatedAt: daysAgo(1) },
     { authorId: patientIds[2], authorName: patientNames[2], category: 'Recipes',
       title: '5 Diabetes-Friendly Snacks from Any Kirana Store',
       body: 'You do not need a speciality health store. Here is what I keep at home:\n\n1. Roasted chana\n2. Fox nuts (makhana)\n3. Peanuts\n4. Cucumber with lime\n5. Sprouted moong\n\nAll under Rs 30 per serving.',
@@ -148,8 +173,14 @@ function buildPosts(patientIds, patientNames) {
       title: 'The 15-Minute Walk After Dinner That Changed My A1C',
       body: 'My doctor mentioned it in passing. Three months later, my A1C went from 8.1 to 6.9.\n\nI walk at a comfortable pace within 10 minutes of finishing my meal. The muscle contractions seem to pull glucose directly from the bloodstream.',
       tags: ['exercise', 'walking', 'a1c'],
-      helpfulCount: 73, commentCount: 0, helpfulBy: [patientIds[0], patientIds[1]],
+      helpfulCount: 73, commentCount: 1, helpfulBy: [patientIds[0], patientIds[1]],
       createdAt: daysAgo(5), updatedAt: daysAgo(5) },
+    { authorId: patientIds[4], authorName: patientNames[4], category: 'Tips & Tricks',
+      title: 'How to track glucose while working night shifts?',
+      body: 'My schedule is upside down. I eat my main "meal" at 11 PM and "breakfast" at 7 AM before sleeping. \n\nFound that tracking relative to sleep cycles rather than clock time helps spot patterns better. Anyone else in IT or nursing handling this?',
+      tags: ['night-shift', 'glucose-tracking', 'work-life'],
+      helpfulCount: 28, commentCount: 4, helpfulBy: [patientIds[0], patientIds[3]],
+      createdAt: daysAgo(2), updatedAt: daysAgo(2) },
     { authorId: patientIds[0], authorName: patientNames[0], category: 'Snacks',
       title: 'Good Snack Options for Long Travel Days?',
       body: 'Flying next week with long transit. Everything at airports seems to be sugar bombs or unappetising. What do you all carry that packs well and does not need refrigeration?',
@@ -162,6 +193,12 @@ function buildPosts(patientIds, patientNames) {
       tags: ['newly-diagnosed', 'mental-health', 'support'],
       helpfulCount: 91, commentCount: 0, helpfulBy: [patientIds[0], patientIds[2]],
       createdAt: daysAgo(8), updatedAt: daysAgo(8) },
+    { authorId: patientIds[3], authorName: patientNames[3], category: 'Tips & Tricks',
+      title: 'Handling hypo-awareness during sleep',
+      body: 'I have started using a CGM and noticed dips at 3 AM that I never felt. My doctor suggested a small protein snack before bed. \n\nHas anyone else experienced "dawn phenomenon" or night-time lows? Looking for tips on pre-bed snacks that keep levels stable.',
+      tags: ['hypoglycemia', 'night-time', 'cgm'],
+      helpfulCount: 45, commentCount: 2, helpfulBy: [patientIds[1], patientIds[4]],
+      createdAt: daysAgo(3), updatedAt: daysAgo(3) },
     { authorId: patientIds[2], authorName: patientNames[2], category: 'Support',
       title: 'Does Anyone Else Struggle with Festival Season?',
       body: 'The social pressure to eat sweets is immense. My relatives mean well but constantly offering mithai while knowing my condition is exhausting.\n\nHow do others handle this without making things awkward?',
@@ -185,20 +222,33 @@ function buildPosts(patientIds, patientNames) {
 
 function buildComments(patientIds, patientNames, postDocIds) {
   return [
-    // 2 comments on Ragi Dosa post (index 0)
+    // Ragi Dosa post
     { postId: postDocIds[0], authorId: patientIds[1], authorName: patientNames[1],
       text: 'Made this last Sunday! The fermentation really does make a difference. I added methi to the batter — supposed to help with glucose absorption.',
       createdAt: daysAgo(6) },
     { postId: postDocIds[0], authorId: patientIds[2], authorName: patientNames[2],
       text: 'Does this work with store-bought ragi flour or does it have to be freshly ground? I do not have a grinder at home.',
       createdAt: daysAgo(5) },
-    // 1 comment on Kirana Snacks post (index 1)
-    { postId: postDocIds[1], authorId: patientIds[1], authorName: patientNames[1],
-      text: 'I would add roasted pumpkin seeds to this list — very filling and almost no effect on glucose in my experience.',
-      createdAt: daysAgo(3) },
-    // 1 comment on Intermittent Fasting post (index 7)
-    { postId: postDocIds[7], authorId: patientIds[2], authorName: patientNames[2],
-      text: 'I tried 16:8 for three months while on Metformin. I moved my doses to 12pm and 8pm with my eating window meals after checking with my doctor. Worked fine but the first week had some nausea.',
+    { postId: postDocIds[0], authorId: patientIds[0], authorName: patientNames[0],
+      text: 'Store-bought works fine! Just make sure it is pure ragi and not a "mix" with added sugar.',
+      createdAt: daysAgo(4) },
+      
+    // Night shift post
+    { postId: postDocIds[4], authorId: patientIds[0], authorName: patientNames[0],
+      text: 'Nurse here! I feel your pain. I found that eating my largest meal before the shift starts (around 6 PM) and then just small snacks during the shift works best.',
+      createdAt: daysAgo(1) },
+    { postId: postDocIds[4], authorId: patientIds[3], authorName: patientNames[3],
+      text: 'I use a CGM and set my alerts to be a bit wider during my sleep hours so I do not get woken up by minor fluctuations.',
+      createdAt: hoursAgo(20) },
+
+    // Hypo-awareness post
+    { postId: postDocIds[7], authorId: patientIds[1], authorName: patientNames[1],
+      text: 'A handful of walnuts or a small piece of cheese before bed really helped stabilize my overnight numbers.',
+      createdAt: daysAgo(2) },
+
+    // Intermittent Fasting post
+    { postId: postDocIds[10], authorId: patientIds[2], authorName: patientNames[2],
+      text: 'I tried 16:8 for three months while on Metformin. Worked fine but the first week had some nausea.',
       createdAt: hoursAgo(4) },
   ];
 }

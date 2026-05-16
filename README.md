@@ -1,14 +1,39 @@
 # ShareCare
 
-![ShareCare_LandingPage](assets/image.png)
+![ShareCare_LandingPage](assets/screenshots/landing_page.png)
 
 A web application for people living with diabetes — combining a **medicine restock request portal** with a **peer support community feed**.
+
+---
+
+## Product Preview
+
+| Landing Page | Patient Dashboard |
+|---|---|
+| ![Landing Page](assets/screenshots/landing_page.png) | ![Patient Dashboard](assets/screenshots/patient_dashboard.png) |
+
+| Community Feed | Pharmacy Portal |
+|---|---|
+| ![Community Feed](assets/screenshots/community_feed.png) | ![Pharmacy Portal](assets/screenshots/pharmacy_dashboard.png) |
 
 ---
 
 ## Abstract
 
 ShareCare addresses two distinct pain points for diabetes patients: the friction of coordinating medicine restocks with pharmacies, and the lack of a safe, non-clinical space for sharing day-to-day coping strategies. The platform allows patients to raise restock requests directly to their pharmacy and track status in real time, while also providing a community feed where members share recipes, exercises, snack ideas, and emotional support. Content is peer-generated and clearly marked as personal experience — not medical advice.
+
+---
+
+## 🏛️ Project Status: Archived
+This project has been successfully completed as part of an academic semester project. It is currently in **Read-Only Demo Mode** to preserve the database state for portfolio review. New account registrations and data persistence are restricted.
+
+### 🔑 Demo Credentials
+To explore the dual-role dashboards, you can use the following pre-seeded demo accounts:
+
+| Role | Email | Password |
+|---|---|---|
+| **Patient** | `priya.demo@sharecare.app` | `ShareCare@123` |
+| **Pharmacy** | `apollo.demo@sharecare.app` | `ShareCare@123` |
 
 ---
 

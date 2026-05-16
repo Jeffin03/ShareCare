@@ -100,7 +100,12 @@
             <input type="hidden" id="role" value="patient">
           </div>
 
-          <button type="submit" class="btn-submit" id="submitBtn">Create account</button>
+          <div style="background:var(--accent-light);color:var(--accent-dark);padding:14px;border-radius:var(--radius-md);font-size:13px;line-height:1.5;margin-bottom:20px;border:1px solid var(--accent);display:flex;gap:10px;">
+            <i class="ri-alert-line" style="font-size:18px;"></i>
+            <span><strong>Demo Mode:</strong> New account creation is restricted in this archived version. Please use the pre-seeded demo accounts to explore the platform.</span>
+          </div>
+
+          <button type="submit" class="btn-submit" id="submitBtn" disabled style="opacity:0.6;cursor:not-allowed;">Create account</button>
           <p class="terms">By signing up you agree to our <a href="#">Terms</a> and <a href="#">Privacy Policy</a>.</p>
         </form>
         <div class="auth-footer">
