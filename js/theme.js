@@ -38,5 +38,13 @@
         el.innerHTML = `<div class="user-initials">${initials}</div>`;
       });
     }
+
+    // Portfolio Mode Banner
+    if (!document.querySelector('.demo-banner')) {
+      const banner = document.createElement('div');
+      banner.className = 'demo-banner';
+      banner.innerHTML = '<i class="ri-information-line"></i> ARCHIVED PORTFOLIO: Read-only demo mode enabled. Data persistence and sign-ups are restricted.';
+      document.body.prepend(banner);
+    }
   });
 })();
